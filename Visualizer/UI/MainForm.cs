@@ -7,6 +7,7 @@
   *
   * Contributors:
   *    Tarak Reddy - initial implementation
+  *    Martin Sperlich - added Find (Ctrl+F) and Find Next (F3).
   *******************************************************************************/
 
 using System;
@@ -15,6 +16,7 @@ using System.Windows.Forms;
 using AgGateway.ADAPT.ApplicationDataModel.FieldBoundaries;
 using AgGateway.ADAPT.ApplicationDataModel.Guidance;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
+using AgGateway.ADAPT.Visualizer.Properties;
 
 namespace AgGateway.ADAPT.Visualizer.UI
 {
@@ -26,6 +28,8 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private readonly OperationDataProcessor _operationDataProcessor;
         private Action<Model.State, string> _updateStatusAction;
         private static BusyForm _busyForm;
+
+        private string _findWhat;
 
         public MainForm()
         {
@@ -62,7 +66,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
                         _busyForm.UpdateLabel(s);
                     }));
                 }
-                _busyForm.UpdateLabel(s);
+                else
+                {
+                    _busyForm.UpdateLabel(s);
+                }
             }
         }
 
@@ -225,6 +232,123 @@ namespace AgGateway.ADAPT.Visualizer.UI
             waitFormLocation.Y = mainFormCenter.Y - (_busyForm.Height / 2);
             _busyForm.StartPosition = FormStartPosition.Manual;
             _busyForm.Location = waitFormLocation;  
+        }
+
+        private Boolean _inputQuery(String caption, String prompt, ref String value)
+        {
+            Form form;
+            form = new Form();
+            form.AutoScaleMode = AutoScaleMode.Font;
+            form.Font = SystemFonts.IconTitleFont;
+
+            SizeF dialogUnits;
+            dialogUnits = form.AutoScaleDimensions;
+
+            form.FormBorderStyle = FormBorderStyle.FixedDialog;
+            form.MinimizeBox = false;
+            form.MaximizeBox = false;
+            form.Text = caption;
+
+            form.ClientSize = new Size(
+                        MulDiv(180, dialogUnits.Width, 4),
+                        MulDiv(63, dialogUnits.Height, 8));
+
+            form.StartPosition = FormStartPosition.CenterScreen;
+
+            System.Windows.Forms.Label lblPrompt;
+            lblPrompt = new System.Windows.Forms.Label();
+            lblPrompt.Parent = form;
+            lblPrompt.AutoSize = true;
+            lblPrompt.Left = MulDiv(8, dialogUnits.Width, 4);
+            lblPrompt.Top = MulDiv(8, dialogUnits.Height, 8);
+            lblPrompt.Text = prompt;
+
+            System.Windows.Forms.TextBox edInput;
+            edInput = new System.Windows.Forms.TextBox();
+            edInput.Parent = form;
+            edInput.Left = lblPrompt.Left;
+            edInput.Top = MulDiv(19, dialogUnits.Height, 8);
+            edInput.Width = MulDiv(164, dialogUnits.Width, 4);
+            edInput.Text = value;
+            edInput.SelectAll();
+
+
+            int buttonTop = MulDiv(41, dialogUnits.Height, 8);
+            //Command buttons should be 50x14 dlus
+            Size buttonSize = ScaleSize(new Size(50, 14), dialogUnits.Width / 4, dialogUnits.Height / 8);
+
+            System.Windows.Forms.Button bbOk = new System.Windows.Forms.Button();
+            bbOk.Parent = form;
+            bbOk.Text = "OK";
+            bbOk.DialogResult = DialogResult.OK;
+            form.AcceptButton = bbOk;
+            bbOk.Location = new Point(MulDiv(38, dialogUnits.Width, 4), buttonTop);
+            bbOk.Size = buttonSize;
+
+            System.Windows.Forms.Button bbCancel = new System.Windows.Forms.Button();
+            bbCancel.Parent = form;
+            bbCancel.Text = "Cancel";
+            bbCancel.DialogResult = DialogResult.Cancel;
+            form.CancelButton = bbCancel;
+            bbCancel.Location = new Point(MulDiv(92, dialogUnits.Width, 4), buttonTop);
+            bbCancel.Size = buttonSize;
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                value = edInput.Text;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static Size ScaleSize(Size original, float factorX, float factorY)
+        {
+            original.Width = (int)(original.Width * factorX);
+            original.Height = (int)(original.Height * factorY);
+            return original;
+        }
+
+        private static int MulDiv(int number, float numeratorA, int denominator)
+        {
+            int numerator = (int)numeratorA;
+            return (int)(((long)number * numerator + (denominator >> 1)) / denominator);
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            _findWhat = Settings.Default.FindString;
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Settings.Default.FindString = _findWhat;
+            Settings.Default.Save();
+        }
+
+        private void _findNextMenuItem_Click(object sender, EventArgs e)
+        {
+            _model.FindNextInTree(_treeViewMetadata);
+        }
+
+        private void _findMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_inputQuery("Find", "Find:", ref _findWhat))
+            {
+                _model.FindInTree(_treeViewMetadata, _findWhat);
+            }
+        }
+
+        private void _importMenuItem_Click(object sender, EventArgs e)
+        {
+            _importToolStripButton_Click(sender, e);
+        }
+
+        private void _exportMenuItem_Click(object sender, EventArgs e)
+        {
+            _exportToolStripButton_Click(sender, e);
         }
     }
 }

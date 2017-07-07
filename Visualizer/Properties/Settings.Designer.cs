@@ -84,5 +84,40 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
                 this["ProprietaryValues"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoLoadPlugins {
+            get {
+                return ((bool)(this["AutoLoadPlugins"]));
+            }
+            set {
+                this["AutoLoadPlugins"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FindString {
+            get {
+                return ((string)(this["FindString"]));
+            }
+            set {
+                this["FindString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Windows.Forms.AutoCompleteStringCollection ImportPathHistory {
+            get {
+                return ((global::System.Windows.Forms.AutoCompleteStringCollection)(this["ImportPathHistory"]));
+            }
+            set {
+                this["ImportPathHistory"] = value;
+            }
+        }
     }
 }

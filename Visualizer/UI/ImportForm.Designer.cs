@@ -78,7 +78,7 @@
             this._proprietaryLabel.Name = "_proprietaryLabel";
             this._proprietaryLabel.Size = new System.Drawing.Size(58, 27);
             this._proprietaryLabel.TabIndex = 8;
-            this._proprietaryLabel.Text = "Proprietary values";
+            this._proprietaryLabel.Text = "P&roprietary values";
             // 
             // _initializeStringTextBox
             // 
@@ -105,7 +105,7 @@
             this._pluginLocationLabel.Name = "_pluginLocationLabel";
             this._pluginLocationLabel.Size = new System.Drawing.Size(76, 13);
             this._pluginLocationLabel.TabIndex = 2;
-            this._pluginLocationLabel.Text = "Plugin location";
+            this._pluginLocationLabel.Text = "&Plugin location";
             // 
             // _loadedPluginsLabel
             // 
@@ -123,7 +123,7 @@
             this._browsePluginLocationButton.Name = "_browsePluginLocationButton";
             this._browsePluginLocationButton.Size = new System.Drawing.Size(54, 23);
             this._browsePluginLocationButton.TabIndex = 4;
-            this._browsePluginLocationButton.Text = "Browse";
+            this._browsePluginLocationButton.Text = "&Browse";
             this._browsePluginLocationButton.UseVisualStyleBackColor = true;
             this._browsePluginLocationButton.Click += new System.EventHandler(this.BrowsePluginLocation_Click);
             // 
@@ -134,7 +134,7 @@
             this._loadPluginsButton.Name = "_loadPluginsButton";
             this._loadPluginsButton.Size = new System.Drawing.Size(79, 23);
             this._loadPluginsButton.TabIndex = 5;
-            this._loadPluginsButton.Text = "Load Plugins";
+            this._loadPluginsButton.Text = "&Load Plugins";
             this._loadPluginsButton.UseVisualStyleBackColor = true;
             this._loadPluginsButton.Click += new System.EventHandler(this._loadPluginsButton_Click);
             // 
@@ -147,7 +147,7 @@
             this._initializeStringLabel.Name = "_initializeStringLabel";
             this._initializeStringLabel.Size = new System.Drawing.Size(74, 13);
             this._initializeStringLabel.TabIndex = 0;
-            this._initializeStringLabel.Text = "Initialize String";
+            this._initializeStringLabel.Text = "&Initialize String";
             // 
             // _pluginPathTextBox
             // 
@@ -179,7 +179,7 @@
             this._dataCardLabel.Name = "_dataCardLabel";
             this._dataCardLabel.Size = new System.Drawing.Size(76, 13);
             this._dataCardLabel.TabIndex = 0;
-            this._dataCardLabel.Text = "Datacard Path";
+            this._dataCardLabel.Text = "&Datacard Path";
             // 
             // _importPathTextbox
             // 
@@ -197,7 +197,7 @@
             this._browseDatacardButton.Name = "_browseDatacardButton";
             this._browseDatacardButton.Size = new System.Drawing.Size(54, 23);
             this._browseDatacardButton.TabIndex = 2;
-            this._browseDatacardButton.Text = "Browse";
+            this._browseDatacardButton.Text = "Br&owse";
             this._browseDatacardButton.UseVisualStyleBackColor = true;
             this._browseDatacardButton.Click += new System.EventHandler(this.BrowseDataCardPath_Click);
             // 

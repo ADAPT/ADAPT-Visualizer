@@ -27,12 +27,12 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private void BrowsePluginLocation_Click(object sender, EventArgs e)
         {
-            Model.BrowseFolderDialog(this, _pluginPathTextBox);
+            Model.BrowseFolderDialog(this, _pluginPathTextBox, _labelPluginLocation.Text);
         }
 
         private void BrowseExportPath_Click(object sender, EventArgs e)
         {
-            Model.BrowseFolderDialog(this, _exportPathTextBox);
+            Model.BrowseFolderDialog(this, _exportPathTextBox, _pathLabel.Text);
         }
 
         private void _loadPluginsButton_Click(object sender, EventArgs e)
@@ -68,17 +68,22 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
             _proprietaryDataGridView.Rows.Clear();
 
+            if (Settings.Default.AutoLoadPlugins)
+            {   // Issue a click
+                _loadPluginsButton_Click(null, null);
+            }
+
             //TODO: where do these values come from??
-//            foreach (var kvp in Settings.Default.ProprietaryValues)
-//            {
-//                var strings = kvp.Split(';');
-//
-//                var dataGridViewRow = new DataGridViewRow();
-//                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell { Value = strings[0] });
-//                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell { Value = strings[1] });
-//
-//                _proprietaryDataGridView.Rows.Add(dataGridViewRow);
-//            }
+            //            foreach (var kvp in Settings.Default.ProprietaryValues)
+            //            {
+            //                var strings = kvp.Split(';');
+            //
+            //                var dataGridViewRow = new DataGridViewRow();
+            //                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell { Value = strings[0] });
+            //                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell { Value = strings[1] });
+            //
+            //                _proprietaryDataGridView.Rows.Add(dataGridViewRow);
+            //            }
         }
 
         private void ExportForm_FormClosing(object sender, FormClosingEventArgs e)

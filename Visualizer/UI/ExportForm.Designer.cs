@@ -103,7 +103,7 @@
             this._proprietaryLabel.Name = "_proprietaryLabel";
             this._proprietaryLabel.Size = new System.Drawing.Size(78, 27);
             this._proprietaryLabel.TabIndex = 8;
-            this._proprietaryLabel.Text = "Proprietary values";
+            this._proprietaryLabel.Text = "P&roprietary values";
             // 
             // _initializeStringTextBox
             // 
@@ -129,7 +129,7 @@
             this._labelPluginLocation.Name = "_labelPluginLocation";
             this._labelPluginLocation.Size = new System.Drawing.Size(76, 13);
             this._labelPluginLocation.TabIndex = 2;
-            this._labelPluginLocation.Text = "Plugin location";
+            this._labelPluginLocation.Text = "&Plugin location";
             // 
             // _loadedPluginsLabel
             // 
@@ -147,7 +147,7 @@
             this._browsePluginLocationButton.Name = "_browsePluginLocationButton";
             this._browsePluginLocationButton.Size = new System.Drawing.Size(54, 23);
             this._browsePluginLocationButton.TabIndex = 4;
-            this._browsePluginLocationButton.Text = "Browse";
+            this._browsePluginLocationButton.Text = "&Browse";
             this._browsePluginLocationButton.UseVisualStyleBackColor = true;
             this._browsePluginLocationButton.Click += new System.EventHandler(this.BrowsePluginLocation_Click);
             // 
@@ -158,7 +158,7 @@
             this._loadPluginsButton.Name = "_loadPluginsButton";
             this._loadPluginsButton.Size = new System.Drawing.Size(79, 23);
             this._loadPluginsButton.TabIndex = 5;
-            this._loadPluginsButton.Text = "Load Plugins";
+            this._loadPluginsButton.Text = "&Load Plugins";
             this._loadPluginsButton.UseVisualStyleBackColor = true;
             this._loadPluginsButton.Click += new System.EventHandler(this._loadPluginsButton_Click);
             // 
@@ -171,7 +171,7 @@
             this._initializeStringLabel.Name = "_initializeStringLabel";
             this._initializeStringLabel.Size = new System.Drawing.Size(74, 13);
             this._initializeStringLabel.TabIndex = 0;
-            this._initializeStringLabel.Text = "Initialize String";
+            this._initializeStringLabel.Text = "&Initialize String";
             // 
             // _pluginPathTextBox
             // 
@@ -205,7 +205,7 @@
             this._cancelButton.Location = new System.Drawing.Point(332, 75);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(54, 23);
-            this._cancelButton.TabIndex = 6;
+            this._cancelButton.TabIndex = 5;
             this._cancelButton.Text = "Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -216,7 +216,7 @@
             this._exportDatacardButton.Location = new System.Drawing.Point(392, 75);
             this._exportDatacardButton.Name = "_exportDatacardButton";
             this._exportDatacardButton.Size = new System.Drawing.Size(54, 23);
-            this._exportDatacardButton.TabIndex = 5;
+            this._exportDatacardButton.TabIndex = 6;
             this._exportDatacardButton.Text = "Export";
             this._exportDatacardButton.UseVisualStyleBackColor = true;
             this._exportDatacardButton.Click += new System.EventHandler(this._exportDatacardButton_Click);
@@ -228,7 +228,7 @@
             this._browseExportPathButton.Name = "_browseExportPathButton";
             this._browseExportPathButton.Size = new System.Drawing.Size(54, 23);
             this._browseExportPathButton.TabIndex = 2;
-            this._browseExportPathButton.Text = "Browse";
+            this._browseExportPathButton.Text = "Br&owse";
             this._browseExportPathButton.UseVisualStyleBackColor = true;
             this._browseExportPathButton.Click += new System.EventHandler(this.BrowseExportPath_Click);
             // 
@@ -248,7 +248,7 @@
             this._pathLabel.Name = "_pathLabel";
             this._pathLabel.Size = new System.Drawing.Size(62, 13);
             this._pathLabel.TabIndex = 0;
-            this._pathLabel.Text = "Export Path";
+            this._pathLabel.Text = "&Export Path";
             // 
             // cardProfileSelection
             // 
@@ -257,16 +257,17 @@
             this.cardProfileSelection.Location = new System.Drawing.Point(94, 48);
             this.cardProfileSelection.Name = "cardProfileSelection";
             this.cardProfileSelection.Size = new System.Drawing.Size(292, 21);
-            this.cardProfileSelection.TabIndex = 7;
-            // 
+            this.cardProfileSelection.TabIndex = 4;
+			//
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(26, 51);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 13);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Card Profile";
+            this.label1.TabIndex = 3;
+            this.label1.Text = "&Card Profile";
+			
             // 
             // ExportForm
             // 
