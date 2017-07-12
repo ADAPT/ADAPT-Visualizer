@@ -12,6 +12,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private readonly TreeView _treeView;
         private readonly DataGridView _dataGridViewRawData;
         private bool _isDirty;
+        private AutoCompleteStringCollection _importPathHistory;
 
         public ImportForm(Model model, TreeView treeView, DataGridView dataGridViewRawData)
         {
@@ -27,12 +28,12 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private void BrowsePluginLocation_Click(object sender, EventArgs e)
         {
-            Model.BrowseFolderDialog(this, _pluginPathTextBox);
+            Model.BrowseFolderDialog(this, _pluginPathTextBox, _pluginLocationLabel.Text);
         }
 
         private void BrowseDataCardPath_Click(object sender, EventArgs e)
         {
-            Model.BrowseFolderDialog(this, _importPathTextbox);
+            Model.BrowseFolderDialog(this, _importPathTextbox, _dataCardLabel.Text);
         }
 
         private void _importButton_Click(object sender, EventArgs e)
@@ -43,8 +44,14 @@ namespace AgGateway.ADAPT.Visualizer.UI
             {
                 _treeView.Nodes.Clear();
                 _dataGridViewRawData.Columns.Clear();
-                
-                _model.Import(_importPathTextbox, _initializeStringTextBox.Text, _treeView);
+
+                if (_model.Import(_importPathTextbox, _initializeStringTextBox.Text, _treeView))
+                {
+                    // Content of _importPathComboBox was valid --> add to history.
+                    string s = _importPathTextbox.Text;
+                    if (_importPathHistory == null) _importPathHistory = new AutoCompleteStringCollection();
+                    if (!_importPathHistory.Contains(s)) _importPathHistory.Add(s);
+                }
 
                 DialogResult = DialogResult.OK;
             }
@@ -71,8 +78,17 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _pluginPathTextBox.Text = Settings.Default.PluginPath;
             _initializeStringTextBox.Text = Settings.Default.InitializeString;
             _importPathTextbox.Text = Settings.Default.ImportPath;
-
+            _importPathTextbox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            _importPathTextbox.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            _importPathHistory = Settings.Default.ImportPathHistory;
+            _importPathTextbox.AutoCompleteCustomSource = _importPathHistory;
+            
             _proprietaryDataGridView.Rows.Clear();
+
+            if (Settings.Default.AutoLoadPlugins)
+            {   // Issue a click
+                _loadPluginsButton_Click(null, null);
+            }
 
             //TODO: where do these values come from
 //            foreach (var kvp in Settings.Default.ProprietaryValues)
@@ -103,6 +119,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             Settings.Default.PluginPath = _pluginPathTextBox.Text;
             Settings.Default.InitializeString = _initializeStringTextBox.Text;
             Settings.Default.ImportPath = _importPathTextbox.Text;
+            Settings.Default.ImportPathHistory = _importPathHistory;
             Settings.Default.Save();
         }
 

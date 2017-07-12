@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoundaryProcessor.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="GuidanceExtension.cs" />
     <Compile Include="GuidanceProcessor.cs" />
     <Compile Include="DrawingUtil.cs" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\RepresentationSystem.xml" />
+    <Content Include="Resources\Search.png" />    
     <Content Include="Resources\tractor.ico" />
     <Content Include="Resources\UnitSystem.xml" />
   </ItemGroup>
