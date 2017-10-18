@@ -94,56 +94,59 @@ namespace AgGateway.ADAPT.Visualizer
                 _drawingUtil.SetMinMax(projectedPoints);
                 var screenPolygon = projectedPoints.Select(point => point.ToXy(_drawingUtil.MinX, _drawingUtil.MinY, _drawingUtil.GetDelta())).ToArray();
 
-                if (doubleValues == null)
+                if (screenPolygon.All(p => !double.IsNaN(p.X) && !double.IsNaN(p.Y)))
                 {
-                    //WorkingData is not numeric
-                    graphics.DrawPolygon(DrawingUtil.Pen, screenPolygon);
-                }
-                else
-                {
-                    if (doubleValues.Max() == doubleValues.Min())
+                    if (doubleValues == null)
                     {
-                        //All values are the same
-                        if (doubleValues.Max() == 0d)
-                        {
-                            //Zero values
-                            graphics.DrawPolygon(DrawingUtil.RedPen, screenPolygon);
-                        }
-                        else
-                        {
-                            //Non-zero values
-                            graphics.DrawPolygon(DrawingUtil.GreenPen, screenPolygon);
-                        }
+                        //WorkingData is not numeric
+                        graphics.DrawPolygon(DrawingUtil.Pen, screenPolygon);
                     }
                     else
                     {
-                        //Simple scheme where
-                        //Red = Minimum Value
-                        //Orange = Value is in bottom third (non minimum)
-                        //Yellow = Value is in middle third
-                        //Green = Value is in top third
-                        int i = 0;
-                        double range = (doubleValues.Max() - doubleValues.Min()) / 3;
-                        double firstThird = doubleValues.Min() + range;
-                        double secondThird = firstThird + range;
-                        foreach (System.Drawing.PointF f in screenPolygon)
+                        if (doubleValues.Max() == doubleValues.Min())
                         {
-                            double d = i < doubleValues.Count ? doubleValues[i] : 0d;  //Values will be in same order as points
-                            System.Drawing.Pen pen = DrawingUtil.YellowPen;
-                            if (d == doubleValues.Min())
+                            //All values are the same
+                            if (doubleValues.Max() == 0d)
                             {
-                                pen = DrawingUtil.RedPen;
+                                //Zero values
+                                graphics.DrawPolygon(DrawingUtil.RedPen, screenPolygon);
                             }
-                            else if (d <= firstThird)
+                            else
                             {
-                                pen = DrawingUtil.OrangePen;
+                                //Non-zero values
+                                graphics.DrawPolygon(DrawingUtil.GreenPen, screenPolygon);
                             }
-                            else if (d >= secondThird)
+                        }
+                        else
+                        {
+                            //Simple scheme where
+                            //Red = Minimum Value
+                            //Orange = Value is in bottom third (non minimum)
+                            //Yellow = Value is in middle third
+                            //Green = Value is in top third
+                            int i = 0;
+                            double range = (doubleValues.Max() - doubleValues.Min()) / 3;
+                            double firstThird = doubleValues.Min() + range;
+                            double secondThird = firstThird + range;
+                            foreach (System.Drawing.PointF f in screenPolygon)
                             {
-                                pen = DrawingUtil.GreenPen;
+                                double d = i < doubleValues.Count ? doubleValues[i] : 0d;  //Values will be in same order as points
+                                System.Drawing.Pen pen = DrawingUtil.YellowPen;
+                                if (d == doubleValues.Min())
+                                {
+                                    pen = DrawingUtil.RedPen;
+                                }
+                                else if (d <= firstThird)
+                                {
+                                    pen = DrawingUtil.OrangePen;
+                                }
+                                else if (d >= secondThird)
+                                {
+                                    pen = DrawingUtil.GreenPen;
+                                }
+                                graphics.DrawEllipse(pen, new System.Drawing.RectangleF(f.X, f.Y, 2, 2));
+                                i++;
                             }
-                            graphics.DrawEllipse(pen, new System.Drawing.RectangleF(f.X, f.Y, 2, 2));
-                            i++;
                         }
                     }
                 }
