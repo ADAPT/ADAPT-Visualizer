@@ -159,7 +159,11 @@ namespace AgGateway.ADAPT.Visualizer
             {
                 if (_workingDataDictionary != null)
                 {
-                    return _workingDataDictionary.Keys.ToList();
+                    return _workingDataDictionary.Keys.Select(k => new { Key = k, DepthVsOrder = k.Split(':')[0].Split('.') })
+                                                       .OrderBy(x => int.Parse(x.DepthVsOrder[0]))
+                                                       .ThenBy(x => int.Parse(x.DepthVsOrder[1]))
+                                                       .Select(x => x.Key)
+                                                       .ToList();
                 }
                 else
                 {
@@ -180,13 +184,13 @@ namespace AgGateway.ADAPT.Visualizer
                     string deviceName = deviceElementUse.Id.ReferenceId.ToString();
                     if (config != null)
                     {
-                        deviceName = config.Id.ReferenceId + ":" + config.Description;
+                        deviceName = config.Id.ReferenceId + "_" + config.Description;
                     }
 
                     IEnumerable<WorkingData> workingDatas = deviceElementUse.GetWorkingDatas();
                     foreach (WorkingData workingData in workingDatas)
                     {
-                        string key = $"{deviceElementUse.Depth}:{deviceElementUse.Order}_{deviceName}_{workingData.Representation.Code}";
+                        string key = $"{deviceElementUse.Depth}.{deviceElementUse.Order}:__{deviceName}_{workingData.Representation.Code}";
                         if (!workingDataDictionary.ContainsKey(key)) 
                         {
                             workingDataDictionary.Add(key, workingData);
