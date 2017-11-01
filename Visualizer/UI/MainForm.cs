@@ -17,6 +17,7 @@ using AgGateway.ADAPT.ApplicationDataModel.FieldBoundaries;
 using AgGateway.ADAPT.ApplicationDataModel.Guidance;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.Visualizer.Properties;
+using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
 
 namespace AgGateway.ADAPT.Visualizer.UI
 {
@@ -26,6 +27,8 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private readonly BoundaryProcessor _boundaryProcessor;
         private readonly GuidanceProcessor _guidanceProcessor;
         private readonly OperationDataProcessor _operationDataProcessor;
+        private readonly SpatialRecordProcessor _spatialRecordProcessor;
+        private readonly PrescriptionProcessor _prescriptionProcessor;
         private Action<Model.State, string> _updateStatusAction;
         private static BusyForm _busyForm;
 
@@ -40,6 +43,8 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _operationDataProcessor = new OperationDataProcessor();
             _boundaryProcessor = new BoundaryProcessor(_tabPageSpatial);
             _guidanceProcessor = new GuidanceProcessor(_tabPageSpatial);
+            _spatialRecordProcessor = new SpatialRecordProcessor(_tabPageSpatial);
+            _prescriptionProcessor = new PrescriptionProcessor(_tabPageSpatial);
 
             _busyForm = new BusyForm();
         }
@@ -76,6 +81,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private void _treeViewMetadata_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             _tabControlViewer.SelectTab(_tabPageSpatial);
+            workingDataComboBox.Visible = false;
 
             using (var g = _tabPageSpatial.CreateGraphics())
             {
@@ -184,6 +190,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             var objectWithIndex = (ObjectWithIndex)treeNode.Tag;
             var element = objectWithIndex.Element;
 
+            workingDataComboBox.Visible = false;
             if (element is FieldBoundary)
             {
                 _boundaryProcessor.ProcessBoundary(element as FieldBoundary);
@@ -202,7 +209,14 @@ namespace AgGateway.ADAPT.Visualizer.UI
             else if (element is OperationData)
             {
                 _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(element as OperationData);
-                _tabControlViewer.SelectedTab = _tabPageRawData;
+                ApplicationDataModel.ADM.ApplicationDataModel model = _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex];
+                _spatialRecordProcessor.ProcessOperation(element as OperationData, _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex].Catalog);
+                workingDataComboBox.Visible = true;
+                workingDataComboBox.DataSource = _spatialRecordProcessor.WorkingDataList;
+            }
+            else if (element is Prescription)
+            {
+                _prescriptionProcessor.ProcessPrescription(element as Prescription);
             }
         }
 
@@ -349,6 +363,17 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private void _exportMenuItem_Click(object sender, EventArgs e)
         {
             _exportToolStripButton_Click(sender, e);
+        }
+
+        private void workingDataComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string workingDataKey = (string)workingDataComboBox.SelectedItem;
+            _spatialRecordProcessor.ThemeMap(workingDataKey);
+        }
+
+        private void _dataGridViewRawData_Paint(object sender, PaintEventArgs e)
+        {
+            workingDataComboBox.Visible = false;
         }
     }
 }

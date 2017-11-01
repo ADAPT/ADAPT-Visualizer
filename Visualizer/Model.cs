@@ -16,6 +16,7 @@ using AgGateway.ADAPT.ApplicationDataModel.Common;
 using AgGateway.ADAPT.ApplicationDataModel.Logistics;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
 using AgGateway.ADAPT.ApplicationDataModel.Documents;
+using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
 
 namespace AgGateway.ADAPT.Visualizer
 {
@@ -362,7 +363,7 @@ namespace AgGateway.ADAPT.Visualizer
             var collection = (IEnumerable)propertyValue;
             if (collection != null)
             {
-                if (collection is IEnumerable<WorkingData> || collection is IEnumerable<DeviceElementUse> || collection is IEnumerable<DataLogTrigger>)
+                if (collection is IEnumerable<WorkingData> || collection is IEnumerable<DeviceElementUse> || collection is IEnumerable<DataLogTrigger> || collection is IEnumerable<RxRates>)
                     return;
 
                 foreach (var child in collection)
@@ -462,7 +463,7 @@ namespace AgGateway.ADAPT.Visualizer
                     else if (obj is NumericRepresentationValue)
                     {
                         NumericValue nv = ((NumericRepresentationValue)obj).Value;
-                        if (!string.IsNullOrWhiteSpace(nv.UnitOfMeasure.Code))
+                        if (nv.UnitOfMeasure != null && !string.IsNullOrWhiteSpace(nv.UnitOfMeasure.Code))
                             addenum.Add($"{nv.Value:#,##0.####} {nv.UnitOfMeasure.Code}");
                     }
                 }

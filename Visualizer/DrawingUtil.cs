@@ -43,6 +43,26 @@ namespace AgGateway.ADAPT.Visualizer
             get { return new Pen(Color.Black, 2); }
         }
 
+        public static Pen RedPen
+        {
+            get { return new Pen(Color.Red, 2); }
+        }
+
+        public static Pen GreenPen
+        {
+            get { return new Pen(Color.YellowGreen, 2); }
+        }
+
+        public static Pen OrangePen
+        {
+            get { return new Pen(Color.Orange, 2); }
+        }
+
+        public static Pen YellowPen
+        {
+            get { return new Pen(Color.Gold, 2); }
+        }
+
         public double GetDelta()
         {
             double delta;
