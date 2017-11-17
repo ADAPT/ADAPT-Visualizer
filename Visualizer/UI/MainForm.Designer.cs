@@ -339,9 +339,9 @@
             // workingDataComboBox
             // 
             this.workingDataComboBox.FormattingEnabled = true;
-            this.workingDataComboBox.Location = new System.Drawing.Point(901, 23);
+            this.workingDataComboBox.Location = new System.Drawing.Point(743, 21);
             this.workingDataComboBox.Name = "workingDataComboBox";
-            this.workingDataComboBox.Size = new System.Drawing.Size(563, 33);
+            this.workingDataComboBox.Size = new System.Drawing.Size(709, 33);
             this.workingDataComboBox.TabIndex = 0;
             this.workingDataComboBox.Visible = false;
             this.workingDataComboBox.SelectedIndexChanged += new System.EventHandler(this.workingDataComboBox_SelectedIndexChanged);
