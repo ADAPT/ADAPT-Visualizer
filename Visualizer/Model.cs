@@ -28,7 +28,8 @@ namespace AgGateway.ADAPT.Visualizer
         {
             StateIdle,
             StateImporting,
-            StateExporting
+            StateExporting,
+            StateValidating
         };
 
         private readonly DataProvider _dataProvider;
@@ -288,6 +289,22 @@ namespace AgGateway.ADAPT.Visualizer
                 TimeSpan duration = new TimeSpan(stop.Ticks - start.Ticks);
                 System.Diagnostics.Debug.Print($"ImportDataCard had a duration of {duration.Seconds:#,##0.0}.");
             });
+        }
+
+        public void ValidateDataOnCard(TextBox dataCardTextBox, string initializeString, Form parent)
+        {
+            if (IsValid(dataCardTextBox, "Datacard"))
+            {
+                CurrentState = State.StateValidating;
+
+                IList<AgGateway.ADAPT.ApplicationDataModel.ADM.IError> errors = _dataProvider.ValidateDataOnCard(dataCardTextBox.Text, initializeString);
+
+                ValidateForm validateForm = new ValidateForm();
+                validateForm.LoadData(errors);
+                validateForm.ShowDialog(parent);
+
+                CurrentState = State.StateIdle;
+            }
         }
 
 

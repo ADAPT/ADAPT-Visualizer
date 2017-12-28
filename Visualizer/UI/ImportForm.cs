@@ -127,5 +127,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             _isDirty = true;
         }
+
+        private void _validateDataButton_Click(object sender, EventArgs e)
+        {
+            _model.ValidateDataOnCard(_importPathTextbox, _initializeStringTextBox.Text, this);
+        }
     }
 }
