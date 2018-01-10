@@ -76,5 +76,21 @@ namespace AgGateway.ADAPT.Visualizer
                 plugin.Initialize(initializeString);
             }
         }
+
+        public IList<ApplicationDataModel.ADM.IError> ValidateDataOnCard(string datacardPath, string initializeString)
+        {
+            foreach (var availablePlugin in AvailablePlugins)
+            {
+                var plugin = GetPlugin(availablePlugin);
+                InitializePlugin(plugin, initializeString);
+
+                if (plugin.IsDataCardSupported(datacardPath))
+                {
+                    return plugin.ValidateDataOnCard(datacardPath);
+                }
+            }
+
+            return null;
+        }
     }
 }
