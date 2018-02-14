@@ -56,7 +56,7 @@ namespace AgGateway.ADAPT.Visualizer
                     foreach (List<Point> polygonPoints in projectedPointsPerPolygon)
                     {
                         var screenPolygon = polygonPoints.Select(point => point.ToXy(_drawingUtil.MinX, _drawingUtil.MinY, _drawingUtil.GetDelta())).ToArray();
-                        graphics.DrawPolygon(DrawingUtil.Pen, screenPolygon);
+                        graphics.DrawPolygon(DrawingUtil.B_Black, screenPolygon);
                     }
                 }
             }

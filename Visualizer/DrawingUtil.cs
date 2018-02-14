@@ -38,29 +38,48 @@ namespace AgGateway.ADAPT.Visualizer
         public double MaxY { get; private set; }
         public Graphics Graphics { get; private set; }
 
-        public static Pen Pen
+        //Default values
+        public static Pen B_Black //WorkingData is not numeric
         {
             get { return new Pen(Color.Black, 2); }
         }
-
-        public static Pen RedPen
+        public static Pen C_DarkMagenta //Non-zero values
+        {
+            get { return new Pen(Color.DarkMagenta, 2); }
+        }
+        public static Pen E_Red //Zero values or minimum values
         {
             get { return new Pen(Color.Red, 2); }
         }
 
-        public static Pen GreenPen
+        //Range 7 levels
+        public static Pen F_DarkOrange
+        {
+            get { return new Pen(Color.DarkOrange, 2); }
+        }
+        public static Pen G_Gold
+        {
+            get { return new Pen(Color.Gold, 2); }
+        }
+        public static Pen H_YellowGreen
         {
             get { return new Pen(Color.YellowGreen, 2); }
         }
-
-        public static Pen OrangePen
+        public static Pen I_LawnGreen
         {
-            get { return new Pen(Color.Orange, 2); }
+            get { return new Pen(Color.LawnGreen, 2); }
         }
-
-        public static Pen YellowPen
+        public static Pen J_LimeGreen
         {
-            get { return new Pen(Color.Gold, 2); }
+            get { return new Pen(Color.LimeGreen, 2); }
+        }
+        public static Pen K_ForestGreen
+        {
+            get { return new Pen(Color.ForestGreen, 2); }
+        }
+        public static Pen L_DarkGreen
+        {
+            get { return new Pen(Color.DarkGreen, 2); }
         }
 
         public double GetDelta()
