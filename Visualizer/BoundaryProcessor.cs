@@ -38,7 +38,7 @@ namespace AgGateway.ADAPT.Visualizer
                     
                     var screenPolygon = projectedPoints.Select(point => point.ToXy(_drawingUtil.MinX, _drawingUtil.MinY, _drawingUtil.GetDelta())).ToArray();
 
-                    graphics.DrawPolygon(DrawingUtil.Pen, screenPolygon);
+                    graphics.DrawPolygon(DrawingUtil.B_Black, screenPolygon);
                 }
             }
         }

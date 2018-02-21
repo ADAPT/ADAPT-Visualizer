@@ -45,7 +45,7 @@ namespace AgGateway.ADAPT.Visualizer
         }
 
         /// <summary>
-        /// Draws a red polygon if all values 0, a green polygon if all values the same non-zero value, or else themes red/orange/yellow/green.
+        /// Draws a Red polygon if all values 0, a DarkMagenta polygon if all values the same non-zero value, or else themes Red/DarkOrange/Gold/YellowGreen/LawnGreen/LimeGreen/ForestGreen/DarkGreen.
         /// </summary>
         /// <param name="operation"></param>
         /// <param name="workingDataKey"></param>
@@ -99,7 +99,7 @@ namespace AgGateway.ADAPT.Visualizer
                     if (doubleValues == null)
                     {
                         //WorkingData is not numeric
-                        graphics.DrawPolygon(DrawingUtil.Pen, screenPolygon);
+                        graphics.DrawPolygon(DrawingUtil.B_Black, screenPolygon);
                     }
                     else
                     {
@@ -109,41 +109,76 @@ namespace AgGateway.ADAPT.Visualizer
                             if (doubleValues.Max() == 0d)
                             {
                                 //Zero values
-                                graphics.DrawPolygon(DrawingUtil.RedPen, screenPolygon);
+                                graphics.DrawPolygon(DrawingUtil.E_Red, screenPolygon);
                             }
                             else
                             {
                                 //Non-zero values
-                                graphics.DrawPolygon(DrawingUtil.GreenPen, screenPolygon);
+                                graphics.DrawPolygon(DrawingUtil.C_DarkMagenta, screenPolygon);
                             }
                         }
                         else
                         {
-                            //Simple scheme where
-                            //Red = Minimum Value
-                            //Orange = Value is in bottom third (non minimum)
-                            //Yellow = Value is in middle third
-                            //Green = Value is in top third
+                            double max = doubleValues.Max();
+                            double min = doubleValues.Min();
+                            double average = doubleValues.Average();
+                            List<double> removedZeroValues = doubleValues.Where(dv => dv != 0).ToList();
+                            double avarageWithoutZeroes = removedZeroValues.Average();
+                            if (average != avarageWithoutZeroes)
+                            {
+                                min = removedZeroValues.Min();
+                            }
+
+
                             int i = 0;
-                            double range = (doubleValues.Max() - doubleValues.Min()) / 3;
-                            double firstThird = doubleValues.Min() + range;
-                            double secondThird = firstThird + range;
+                            double range = (max - min) / 7.0;
+                            double e7th = min;
+                            double f7th = e7th + range;
+                            double g7th = f7th + range;
+                            double h7th = g7th + range;
+                            double i7th = h7th + range;
+                            double j7th = i7th + range;
+                            double k7th = j7th + range;
+                            double l7th = max;
+
                             foreach (System.Drawing.PointF f in screenPolygon)
                             {
-                                double d = i < doubleValues.Count ? doubleValues[i] : 0d;  //Values will be in same order as points
-                                System.Drawing.Pen pen = DrawingUtil.YellowPen;
-                                if (d == doubleValues.Min())
+                                double dbl = i < doubleValues.Count ? doubleValues[i] : 0d;  //Values will be in same order as points
+                                System.Drawing.Pen pen = DrawingUtil.B_Black;
+
+                                if (dbl <= e7th)
                                 {
-                                    pen = DrawingUtil.RedPen;
+                                    pen = DrawingUtil.E_Red;
                                 }
-                                else if (d <= firstThird)
+                                else if (dbl <= f7th)
                                 {
-                                    pen = DrawingUtil.OrangePen;
+                                    pen = DrawingUtil.F_DarkOrange;
                                 }
-                                else if (d >= secondThird)
+                                else if (dbl <= g7th)
                                 {
-                                    pen = DrawingUtil.GreenPen;
+                                    pen = DrawingUtil.G_Gold;
                                 }
+                                else if (dbl <= h7th)
+                                {
+                                    pen = DrawingUtil.H_YellowGreen;
+                                }
+                                else if (dbl <= i7th)
+                                {
+                                    pen = DrawingUtil.I_LawnGreen;
+                                }
+                                else if (dbl <= j7th)
+                                {
+                                    pen = DrawingUtil.J_LimeGreen;
+                                }
+                                else if (dbl <= k7th)
+                                {
+                                    pen = DrawingUtil.K_ForestGreen;
+                                }
+                                else if (dbl <= l7th)
+                                {
+                                    pen = DrawingUtil.L_DarkGreen;
+                                }
+
                                 graphics.DrawEllipse(pen, new System.Drawing.RectangleF(f.X, f.Y, 2, 2));
                                 i++;
                             }
