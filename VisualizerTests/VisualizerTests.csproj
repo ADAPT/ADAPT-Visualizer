@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,14 +33,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AgGateway.ADAPT.ApplicationDataModel, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AgGatewayADAPTFramework.1.1.0.10\lib\AgGateway.ADAPT.ApplicationDataModel.dll</HintPath>
+    <Reference Include="AgGateway.ADAPT.ApplicationDataModel, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AgGatewayADAPTFramework.1.2.0\lib\net451\AgGateway.ADAPT.ApplicationDataModel.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="AgGateway.ADAPT.PluginManager, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AgGatewayADAPTFramework.1.1.0.10\lib\AgGateway.ADAPT.PluginManager.dll</HintPath>
+    <Reference Include="AgGateway.ADAPT.PluginManager, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AgGatewayADAPTFramework.1.2.0\lib\net451\AgGateway.ADAPT.PluginManager.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="AgGateway.ADAPT.Representation, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AgGatewayADAPTFramework.1.1.0.10\lib\AgGateway.ADAPT.Representation.dll</HintPath>
+    <Reference Include="AgGateway.ADAPT.Representation, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AgGatewayADAPTFramework.1.2.0\lib\net451\AgGateway.ADAPT.Representation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=3.2.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.2.1\lib\net45\nunit.framework.dll</HintPath>
@@ -71,11 +76,14 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\RepresentationSystem.xml" />
-    <Content Include="Resources\UnitSystem.xml" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\AgGatewayADAPTFramework.1.2.0\build\AgGatewayADAPTFramework.targets" Condition="Exists('..\packages\AgGatewayADAPTFramework.1.2.0\build\AgGatewayADAPTFramework.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\AgGatewayADAPTFramework.1.2.0\build\AgGatewayADAPTFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AgGatewayADAPTFramework.1.2.0\build\AgGatewayADAPTFramework.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

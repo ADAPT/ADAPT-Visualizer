@@ -225,10 +225,13 @@ namespace AgGateway.ADAPT.Visualizer
                     IEnumerable<WorkingData> workingDatas = deviceElementUse.GetWorkingDatas();
                     foreach (WorkingData workingData in workingDatas)
                     {
-                        string key = $"{deviceElementUse.Depth}.{deviceElementUse.Order}:__{deviceName}_{workingData.Representation.Code}";
-                        if (!workingDataDictionary.ContainsKey(key)) 
+                        if (workingData.Representation != null)
                         {
-                            workingDataDictionary.Add(key, workingData);
+                            string key = $"{deviceElementUse.Depth}.{deviceElementUse.Order}:__{deviceName}_{workingData.Representation.Code}";
+                            if (!workingDataDictionary.ContainsKey(key))
+                            {
+                                workingDataDictionary.Add(key, workingData);
+                            }
                         }
                     }
                 }

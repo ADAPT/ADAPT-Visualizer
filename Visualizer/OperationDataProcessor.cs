@@ -7,6 +7,7 @@
   *
   * Contributors:
   *    Tarak Reddy - initial implementation
+  *    Joseph Ross - added null checks for recntly added code
   *******************************************************************************/
 
 using System;
@@ -93,11 +94,17 @@ namespace AgGateway.ADAPT.Visualizer
                 }
             }
 
-            //Fill in the other cells
-            dataRow["Latitude"] = (spatialRecord.Geometry as Point).Y.ToString(); //Y
-            dataRow["Longitude"] = (spatialRecord.Geometry as Point).X.ToString(); //X
-            dataRow["Elevation"] = (spatialRecord.Geometry as Point).Z.ToString(); //Z
-            dataRow["TimeStamp"] = spatialRecord.Timestamp.ToString();
+            if (spatialRecord.Geometry != null)
+            {
+                //Fill in the other cells
+                dataRow["Latitude"] = (spatialRecord.Geometry as Point).Y.ToString(); //Y
+                dataRow["Longitude"] = (spatialRecord.Geometry as Point).X.ToString(); //X
+                dataRow["Elevation"] = (spatialRecord.Geometry as Point).Z.ToString(); //Z
+            }
+            if (spatialRecord.Timestamp != null)
+            {
+                dataRow["TimeStamp"] = spatialRecord.Timestamp.ToString();
+            }
 
             _dataTable.Rows.Add(dataRow);
         }
