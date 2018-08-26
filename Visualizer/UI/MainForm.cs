@@ -18,6 +18,8 @@ using AgGateway.ADAPT.ApplicationDataModel.Guidance;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.Visualizer.Properties;
 using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AgGateway.ADAPT.Visualizer.UI
 {
@@ -208,9 +210,15 @@ namespace AgGateway.ADAPT.Visualizer.UI
             }
             else if (element is OperationData)
             {
-                _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(element as OperationData);
+                OperationData operation = element as OperationData;
+                List<SpatialRecord> spatialRecords = new List<SpatialRecord>();
+                if (operation.GetSpatialRecords != null)
+                {
+                    spatialRecords = operation.GetSpatialRecords().ToList(); //Iterate the records once here for multiple consumers below
+                }
+                _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(operation, spatialRecords);
                 ApplicationDataModel.ADM.ApplicationDataModel model = _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex];
-                _spatialRecordProcessor.ProcessOperation(element as OperationData, _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex].Catalog);
+                _spatialRecordProcessor.ProcessOperation(operation, spatialRecords, _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex].Catalog);
                 workingDataComboBox.Visible = true;
                 workingDataComboBox.DataSource = _spatialRecordProcessor.WorkingDataList;
             }

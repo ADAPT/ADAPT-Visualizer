@@ -45,7 +45,13 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 _treeView.Nodes.Clear();
                 _dataGridViewRawData.Columns.Clear();
 
-                if (_model.Import(_importPathTextbox, _initializeStringTextBox.Text, _treeView))
+                ApplicationDataModel.ADM.Properties properties = new ApplicationDataModel.ADM.Properties();
+                foreach (DataGridViewRow row in _proprietaryDataGridView.Rows)
+                {
+                    properties.SetProperty(row.Cells[0].Value.ToString(), row.Cells[1].Value.ToString());
+                }
+
+                if (_model.Import(_importPathTextbox, _initializeStringTextBox.Text, _treeView, properties))
                 {
                     // Content of _importPathComboBox was valid --> add to history.
                     string s = _importPathTextbox.Text;
@@ -89,18 +95,6 @@ namespace AgGateway.ADAPT.Visualizer.UI
             {   // Issue a click
                 _loadPluginsButton_Click(null, null);
             }
-
-            //TODO: where do these values come from
-//            foreach (var kvp in Settings.Default.ProprietaryValues)
-//            {
-//                var strings = kvp.Split(';');
-//
-//                var dataGridViewRow = new DataGridViewRow();
-//                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell{Value = strings[0]});
-//                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell{Value = strings[1]});
-//
-//                _proprietaryDataGridView.Rows.Add(dataGridViewRow);
-//            }
         }
 
         private void ImportForm_FormClosing(object sender, FormClosingEventArgs e)
