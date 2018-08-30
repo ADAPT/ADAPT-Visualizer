@@ -48,7 +48,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 ApplicationDataModel.ADM.Properties properties = new ApplicationDataModel.ADM.Properties();
                 foreach (DataGridViewRow row in _proprietaryDataGridView.Rows)
                 {
-                    properties.SetProperty(row.Cells[0].Value.ToString(), row.Cells[1].Value.ToString());
+                    if (row.Cells[0].Value != null && row.Cells[1].Value != null)
+                    {
+                        properties.SetProperty(row.Cells[0].Value.ToString(), row.Cells[1].Value.ToString());
+                    }
                 }
 
                 if (_model.Import(_importPathTextbox, _initializeStringTextBox.Text, _treeView, properties))
