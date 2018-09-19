@@ -106,7 +106,7 @@
             this._proprietaryLabel.Name = "_proprietaryLabel";
             this._proprietaryLabel.Size = new System.Drawing.Size(116, 52);
             this._proprietaryLabel.TabIndex = 8;
-            this._proprietaryLabel.Text = "P&roprietary values";
+            this._proprietaryLabel.Text = "Import Properties";
             // 
             // _initializeStringTextBox
             // 

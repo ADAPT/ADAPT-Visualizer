@@ -48,7 +48,20 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             Cursor.Current = Cursors.WaitCursor;
 
-            _model.Export((string) _loadedPluginsListBox.SelectedItem, _initializeStringTextBox.Text, _exportPathTextBox.Text, cardProfileSelection.SelectedItem.ToString());
+            ApplicationDataModel.ADM.Properties properties = new ApplicationDataModel.ADM.Properties();
+            foreach (DataGridViewRow row in _proprietaryDataGridView.Rows)
+            {
+                if (row.Cells[0].Value != null && row.Cells[1].Value != null)
+                {
+                    properties.SetProperty(row.Cells[0].Value.ToString(), row.Cells[1].Value.ToString());
+                }
+            }
+
+            _model.Export((string) _loadedPluginsListBox.SelectedItem, 
+                           _initializeStringTextBox.Text, 
+                           _exportPathTextBox.Text, 
+                           cardProfileSelection.SelectedItem.ToString(),
+                           properties);
 
             Cursor.Current = Cursors.Default;
 
@@ -72,18 +85,6 @@ namespace AgGateway.ADAPT.Visualizer.UI
             {   // Issue a click
                 _loadPluginsButton_Click(null, null);
             }
-
-            //TODO: where do these values come from??
-            //            foreach (var kvp in Settings.Default.ProprietaryValues)
-            //            {
-            //                var strings = kvp.Split(';');
-            //
-            //                var dataGridViewRow = new DataGridViewRow();
-            //                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell { Value = strings[0] });
-            //                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell { Value = strings[1] });
-            //
-            //                _proprietaryDataGridView.Rows.Add(dataGridViewRow);
-            //            }
         }
 
         private void ExportForm_FormClosing(object sender, FormClosingEventArgs e)

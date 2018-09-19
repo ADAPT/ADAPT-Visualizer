@@ -41,7 +41,7 @@ namespace AgGateway.ADAPT.Visualizer
             get { return _pluginFactory; }
         }
 
-        public IList<ApplicationDataModel.ADM.ApplicationDataModel> Import(string datacardPath, string initializeString)
+        public IList<ApplicationDataModel.ADM.ApplicationDataModel> Import(string datacardPath, string initializeString, ApplicationDataModel.ADM.Properties properties)
         {
             foreach (var availablePlugin in AvailablePlugins)
             {
@@ -50,7 +50,7 @@ namespace AgGateway.ADAPT.Visualizer
 
                 if (plugin.IsDataCardSupported(datacardPath))
                 {
-                    return plugin.Import(datacardPath);
+                    return plugin.Import(datacardPath, properties);
                 }
             }
 
@@ -62,11 +62,15 @@ namespace AgGateway.ADAPT.Visualizer
             return _pluginFactory.GetPlugin(pluginName);
         }
 
-        public static void Export(IPlugin plugin, ApplicationDataModel.ADM.ApplicationDataModel applicationDataModel, string initializeString, string exportPath)
+        public static void Export(IPlugin plugin, 
+                                 ApplicationDataModel.ADM.ApplicationDataModel applicationDataModel, 
+                                 string initializeString, 
+                                 string exportPath, 
+                                 ApplicationDataModel.ADM.Properties properties)
         {
             InitializePlugin(plugin, initializeString);
 
-            plugin.Export(applicationDataModel, exportPath);
+            plugin.Export(applicationDataModel, exportPath, properties);
         }
 
         private static void InitializePlugin(IPlugin plugin, string initializeString)

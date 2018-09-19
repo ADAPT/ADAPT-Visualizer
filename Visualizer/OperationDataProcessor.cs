@@ -25,7 +25,7 @@ namespace AgGateway.ADAPT.Visualizer
     {
         private DataTable _dataTable;
 
-        public DataTable ProcessOperationData(OperationData operationData)
+        public DataTable ProcessOperationData(OperationData operationData, List<SpatialRecord> spatialRecords)
         {
             _dataTable = new DataTable();
 
@@ -35,9 +35,8 @@ namespace AgGateway.ADAPT.Visualizer
             _dataTable.Columns.Add(new DataColumn("Elevation")); //Z
             _dataTable.Columns.Add(new DataColumn("TimeStamp")); //time
 
-            if (operationData.GetSpatialRecords != null)
+            if (spatialRecords.Any())
             {
-                var spatialRecords = operationData.GetSpatialRecords().ToList();
                 var meters = GetWorkingData(operationData);
 
                 CreateColumns(meters);

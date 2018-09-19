@@ -53,7 +53,7 @@ namespace VisualizerTests
             });
             _spatialRecords.Add(new SpatialRecord());
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
 
             Assert.AreEqual(5, dataTable.Columns.Count);
             Assert.AreEqual(_workingDatas.First().Representation.Code + "-" + _workingDatas.First().Id.ReferenceId + "-0", dataTable.Columns[4].ColumnName);
@@ -80,7 +80,7 @@ namespace VisualizerTests
 
             _spatialRecords.Add(spatialRecord);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
 
             Assert.AreEqual(1, dataTable.Rows.Count);
             Assert.AreEqual(numericRepresentation.Value.Value.ToString(), dataTable.Rows[0][4]);
@@ -107,7 +107,7 @@ namespace VisualizerTests
 
             _spatialRecords.Add(spatialRecord);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
 
             Assert.AreEqual(1, dataTable.Rows.Count);
             Assert.AreEqual(enumeratedValue.Value.Value, dataTable.Rows[0][4]);
@@ -131,7 +131,7 @@ namespace VisualizerTests
 
             _spatialRecords.Add(spatialRecord);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
 
             Assert.AreEqual(1, dataTable.Rows.Count);
             Assert.AreEqual("", dataTable.Rows[0][4]);
@@ -157,7 +157,7 @@ namespace VisualizerTests
 
             _spatialRecords.Add(spatialRecord);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
 
             Assert.AreEqual(1, dataTable.Rows.Count);
             Assert.AreEqual("", dataTable.Rows[0][4]);
@@ -184,7 +184,7 @@ namespace VisualizerTests
 
             _spatialRecords.Add(spatialRecord);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
 
             var expectedColumnName = _workingDatas.First().Representation.Code + "-" + _workingDatas.First().Id.ReferenceId + "-0-" + numericRepresentation.Value.UnitOfMeasure.Code;
             Assert.AreEqual(expectedColumnName, dataTable.Columns[4].ColumnName);
@@ -209,7 +209,7 @@ namespace VisualizerTests
             CreateHavestMoistureSpatialRecord(_workingDatas[0], 2.0);
             CreateHavestMoistureSpatialRecord(_workingDatas[0], 333.0);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
 
             Assert.AreEqual(5, dataTable.Rows.Count);
             Assert.AreEqual("3", dataTable.Rows[0][4]);
@@ -243,7 +243,7 @@ namespace VisualizerTests
             spatialRecord.SetMeterValue(_workingDatas[0], meter1Value1);
             _spatialRecords.Add(spatialRecord);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
             Assert.AreEqual(latitude.ToString(), dataTable.Rows[0][0]);
             Assert.AreEqual(longitude.ToString(), dataTable.Rows[0][1]);
             Assert.AreEqual(elevation.ToString(), dataTable.Rows[0][2]);
@@ -271,7 +271,7 @@ namespace VisualizerTests
             spatialRecord.SetMeterValue(_workingDatas[0], meter1Value1);
             _spatialRecords.Add(spatialRecord);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
             Assert.AreEqual(dateTime.ToString(), dataTable.Rows[0][3]);
         }
 
@@ -290,7 +290,7 @@ namespace VisualizerTests
 
             CreateHavestMoistureSpatialRecord(_workingDatas[0], 3.0);
 
-            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData);
+            var dataTable = _operationDataProcessor.ProcessOperationData(_operationData, _spatialRecords);
             Assert.AreEqual("Latitude", dataTable.Columns[0].ColumnName);
             Assert.AreEqual("Longitude", dataTable.Columns[1].ColumnName);
             Assert.AreEqual("Elevation", dataTable.Columns[2].ColumnName);
