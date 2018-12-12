@@ -381,7 +381,7 @@ namespace AgGateway.ADAPT.Visualizer
             var collection = (IEnumerable)propertyValue;
             if (collection != null)
             {
-                if (collection is IEnumerable<WorkingData> || collection is IEnumerable<DeviceElementUse> || collection is IEnumerable<DataLogTrigger> || collection is IEnumerable<RxRates>)
+                if (collection is IEnumerable<WorkingData> || collection is IEnumerable<DeviceElementUse> || collection is IEnumerable<DataLogTrigger> || collection is IEnumerable<RxCellLookup>)
                     return;
 
                 foreach (var child in collection)
