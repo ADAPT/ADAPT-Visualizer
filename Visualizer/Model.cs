@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,7 +12,6 @@ using AgGateway.ADAPT.ApplicationDataModel.Equipment;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.Visualizer.UI;
 using AgGateway.ADAPT.ApplicationDataModel.Common;
-using AgGateway.ADAPT.ApplicationDataModel.Logistics;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
 using AgGateway.ADAPT.ApplicationDataModel.Documents;
 using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
@@ -109,7 +107,7 @@ namespace AgGateway.ADAPT.Visualizer
             return true;
         }
 
-        public void Export(string pluginName, string initializeString, string exportPath, string cardProfileSelectedText)
+        public void Export(string pluginName, string initializeString, string exportPath, string cardProfileSelectedText, ApplicationDataModel.ADM.Properties properties)
         {
             try
             {
@@ -130,8 +128,11 @@ namespace AgGateway.ADAPT.Visualizer
                     var selectApplicationDataModel =
                         ApplicationDataModels.First(
                             x => x.Catalog.Description.ToLower().Equals(cardProfileSelectedText.ToLower()));
-                    DataProvider.Export(plugin, selectApplicationDataModel, initializeString,
-                        GetExportDirectory(exportPath));
+                    DataProvider.Export(plugin, 
+                                        selectApplicationDataModel, 
+                                        initializeString,
+                                        GetExportDirectory(exportPath), 
+                                        properties);
 
                     CurrentState = State.StateIdle;
                     _updateStatusAction(CurrentState, "Done");
@@ -228,14 +229,14 @@ namespace AgGateway.ADAPT.Visualizer
             return result;
         }
 
-        public bool Import(TextBox dataCardTextBox, string initializeString, TreeView treeView)
+        public bool Import(TextBox dataCardTextBox, string initializeString, TreeView treeView, ApplicationDataModel.ADM.Properties properties)
         {
             if (IsValid(dataCardTextBox, "Datacard"))
             {
                 CurrentState = State.StateImporting;
                 treeView.BeginUpdate();
 
-                ImportDataCard(dataCardTextBox.Text, initializeString, treeView);
+                ImportDataCard(dataCardTextBox.Text, initializeString, treeView, properties);
 
                 treeView.EndUpdate();
 
@@ -250,7 +251,7 @@ namespace AgGateway.ADAPT.Visualizer
             _treeView.Invoke(new Action(() => MessageBox.Show(message)));
         }
 
-        private void ImportDataCard(string datacardPath, string initializeString, TreeView treeView)
+        private void ImportDataCard(string datacardPath, string initializeString, TreeView treeView, ApplicationDataModel.ADM.Properties properties)
         {
             _treeView = treeView;
 
@@ -260,7 +261,7 @@ namespace AgGateway.ADAPT.Visualizer
 
                 _updateStatusAction(CurrentState, "Starting Import");
 
-                ApplicationDataModels = _dataProvider.Import(datacardPath, initializeString);
+                ApplicationDataModels = _dataProvider.Import(datacardPath, initializeString, properties);
                 if (ApplicationDataModels == null || ApplicationDataModels.Count == 0)
                 {
                     MessageBox.Show(@"Not supported data format.");
@@ -380,7 +381,7 @@ namespace AgGateway.ADAPT.Visualizer
             var collection = (IEnumerable)propertyValue;
             if (collection != null)
             {
-                if (collection is IEnumerable<WorkingData> || collection is IEnumerable<DeviceElementUse> || collection is IEnumerable<DataLogTrigger> || collection is IEnumerable<RxRates>)
+                if (collection is IEnumerable<WorkingData> || collection is IEnumerable<DeviceElementUse> || collection is IEnumerable<DataLogTrigger> || collection is IEnumerable<RxCellLookup>)
                     return;
 
                 foreach (var child in collection)

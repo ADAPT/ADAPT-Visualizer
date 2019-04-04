@@ -27,6 +27,7 @@ namespace AgGateway.ADAPT.Visualizer
         private readonly TabPage _spatialViewer;
         private Dictionary<string, WorkingData> _workingDataDictionary;
         private OperationData _lastOperationData;
+        private List<SpatialRecord> _spatialRecords;
 
         public SpatialRecordProcessor(TabPage spatialViewer)
         {
@@ -38,10 +39,11 @@ namespace AgGateway.ADAPT.Visualizer
         /// </summary>
         /// <param name="operation"></param>
         /// <param name="catalog"></param>
-        public void ProcessOperation(OperationData operation, Catalog catalog)
+        public void ProcessOperation(OperationData operation, List<SpatialRecord> spatialRecords, Catalog catalog)
         {
             _workingDataDictionary = GetWorkingDataDictionary(operation, catalog);
             _lastOperationData = operation;
+            _spatialRecords = spatialRecords;
         }
 
         /// <summary>
@@ -58,7 +60,7 @@ namespace AgGateway.ADAPT.Visualizer
 
                 List<Point> projectedPoints = new List<Point>();
                 List<double> doubleValues = null;
-                foreach (SpatialRecord record in _lastOperationData.GetSpatialRecords())
+                foreach (SpatialRecord record in _spatialRecords)
                 {
                     Point point = record.Geometry as Point;
                     projectedPoints.Add(point.ToUtm());
@@ -225,10 +227,13 @@ namespace AgGateway.ADAPT.Visualizer
                     IEnumerable<WorkingData> workingDatas = deviceElementUse.GetWorkingDatas();
                     foreach (WorkingData workingData in workingDatas)
                     {
-                        string key = $"{deviceElementUse.Depth}.{deviceElementUse.Order}:__{deviceName}_{workingData.Representation.Code}";
-                        if (!workingDataDictionary.ContainsKey(key)) 
+                        if (workingData.Representation != null)
                         {
-                            workingDataDictionary.Add(key, workingData);
+                            string key = $"{deviceElementUse.Depth}.{deviceElementUse.Order}:__{deviceName}_{workingData.Representation.Code}";
+                            if (!workingDataDictionary.ContainsKey(key))
+                            {
+                                workingDataDictionary.Add(key, workingData);
+                            }
                         }
                     }
                 }
