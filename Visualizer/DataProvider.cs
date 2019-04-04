@@ -51,6 +51,7 @@ namespace AgGateway.ADAPT.Visualizer
 
         public IList<ApplicationDataModel.ADM.ApplicationDataModel> Import(string datacardPath, string initializeString, ApplicationDataModel.ADM.Properties properties)
         {
+			var list = new List<ApplicationDataModel.ADM.ApplicationDataModel>();
 			foreach (var availablePlugin in AvailablePlugins)
             {
                 var plugin = GetPlugin(availablePlugin.Key);
@@ -58,9 +59,13 @@ namespace AgGateway.ADAPT.Visualizer
 
                 if (plugin.IsDataCardSupported(datacardPath))
                 {
-					return plugin.Import(datacardPath, properties);
+	                list.AddRange(plugin.Import(datacardPath, properties));
 				}
-            }
+			}
+			if (list.Any())
+			{
+				return list;
+			}
 			return null;
 		}
 
