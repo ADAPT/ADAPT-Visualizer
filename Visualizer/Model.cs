@@ -386,10 +386,17 @@ namespace AgGateway.ADAPT.Visualizer
 
                 foreach (var child in collection)
                 {
-                    var childObject = child;
-                    var type = CheckType(ref childObject, childObject.GetType());
-                    //170623 MSp var node = new TreeNode(type.Name)
-                    string nodeText = _extendNodeText(type.Name, childObject, type);    //170623 MSp 
+                    string nodeText;            //190502 MSp
+                    if (child == null)          //190502 MSp
+                    {                           //190502 MSp
+                         nodeText = "#null#";   //190502 MSp
+                    }                           //190502 MSp
+                    else                        //190502 MSp
+                    {                           //190502 MSp
+                        var childObject = child;
+                        var type = CheckType(ref childObject, childObject.GetType());
+                        nodeText = _extendNodeText(type.Name, childObject, type);    
+                    }                           //190429 MS
                     var node = new TreeNode(nodeText)                                   //170623 MSp 
                     {
                         Tag = new ObjectWithIndex(_admIndex, child)
