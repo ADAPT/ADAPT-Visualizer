@@ -62,6 +62,18 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExportProfile {
+            get {
+                return ((string)(this["ExportProfile"]));
+            }
+            set {
+                this["ExportProfile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string InitializeString {
             get {
                 return ((string)(this["InitializeString"]));
