@@ -29,5 +29,8 @@
     <Setting Name="ImportPathHistory" Type="System.Windows.Forms.AutoCompleteStringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="ExportProfile" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>    
   </Settings>
 </SettingsFile>

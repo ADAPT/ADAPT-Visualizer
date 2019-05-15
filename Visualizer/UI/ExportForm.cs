@@ -20,9 +20,17 @@ namespace AgGateway.ADAPT.Visualizer.UI
             if (_model.AvailablePlugins().Any())
                 _loadedPluginsListBox.DataSource = _model.AvailablePlugins();
 
+            string lastProfile = Settings.Default.ExportProfile;
             foreach (var applicationDataModel in _model.ApplicationDataModels.OrderBy(x => x.Catalog.Description))
             {
                 cardProfileSelection.Items.Add(applicationDataModel.Catalog.Description);
+                if ((!string.IsNullOrEmpty(lastProfile)) && (applicationDataModel.Catalog.Description.Equals(lastProfile, StringComparison.CurrentCultureIgnoreCase))) {
+                    cardProfileSelection.SelectedIndex = cardProfileSelection.Items.Count - 1;
+                }
+            }
+            if ((cardProfileSelection.Items.Count > 0) && (cardProfileSelection.SelectedIndex < 0))
+            {
+                cardProfileSelection.SelectedIndex = 0;               
             }
         }
 
@@ -103,6 +111,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             Settings.Default.PluginPath = _pluginPathTextBox.Text;
             Settings.Default.InitializeString = _initializeStringTextBox.Text;
             Settings.Default.ExportPath = _exportPathTextBox.Text;
+            Settings.Default.ExportProfile = cardProfileSelection.Text; 
             Settings.Default.Save();
         }
 
