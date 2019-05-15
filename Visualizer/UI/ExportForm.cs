@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using AgGateway.ADAPT.Visualizer.Properties;
@@ -57,7 +58,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 }
             }
 
-            _model.Export((string) _loadedPluginsListBox.SelectedItem, 
+            _model.Export(((KeyValuePair<string, string>)_loadedPluginsListBox.SelectedItem).Key, 
                            _initializeStringTextBox.Text, 
                            _exportPathTextBox.Text, 
                            cardProfileSelection.SelectedItem.ToString(),

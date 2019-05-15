@@ -70,17 +70,17 @@ namespace AgGateway.ADAPT.Visualizer
 
         public IList<ApplicationDataModel.ADM.ApplicationDataModel> ApplicationDataModels { get; private set; }
 
-        public ObservableCollection<string> AvailablePlugins()
+        public ObservableCollection<KeyValuePair<string, string>> AvailablePlugins()
         {
             if (_dataProvider == null)
-                return new ObservableCollection<string>();
+                return new ObservableCollection<KeyValuePair<string, string>>();
 
-            return new ObservableCollection<string>(_dataProvider.AvailablePlugins);
+            return new ObservableCollection<KeyValuePair<string, string>>(_dataProvider.AvailablePlugins);
         }
 
-        public ObservableCollection<string> LoadPlugins(TextBox textBox)
+        public ObservableCollection<KeyValuePair<string, string>> LoadPlugins(TextBox textBox)
         {
-            var availablePlugins = new ObservableCollection<string>();
+            var availablePlugins = new ObservableCollection<KeyValuePair<string, string>>();
 
             if (IsValid(textBox, "Plugin"))
             {
