@@ -88,28 +88,28 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _initializeStringTextBox.Text = Settings.Default.InitializeString;
             _exportPathTextBox.Text = Settings.Default.ExportPath;
 
-            _proprietaryDataGridView.Rows.Clear();
-
+            _proprietaryDataGridView.LoadFromCollection(Settings.Default.ExportProperties);
+            
             if (Settings.Default.AutoLoadPlugins)
             {   // Issue a click
                 _loadPluginsButton_Click(null, null);
             }
+            // Try to select the last plugin used
+            string lastPlugin = Settings.Default.ExportPlugin;
+            int i = _loadedPluginsListBox.FindStringExact(lastPlugin);
+            if (i >= 0) _loadedPluginsListBox.SelectedIndex = i;
         }
 
         private void ExportForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_isDirty)
             {
-                Settings.Default.ProprietaryValues.Clear();
-
-                foreach (DataGridViewRow row in _proprietaryDataGridView.Rows)
-                {
-                    Settings.Default.ProprietaryValues.Add(string.Format("{0};{1}", row.Cells[0].Value, row.Cells[1].Value));
-                }    
+                _proprietaryDataGridView.PersistToCollection(Settings.Default.ExportProperties);
             }
 
             Settings.Default.PluginPath = _pluginPathTextBox.Text;
             Settings.Default.InitializeString = _initializeStringTextBox.Text;
+            Settings.Default.ExportPlugin = _loadedPluginsListBox.Text;
             Settings.Default.ExportPath = _exportPathTextBox.Text;
             Settings.Default.ExportProfile = cardProfileSelection.Text; 
             Settings.Default.Save();
