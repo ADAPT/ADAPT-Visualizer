@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
 using AgGateway.ADAPT.Visualizer.Properties;
+using System.Collections.Specialized;
+using System.Collections;
 
 namespace AgGateway.ADAPT.Visualizer.UI
 {
@@ -91,8 +93,8 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _importPathTextbox.AutoCompleteSource = AutoCompleteSource.CustomSource;
             _importPathHistory = Settings.Default.ImportPathHistory;
             _importPathTextbox.AutoCompleteCustomSource = _importPathHistory;
-            
-            _proprietaryDataGridView.Rows.Clear();
+
+            _proprietaryDataGridView.LoadFromCollection(Settings.Default.ImportProperties);
 
             if (Settings.Default.AutoLoadPlugins)
             {   // Issue a click
@@ -104,14 +106,8 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             if (_isDirty)
             {
-                Settings.Default.ProprietaryValues.Clear();
-
-                foreach (DataGridViewRow row in _proprietaryDataGridView.Rows)
-                {
-                    Settings.Default.ProprietaryValues.Add(string.Format("{0};{1}", row.Cells[0].Value, row.Cells[1].Value));
-                }
+                _proprietaryDataGridView.PersistToCollection(Settings.Default.ImportProperties);
             }
-
 
             Settings.Default.PluginPath = _pluginPathTextBox.Text;
             Settings.Default.InitializeString = _initializeStringTextBox.Text;

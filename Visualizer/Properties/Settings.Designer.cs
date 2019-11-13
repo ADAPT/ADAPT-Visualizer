@@ -12,7 +12,7 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -62,38 +62,12 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ExportProfile {
-            get {
-                return ((string)(this["ExportProfile"]));
-            }
-            set {
-                this["ExportProfile"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string InitializeString {
             get {
                 return ((string)(this["InitializeString"]));
             }
             set {
                 this["InitializeString"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>TestKey;TestValue</string>\r\n</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection ProprietaryValues {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["ProprietaryValues"]));
-            }
-            set {
-                this["ProprietaryValues"] = value;
             }
         }
         
@@ -129,6 +103,58 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
             }
             set {
                 this["ImportPathHistory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExportProfile {
+            get {
+                return ((string)(this["ExportProfile"]));
+            }
+            set {
+                this["ExportProfile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>TestKey;TestValue</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ImportProperties {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ImportProperties"]));
+            }
+            set {
+                this["ImportProperties"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>TestKey;TestValue</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ExportProperties {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ExportProperties"]));
+            }
+            set {
+                this["ExportProperties"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExportPlugin {
+            get {
+                return ((string)(this["ExportPlugin"]));
+            }
+            set {
+                this["ExportPlugin"] = value;
             }
         }
     }
