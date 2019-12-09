@@ -87,7 +87,7 @@ namespace AgGateway.ADAPT.Visualizer
                                 {
                                     doubleValues = new List<double>();
                                 }
-                                doubleValues.Add(enumValue.Value.Value == "On" ? 1d : 0d);
+                                doubleValues.Add(enumValue.Value.Value == "On" ? 1d : -1d);
                             }
                         }
                     }
