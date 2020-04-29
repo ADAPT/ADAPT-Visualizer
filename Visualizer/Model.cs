@@ -5,13 +5,16 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AgGateway.ADAPT.ApplicationDataModel.Equipment;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.Visualizer.UI;
+using AgGateway.ADAPT.ApplicationDataModel.Common;
+using AgGateway.ADAPT.ApplicationDataModel.Representations;
+using AgGateway.ADAPT.ApplicationDataModel.Documents;
+using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
 
 namespace AgGateway.ADAPT.Visualizer
 {
@@ -23,12 +26,18 @@ namespace AgGateway.ADAPT.Visualizer
         {
             StateIdle,
             StateImporting,
-            StateExporting
+            StateExporting,
+            StateValidating
         };
 
         private readonly DataProvider _dataProvider;
         private int _admIndex;
         private static TreeView _treeView;
+
+        private string _findWhat;
+#if detectCircularRecursions
+        private long _findId;
+#endif  // detectCircularRecursions 
 
         private State _currentState;
         public State CurrentState
@@ -61,17 +70,17 @@ namespace AgGateway.ADAPT.Visualizer
 
         public IList<ApplicationDataModel.ADM.ApplicationDataModel> ApplicationDataModels { get; private set; }
 
-        public ObservableCollection<string> AvailablePlugins()
+        public ObservableCollection<KeyValuePair<string, string>> AvailablePlugins()
         {
             if (_dataProvider == null)
-                return new ObservableCollection<string>();
+                return new ObservableCollection<KeyValuePair<string, string>>();
 
-            return new ObservableCollection<string>(_dataProvider.AvailablePlugins);
+            return new ObservableCollection<KeyValuePair<string, string>>(_dataProvider.AvailablePlugins);
         }
 
-        public ObservableCollection<string> LoadPlugins(TextBox textBox)
+        public ObservableCollection<KeyValuePair<string, string>> LoadPlugins(TextBox textBox)
         {
-            var availablePlugins = new ObservableCollection<string>();
+            var availablePlugins = new ObservableCollection<KeyValuePair<string, string>>();
 
             if (IsValid(textBox, "Plugin"))
             {
@@ -98,7 +107,7 @@ namespace AgGateway.ADAPT.Visualizer
             return true;
         }
 
-        public void Export(string pluginName, string initializeString, string exportPath, string cardProfileSelectedText)
+        public void Export(string pluginName, string initializeString, string exportPath, string cardProfileSelectedText, ApplicationDataModel.ADM.Properties properties)
         {
             try
             {
@@ -119,8 +128,11 @@ namespace AgGateway.ADAPT.Visualizer
                     var selectApplicationDataModel =
                         ApplicationDataModels.First(
                             x => x.Catalog.Description.ToLower().Equals(cardProfileSelectedText.ToLower()));
-                    DataProvider.Export(plugin, selectApplicationDataModel, initializeString,
-                        GetExportDirectory(exportPath));
+                    DataProvider.Export(plugin, 
+                                        selectApplicationDataModel, 
+                                        initializeString,
+                                        GetExportDirectory(exportPath), 
+                                        properties);
 
                     CurrentState = State.StateIdle;
                     _updateStatusAction(CurrentState, "Done");
@@ -132,17 +144,106 @@ namespace AgGateway.ADAPT.Visualizer
             }
         }
 
-        public void Import(TextBox dataCardTextBox, string initializeString, TreeView treeView)
+        public void FindInTree(TreeView treeView, string findWhat)
+        {
+            _findWhat = findWhat;
+#if detectCircularRecursions
+            _findId = DateTime.Now.Ticks;
+#endif  // detectCircularRecursions 
+            FindNextInTree(treeView);
+        }
+
+        public void FindNextInTree(TreeView treeView)
+        {
+            if (string.IsNullOrEmpty(_findWhat)) return;
+            if (treeView.Nodes.Count <= 0) return;
+
+            Cursor.Current = Cursors.WaitCursor;
+
+            // If currently no node is selected take the first one.
+            if (treeView.SelectedNode == null) treeView.SelectedNode = treeView.Nodes[0];
+
+            TreeNode node = _findWorker(treeView.SelectedNode, true);
+            if (node != null)
+                treeView.SelectedNode = node;
+            else
+                System.Media.SystemSounds.Beep.Play();
+
+            Cursor.Current = Cursors.Default;
+        }
+
+        private TreeNode _findWorker(TreeNode nodeA, bool isStartNode = false)
+        {
+            TreeNode result = null;
+
+            if (!isStartNode)   // Only test the current node if it's NOT the start node!
+            {
+#if detectCircularRecursions
+                System.Diagnostics.Debug.Print($"{nodeA.Level:0} {nodeA.Text}");
+                long? id = nodeA.Tag as long?;
+                if (id.HasValue)
+                {
+                    System.Diagnostics.Debug.Assert(id != _findId, "Circular recursion :-O");
+                    return null;
+                }
+                else
+                {
+                    nodeA.Tag = _findId;    // WATCH OUT: Tag is being used for something else and overwritten here!
+                }
+#endif  // detectCircularRecursions 
+
+                if (nodeA.Text.IndexOf(_findWhat, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    result = nodeA;
+                }
+            }
+
+            if (result == null)
+            {
+                // No match. Do I have children?
+                TreeNode firstChild = nodeA.FirstNode;
+                if (firstChild != null) result = _findWorker(firstChild);
+            }
+            if (result == null)
+            {
+                // No match. Do I have siblings?
+                TreeNode sibling = nodeA.NextNode;
+                if (sibling != null) result = _findWorker(sibling);
+            }
+            if ((result == null) && (isStartNode)) 
+            {
+                // If I'm the start node I also try to walk up the parent line towards the root.
+                TreeNode parent = nodeA.Parent;
+                while (parent != null)
+                {
+                    // The parent itself isn't relevant. It's the first sibling of the parent
+                    // I do continue the search.
+                    TreeNode parentSibling = parent.NextNode;
+                    if (parentSibling != null) result = _findWorker(parentSibling);
+
+                    if (result != null) break;
+                    // Further towards the root of the tree.
+                    parent = parent.Parent;
+                }
+            }
+            return result;
+        }
+
+        public bool Import(TextBox dataCardTextBox, string initializeString, TreeView treeView, ApplicationDataModel.ADM.Properties properties)
         {
             if (IsValid(dataCardTextBox, "Datacard"))
             {
                 CurrentState = State.StateImporting;
                 treeView.BeginUpdate();
 
-                ImportDataCard(dataCardTextBox.Text, initializeString, treeView);
+                ImportDataCard(dataCardTextBox.Text, initializeString, treeView, properties);
 
                 treeView.EndUpdate();
-            }   
+
+                return true;
+            }
+
+            return false;  
         }
 
         private void ShowMessageBox(string message)
@@ -150,15 +251,17 @@ namespace AgGateway.ADAPT.Visualizer
             _treeView.Invoke(new Action(() => MessageBox.Show(message)));
         }
 
-        private void ImportDataCard(string datacardPath, string initializeString, TreeView treeView)
+        private void ImportDataCard(string datacardPath, string initializeString, TreeView treeView, ApplicationDataModel.ADM.Properties properties)
         {
             _treeView = treeView;
 
             Task.Run(() =>
             {
+                DateTime start = DateTime.Now;  //170629 MSp
+
                 _updateStatusAction(CurrentState, "Starting Import");
 
-                ApplicationDataModels = _dataProvider.Import(datacardPath, initializeString);
+                ApplicationDataModels = _dataProvider.Import(datacardPath, initializeString, properties);
                 if (ApplicationDataModels == null || ApplicationDataModels.Count == 0)
                 {
                     MessageBox.Show(@"Not supported data format.");
@@ -172,7 +275,7 @@ namespace AgGateway.ADAPT.Visualizer
                 {
                     var applicationDataModel = ApplicationDataModels[_admIndex];
 
-                    applicationDataModel.Documents.LoggedData.SelectMany(x => x.OperationData.ToList()).ToList();
+                    applicationDataModel.Documents?.LoggedData.SelectMany(x => x.OperationData.ToList()).ToList();
                     
                     var parentNode = (TreeNode)_treeView.Invoke(new Func<TreeNode>(() => treeView.Nodes.Add("ApplicationDataModel")));
 
@@ -181,10 +284,28 @@ namespace AgGateway.ADAPT.Visualizer
                 
                 CurrentState = State.StateIdle;
                 _updateStatusAction(CurrentState, "Done");
-                
-            });
 
-            
+                //170629 MSp How long did it take to parse the data model into the tree?
+                DateTime stop = DateTime.Now;
+                TimeSpan duration = new TimeSpan(stop.Ticks - start.Ticks);
+                System.Diagnostics.Debug.Print($"ImportDataCard had a duration of {duration.Seconds:#,##0.0}.");
+            });
+        }
+
+        public void ValidateDataOnCard(TextBox dataCardTextBox, string initializeString, Form parent)
+        {
+            if (IsValid(dataCardTextBox, "Datacard"))
+            {
+                CurrentState = State.StateValidating;
+
+                IList<AgGateway.ADAPT.ApplicationDataModel.ADM.IError> errors = _dataProvider.ValidateDataOnCard(dataCardTextBox.Text, initializeString);
+
+                ValidateForm validateForm = new ValidateForm();
+                validateForm.LoadData(errors);
+                validateForm.ShowDialog(parent);
+
+                CurrentState = State.StateIdle;
+            }
         }
 
 
@@ -241,7 +362,9 @@ namespace AgGateway.ADAPT.Visualizer
             }
             else
             {
-                var childNode = (TreeNode)_treeView.Invoke(new Func<TreeNode>(() => parentNode.Nodes.Add(propertyInfo.Name)));
+                string nodeText = _extendNodeText(propertyInfo.Name, propertyValue, propertyType);                      //170623 MSp 
+                var childNode = (TreeNode)_treeView.Invoke(new Func<TreeNode>(() => parentNode.Nodes.Add(nodeText)));   //170623 MSp 
+                //170623 MSp var childNode = (TreeNode)_treeView.Invoke(new Func<TreeNode>(() => parentNode.Nodes.Add(propertyInfo.Name)));
                 parentNode.Tag = new ObjectWithIndex(_admIndex, element);
 
                 AddNode(propertyValue, childNode);
@@ -258,23 +381,127 @@ namespace AgGateway.ADAPT.Visualizer
             var collection = (IEnumerable)propertyValue;
             if (collection != null)
             {
-                if (collection is IEnumerable<WorkingData> || collection is IEnumerable<DeviceElementUse> || collection is IEnumerable<DataLogTrigger>)
+                if (collection is IEnumerable<WorkingData> || collection is IEnumerable<DeviceElementUse> || collection is IEnumerable<DataLogTrigger> || collection is IEnumerable<RxCellLookup>)
                     return;
 
                 foreach (var child in collection)
                 {
-                    var childObject = child;
-                    var type = CheckType(ref childObject, childObject.GetType());
-                    var node = new TreeNode(type.Name)
+                    string nodeText;            //190502 MSp
+                    if (child == null)          //190502 MSp
+                    {                           //190502 MSp
+                         nodeText = "#null#";   //190502 MSp
+                    }                           //190502 MSp
+                    else                        //190502 MSp
+                    {                           //190502 MSp
+                        var childObject = child;
+                        var type = CheckType(ref childObject, childObject.GetType());
+                        nodeText = _extendNodeText(type.Name, childObject, type);    
+                    }                           //190429 MS
+                    var node = new TreeNode(nodeText)                                   //170623 MSp 
                     {
                         Tag = new ObjectWithIndex(_admIndex, child)
                     };
+
                     _treeView.Invoke(new Action(() => collectionNode.Nodes.Add(node)));
                     AddNode(child, node);
                 }
             }
         }
-        
+
+        private string _extendNodeText(string nodeText, object obj, Type type)
+        {
+            if (obj == null) return nodeText;
+
+            // Don't know if thats very fancy code - but also for Int32 I'd like
+            // to see their value.
+            // For all other objects I try to add ReferenceId and one of Description,
+            // Name or LastName.
+
+            if (nodeText.IndexOf(':') >= 0) // Don't overwrite existing Values
+            {
+                System.Diagnostics.Debug.Assert(false, "Does this ever happen?");
+                return nodeText;    
+            }
+
+            // OK, Text property doesn't hold a value...
+            if (obj is Int32) // Is it a Int32?
+            {
+                Int32 n = (Int32)obj;
+                nodeText += $": {n}";
+            }
+            else
+            {
+                List<string> addenum = new List<string>();
+
+                // Special handling for ContextItems.
+                // Show Code and Value. Indicate nested items with a +.
+                if (obj is ContextItem)
+                {
+                    ContextItem ci = (ContextItem)obj;
+                    if (!string.IsNullOrWhiteSpace(ci.Code)) addenum.Add(ci.Code);
+                    if (!string.IsNullOrWhiteSpace(ci.Value)) addenum.Add(ci.Value);
+                    if (ci.NestedItems.Count > 0) addenum.Add("+");
+                }
+                // Special handling for MeteredValue with NumericRepresentation
+                // Show the Code of the NumericRepresentationValue (vrTotalAreaCovered, ...) as 
+                // well as Value (Value.Value) and Code (Value.UnitOfMeasure.Code).
+                else if ((obj is MeteredValue) && (((MeteredValue)obj).Value is NumericRepresentationValue))
+                {
+                    NumericRepresentationValue nrv = (NumericRepresentationValue)((MeteredValue)obj).Value;
+                    if (!string.IsNullOrWhiteSpace(nrv.Representation.Code)) addenum.Add(nrv.Representation.Code);
+                    // For NumericValue there is also a dedicated block some lines down :-/
+                    NumericValue nv = nrv.Value;
+                    if (!string.IsNullOrWhiteSpace(nv.UnitOfMeasure.Code))
+                        addenum.Add($"{nv.Value:#,##0.####} {nv.UnitOfMeasure.Code}");
+                }
+                else
+                {
+                    // Generic handling for all types
+
+                    // Add value of ReferenceId
+                    PropertyInfo pi = type.GetProperty("Id");
+                    if (pi != null)
+                    {
+                        CompoundIdentifier ci = pi.GetValue(obj) as CompoundIdentifier;
+                        if (ci != null) addenum.Add(ci.ReferenceId.ToString());
+                    }
+                    // Add one of the following...
+                    pi = type.GetProperty("Description");
+                    if (pi == null) pi = type.GetProperty("Name");
+                    if (pi == null) pi = type.GetProperty("LastName");
+                    if (pi != null)
+                    {
+                        string designator = pi.GetValue(obj) as string;
+                        if (designator != null) addenum.Add(designator);
+                    }
+
+                    // Additional handling for TimeScope
+                    if (obj is TimeScope)
+                    {
+                        TimeScope ts = (TimeScope)obj;
+                        addenum.Add($"dcx {ts.DateContext}");
+                        if (ts.TimeStamp1.HasValue) addenum.Add($"ts1 {ts.TimeStamp1.Value.ToNiceDateTime()}");
+                        if (ts.TimeStamp2.HasValue) addenum.Add($"ts2 {ts.TimeStamp2.Value.ToNiceDateTime()}");
+                        if (ts.Duration.HasValue) addenum.Add($"d {ts.Duration}");
+                    }
+                    // Additional handling for NumericRepresentationValue
+                    else if (obj is NumericRepresentationValue)
+                    {
+                        NumericValue nv = ((NumericRepresentationValue)obj).Value;
+                        if (nv.UnitOfMeasure != null && !string.IsNullOrWhiteSpace(nv.UnitOfMeasure.Code))
+                            addenum.Add($"{nv.Value:#,##0.####} {nv.UnitOfMeasure.Code}");
+                    }
+                }
+
+                if (addenum.Count > 0)
+                {
+                    nodeText += " [" + String.Join(", ", addenum) + "]";
+                }
+            }
+
+            return nodeText;
+        }
+
         private bool IsValid(TextBox textBox, string text)
         {
             if (textBox.Text == null || !Directory.Exists(textBox.Text))
@@ -292,10 +519,12 @@ namespace AgGateway.ADAPT.Visualizer
             return exportPath != String.Empty ? exportPath : "C:\\newfile.zip";
         }
 
-        public static void BrowseFolderDialog(IWin32Window parent, TextBox textBox)
+        public static void BrowseFolderDialog(IWin32Window parent, TextBox textBox, string description = "")
         {
             using (var folderBrowserDialog = new FolderBrowserDialog())
             {
+                folderBrowserDialog.Description = description;
+                folderBrowserDialog.SelectedPath = textBox.Text;
                 if (folderBrowserDialog.ShowDialog(parent) == DialogResult.OK)
                 {
                     textBox.Text = folderBrowserDialog.SelectedPath;

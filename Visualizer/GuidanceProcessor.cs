@@ -87,9 +87,9 @@ namespace AgGateway.ADAPT.Visualizer
             {
                 (guidancePattern as AbCurve).SetMinMax(_drawingUtil);
             }
-            else if (guidancePattern is CenterPivot)
+            else if (guidancePattern is PivotGuidancePattern)
             {
-                (guidancePattern as CenterPivot).SetMinMax(_drawingUtil);
+                (guidancePattern as PivotGuidancePattern).SetMinMax(_drawingUtil);
             }
             else if (guidancePattern is MultiAbLine)
             {
@@ -115,9 +115,9 @@ namespace AgGateway.ADAPT.Visualizer
             {
                 ProcessAbCurve(guidancePattern as AbCurve);
             }
-            else if (guidancePattern is CenterPivot)
+            else if (guidancePattern is PivotGuidancePattern)
             {
-                ProcessCenterPivot(guidancePattern as CenterPivot);
+                ProcessCenterPivot(guidancePattern as PivotGuidancePattern);
             }
             else if (guidancePattern is MultiAbLine)
             {
@@ -146,15 +146,15 @@ namespace AgGateway.ADAPT.Visualizer
             }
         }
 
-        private void ProcessCenterPivot(CenterPivot centerPivot)
+        private void ProcessCenterPivot(PivotGuidancePattern centerPivot)
         {
             var delta = _drawingUtil.GetDelta();
             var center = centerPivot.Center.ToUtm().ToXy(_drawingUtil.MinX, _drawingUtil.MinY, delta);
             var radius = GetRadius(centerPivot);
-            _drawingUtil.Graphics.DrawEllipse(DrawingUtil.Pen, center.X - radius, center.Y - radius, radius + radius, radius + radius);
+            _drawingUtil.Graphics.DrawEllipse(DrawingUtil.B_Black, center.X - radius, center.Y - radius, radius + radius, radius + radius);
         }
 
-        private float GetRadius(CenterPivot centerPivot)
+        private float GetRadius(PivotGuidancePattern centerPivot)
         {
             var width = centerPivot.Center.ToUtm().X - centerPivot.EndPoint.ToUtm().X;
             
@@ -198,7 +198,7 @@ namespace AgGateway.ADAPT.Visualizer
                 delta = 1.0;
             var screenPoints = points.Select(point => point.ToUtm()).Select(point => point.ToXy(_drawingUtil.MinX, _drawingUtil.MinY, delta)).ToArray();
 
-            _drawingUtil.Graphics.DrawLines(DrawingUtil.Pen, screenPoints);
+            _drawingUtil.Graphics.DrawLines(DrawingUtil.B_Black, screenPoints);
         }
     }
 }

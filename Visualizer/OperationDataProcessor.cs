@@ -7,6 +7,7 @@
   *
   * Contributors:
   *    Tarak Reddy - initial implementation
+  *    Joseph Ross - added null checks for recntly added code
   *******************************************************************************/
 
 using System;
@@ -16,6 +17,7 @@ using System.Globalization;
 using System.Linq;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
+using AgGateway.ADAPT.ApplicationDataModel.Shapes;
 
 namespace AgGateway.ADAPT.Visualizer
 {
@@ -23,13 +25,18 @@ namespace AgGateway.ADAPT.Visualizer
     {
         private DataTable _dataTable;
 
-        public DataTable ProcessOperationData(OperationData operationData)
+        public DataTable ProcessOperationData(OperationData operationData, List<SpatialRecord> spatialRecords)
         {
             _dataTable = new DataTable();
 
-            if (operationData.GetSpatialRecords != null)
+            //Add extra columns
+            _dataTable.Columns.Add(new DataColumn("Latitude")); //Y
+            _dataTable.Columns.Add(new DataColumn("Longitude")); //X
+            _dataTable.Columns.Add(new DataColumn("Elevation")); //Z
+            _dataTable.Columns.Add(new DataColumn("TimeStamp")); //time
+
+            if (spatialRecords.Any())
             {
-                var spatialRecords = operationData.GetSpatialRecords().ToList();
                 var meters = GetWorkingData(operationData);
 
                 CreateColumns(meters);
@@ -84,6 +91,18 @@ namespace AgGateway.ADAPT.Visualizer
                     if (workingData as EnumeratedWorkingData != null)
                         CreateEnumeratedMeterCell(spatialRecord, workingData, depth, dataRow);
                 }
+            }
+
+            if (spatialRecord.Geometry != null)
+            {
+                //Fill in the other cells
+                dataRow["Latitude"] = (spatialRecord.Geometry as Point).Y.ToString(); //Y
+                dataRow["Longitude"] = (spatialRecord.Geometry as Point).X.ToString(); //X
+                dataRow["Elevation"] = (spatialRecord.Geometry as Point).Z.ToString(); //Z
+            }
+            if (spatialRecord.Timestamp != null)
+            {
+                dataRow["TimeStamp"] = spatialRecord.Timestamp.ToString();
             }
 
             _dataTable.Rows.Add(dataRow);

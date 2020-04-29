@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using AgGateway.ADAPT.ApplicationDataModel.ADM;
 using AgGateway.ADAPT.PluginManager;
 
@@ -25,15 +26,22 @@ namespace AgGateway.ADAPT.Visualizer
             _pluginFactory = new PluginFactory(pluginsPath);
         }
 
-        public ObservableCollection<string> AvailablePlugins
+        public ObservableCollection<KeyValuePair<string, string>> AvailablePlugins
         {
             get
             {
-                if(_pluginFactory == null)
-                    return new ObservableCollection<string>();
+				if (_pluginFactory == null)
+					return new ObservableCollection<KeyValuePair<string, string>>();
 
-                return new ObservableCollection<string>(PluginFactory.AvailablePlugins);
-            }
+				var listOfPlugins = new List<KeyValuePair<string, string>>();
+				foreach (var pluginName in PluginFactory.AvailablePlugins)
+				{
+					var plugin = GetPlugin(pluginName);
+					listOfPlugins.Add(new KeyValuePair<string, string>(pluginName, plugin.Version));
+				}
+
+				return new ObservableCollection<KeyValuePair<string, string>>(listOfPlugins);
+			}
         }
 
         public PluginFactory PluginFactory
@@ -41,32 +49,40 @@ namespace AgGateway.ADAPT.Visualizer
             get { return _pluginFactory; }
         }
 
-        public IList<ApplicationDataModel.ADM.ApplicationDataModel> Import(string datacardPath, string initializeString)
+        public IList<ApplicationDataModel.ADM.ApplicationDataModel> Import(string datacardPath, string initializeString, ApplicationDataModel.ADM.Properties properties)
         {
-            foreach (var availablePlugin in AvailablePlugins)
+			var list = new List<ApplicationDataModel.ADM.ApplicationDataModel>();
+			foreach (var availablePlugin in AvailablePlugins)
             {
-                var plugin = GetPlugin(availablePlugin);
+                var plugin = GetPlugin(availablePlugin.Key);
                 InitializePlugin(plugin, initializeString);
 
                 if (plugin.IsDataCardSupported(datacardPath))
                 {
-                    return plugin.Import(datacardPath);
-                }
-            }
-
-            return null;
-        }
+	                list.AddRange(plugin.Import(datacardPath, properties));
+				}
+			}
+			if (list.Any())
+			{
+				return list;
+			}
+			return null;
+		}
 
         public IPlugin GetPlugin(string pluginName)
         {
             return _pluginFactory.GetPlugin(pluginName);
         }
 
-        public static void Export(IPlugin plugin, ApplicationDataModel.ADM.ApplicationDataModel applicationDataModel, string initializeString, string exportPath)
+        public static void Export(IPlugin plugin, 
+                                 ApplicationDataModel.ADM.ApplicationDataModel applicationDataModel, 
+                                 string initializeString, 
+                                 string exportPath, 
+                                 ApplicationDataModel.ADM.Properties properties)
         {
             InitializePlugin(plugin, initializeString);
 
-            plugin.Export(applicationDataModel, exportPath);
+            plugin.Export(applicationDataModel, exportPath, properties);
         }
 
         private static void InitializePlugin(IPlugin plugin, string initializeString)
@@ -75,6 +91,22 @@ namespace AgGateway.ADAPT.Visualizer
             {
                 plugin.Initialize(initializeString);
             }
+        }
+
+        public IList<ApplicationDataModel.ADM.IError> ValidateDataOnCard(string datacardPath, string initializeString)
+        {
+            foreach (var availablePlugin in AvailablePlugins)
+            {
+                var plugin = GetPlugin(availablePlugin.Key);
+                InitializePlugin(plugin, initializeString);
+
+                if (plugin.IsDataCardSupported(datacardPath))
+                {
+                    return plugin.ValidateDataOnCard(datacardPath);
+                }
+            }
+
+            return null;
         }
     }
 }

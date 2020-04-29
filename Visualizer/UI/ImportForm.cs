@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
 using AgGateway.ADAPT.Visualizer.Properties;
+using System.Collections.Specialized;
+using System.Collections;
 
 namespace AgGateway.ADAPT.Visualizer.UI
 {
@@ -12,6 +14,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private readonly TreeView _treeView;
         private readonly DataGridView _dataGridViewRawData;
         private bool _isDirty;
+        private AutoCompleteStringCollection _importPathHistory;
 
         public ImportForm(Model model, TreeView treeView, DataGridView dataGridViewRawData)
         {
@@ -27,12 +30,12 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private void BrowsePluginLocation_Click(object sender, EventArgs e)
         {
-            Model.BrowseFolderDialog(this, _pluginPathTextBox);
+            Model.BrowseFolderDialog(this, _pluginPathTextBox, _pluginLocationLabel.Text);
         }
 
         private void BrowseDataCardPath_Click(object sender, EventArgs e)
         {
-            Model.BrowseFolderDialog(this, _importPathTextbox);
+            Model.BrowseFolderDialog(this, _importPathTextbox, _dataCardLabel.Text);
         }
 
         private void _importButton_Click(object sender, EventArgs e)
@@ -43,8 +46,23 @@ namespace AgGateway.ADAPT.Visualizer.UI
             {
                 _treeView.Nodes.Clear();
                 _dataGridViewRawData.Columns.Clear();
-                
-                _model.Import(_importPathTextbox, _initializeStringTextBox.Text, _treeView);
+
+                ApplicationDataModel.ADM.Properties properties = new ApplicationDataModel.ADM.Properties();
+                foreach (DataGridViewRow row in _proprietaryDataGridView.Rows)
+                {
+                    if (row.Cells[0].Value != null && row.Cells[1].Value != null)
+                    {
+                        properties.SetProperty(row.Cells[0].Value.ToString(), row.Cells[1].Value.ToString());
+                    }
+                }
+
+                if (_model.Import(_importPathTextbox, _initializeStringTextBox.Text, _treeView, properties))
+                {
+                    // Content of _importPathComboBox was valid --> add to history.
+                    string s = _importPathTextbox.Text;
+                    if (_importPathHistory == null) _importPathHistory = new AutoCompleteStringCollection();
+                    if (!_importPathHistory.Contains(s)) _importPathHistory.Add(s);
+                }
 
                 DialogResult = DialogResult.OK;
             }
@@ -71,44 +89,41 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _pluginPathTextBox.Text = Settings.Default.PluginPath;
             _initializeStringTextBox.Text = Settings.Default.InitializeString;
             _importPathTextbox.Text = Settings.Default.ImportPath;
+            _importPathTextbox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            _importPathTextbox.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            _importPathHistory = Settings.Default.ImportPathHistory;
+            _importPathTextbox.AutoCompleteCustomSource = _importPathHistory;
 
-            _proprietaryDataGridView.Rows.Clear();
+            _proprietaryDataGridView.LoadFromCollection(Settings.Default.ImportProperties);
 
-            //TODO: where do these values come from
-//            foreach (var kvp in Settings.Default.ProprietaryValues)
-//            {
-//                var strings = kvp.Split(';');
-//
-//                var dataGridViewRow = new DataGridViewRow();
-//                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell{Value = strings[0]});
-//                dataGridViewRow.Cells.Add(new DataGridViewTextBoxCell{Value = strings[1]});
-//
-//                _proprietaryDataGridView.Rows.Add(dataGridViewRow);
-//            }
+            if (Settings.Default.AutoLoadPlugins)
+            {   // Issue a click
+                _loadPluginsButton_Click(null, null);
+            }
         }
 
         private void ImportForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_isDirty)
             {
-                Settings.Default.ProprietaryValues.Clear();
-
-                foreach (DataGridViewRow row in _proprietaryDataGridView.Rows)
-                {
-                    Settings.Default.ProprietaryValues.Add(string.Format("{0};{1}", row.Cells[0].Value, row.Cells[1].Value));
-                }
+                _proprietaryDataGridView.PersistToCollection(Settings.Default.ImportProperties);
             }
-
 
             Settings.Default.PluginPath = _pluginPathTextBox.Text;
             Settings.Default.InitializeString = _initializeStringTextBox.Text;
             Settings.Default.ImportPath = _importPathTextbox.Text;
+            Settings.Default.ImportPathHistory = _importPathHistory;
             Settings.Default.Save();
         }
 
         private void _proprietaryDataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             _isDirty = true;
+        }
+
+        private void _validateDataButton_Click(object sender, EventArgs e)
+        {
+            _model.ValidateDataOnCard(_importPathTextbox, _initializeStringTextBox.Text, this);
         }
     }
 }
