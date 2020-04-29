@@ -93,6 +93,11 @@ namespace AgGateway.ADAPT.Visualizer
                     }
                 }
 
+                if (!projectedPoints.Any())
+                {
+                    return;
+                }
+
                 _drawingUtil.SetMinMax(projectedPoints);
                 var screenPolygon = projectedPoints.Select(point => point.ToXy(_drawingUtil.MinX, _drawingUtil.MinY, _drawingUtil.GetDelta())).ToArray();
 
@@ -108,7 +113,7 @@ namespace AgGateway.ADAPT.Visualizer
                         if (doubleValues.Max() == doubleValues.Min())
                         {
                             //All values are the same
-                            if (doubleValues.Max() == 0d)
+                            if (doubleValues.Max() <= 0d)
                             {
                                 //Zero values
                                 graphics.DrawPolygon(DrawingUtil.E_Red, screenPolygon);
@@ -116,7 +121,7 @@ namespace AgGateway.ADAPT.Visualizer
                             else
                             {
                                 //Non-zero values
-                                graphics.DrawPolygon(DrawingUtil.C_DarkMagenta, screenPolygon);
+                                graphics.DrawPolygon(DrawingUtil.L_DarkGreen, screenPolygon);
                             }
                         }
                         else

@@ -119,7 +119,7 @@ namespace AgGateway.ADAPT.Visualizer
                 var maxY = points.Max(point => point.Y);
                 MaxY = maxY > MaxY ? maxY : MaxY;
             }
-            else
+            else if (points.Any())
             {
                 MinX = points.Min(point => point.X);
                 MaxX = points.Max(point => point.X);
