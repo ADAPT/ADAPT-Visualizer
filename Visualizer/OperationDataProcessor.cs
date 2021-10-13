@@ -30,6 +30,7 @@ namespace AgGateway.ADAPT.Visualizer
             _dataTable = new DataTable();
 
             //Add extra columns
+            _dataTable.Columns.Add(new DataColumn("Index")); //Record Index within the OperationData
             _dataTable.Columns.Add(new DataColumn("Latitude")); //Y
             _dataTable.Columns.Add(new DataColumn("Longitude")); //X
             _dataTable.Columns.Add(new DataColumn("Elevation")); //Z
@@ -41,9 +42,10 @@ namespace AgGateway.ADAPT.Visualizer
 
                 CreateColumns(meters);
 
+                int index = 0;
                 foreach (var spatialRecord in spatialRecords)
                 {
-                    CreateRow(meters, spatialRecord);
+                    CreateRow(meters, spatialRecord, index++);
                 }
 
                 UpdateColumnNamesWithUom(meters, spatialRecords);
@@ -75,7 +77,7 @@ namespace AgGateway.ADAPT.Visualizer
             }
         }
 
-        private void CreateRow(Dictionary<int, IEnumerable<WorkingData>> workingDataDictionary, SpatialRecord spatialRecord)
+        private void CreateRow(Dictionary<int, IEnumerable<WorkingData>> workingDataDictionary, SpatialRecord spatialRecord, int index)
         {
             var dataRow = _dataTable.NewRow();
 
@@ -93,6 +95,7 @@ namespace AgGateway.ADAPT.Visualizer
                 }
             }
 
+            dataRow["Index"] = index;
             if (spatialRecord.Geometry != null)
             {
                 //Fill in the other cells
