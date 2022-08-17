@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,14 +36,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AgGateway.ADAPT.ApplicationDataModel, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AgGatewayADAPTFramework.2.8.2\lib\net451\AgGateway.ADAPT.ApplicationDataModel.dll</HintPath>
+    <Reference Include="AgGateway.ADAPT.ApplicationDataModel, Version=2.8.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AgGatewayADAPTFramework.2.8.3\lib\net451\AgGateway.ADAPT.ApplicationDataModel.dll</HintPath>
     </Reference>
-    <Reference Include="AgGateway.ADAPT.PluginManager, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AgGatewayADAPTFramework.2.8.2\lib\net451\AgGateway.ADAPT.PluginManager.dll</HintPath>
+    <Reference Include="AgGateway.ADAPT.PluginManager, Version=2.8.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AgGatewayADAPTFramework.2.8.3\lib\net451\AgGateway.ADAPT.PluginManager.dll</HintPath>
     </Reference>
-    <Reference Include="AgGateway.ADAPT.Representation, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AgGatewayADAPTFramework.2.8.2\lib\net451\AgGateway.ADAPT.Representation.dll</HintPath>
+    <Reference Include="AgGateway.ADAPT.Representation, Version=2.8.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AgGatewayADAPTFramework.2.8.3\lib\net451\AgGateway.ADAPT.Representation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -168,12 +169,12 @@
     <Content Include="Resources\tractor.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\AgGatewayADAPTFramework.2.8.2\build\AgGatewayADAPTFramework.targets" Condition="Exists('..\packages\AgGatewayADAPTFramework.2.8.2\build\AgGatewayADAPTFramework.targets')" />
+  <Import Project="..\packages\AgGatewayADAPTFramework.2.8.3\build\AgGatewayADAPTFramework.targets" Condition="Exists('..\packages\AgGatewayADAPTFramework.2.8.3\build\AgGatewayADAPTFramework.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\AgGatewayADAPTFramework.2.8.2\build\AgGatewayADAPTFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AgGatewayADAPTFramework.2.8.2\build\AgGatewayADAPTFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\AgGatewayADAPTFramework.2.8.3\build\AgGatewayADAPTFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AgGatewayADAPTFramework.2.8.3\build\AgGatewayADAPTFramework.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
