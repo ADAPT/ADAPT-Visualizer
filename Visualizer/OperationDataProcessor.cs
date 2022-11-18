@@ -10,14 +10,13 @@
   *    Joseph Ross - added null checks for recntly added code
   *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
 using AgGateway.ADAPT.ApplicationDataModel.Shapes;
+
+using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
 
 namespace AgGateway.ADAPT.Visualizer
 {
