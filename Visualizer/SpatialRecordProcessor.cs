@@ -9,15 +9,12 @@
   *    Kelly Nelson - implemented based on like classes in this project
   *******************************************************************************/
 
-using System.Linq;
-using System.Windows.Forms;
-using AgGateway.ADAPT.ApplicationDataModel.FieldBoundaries;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
-using System.Collections.Generic;
 using AgGateway.ADAPT.ApplicationDataModel.Equipment;
 using AgGateway.ADAPT.ApplicationDataModel.Shapes;
 using AgGateway.ADAPT.ApplicationDataModel.ADM;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
+using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
 
 namespace AgGateway.ADAPT.Visualizer
 {

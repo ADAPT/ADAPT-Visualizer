@@ -383,5 +383,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             workingDataComboBox.Visible = false;
         }
+
+        private void _dataGridViewRawData_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+        {
+            e.Column.FillWeight = 1;
+        }
     }
 }

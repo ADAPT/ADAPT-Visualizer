@@ -31,8 +31,8 @@ namespace AgGateway.ADAPT.Visualizer.UI
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
             this._splitContainer = new System.Windows.Forms.SplitContainer();
             this._label = new System.Windows.Forms.Label();
-            this._richTextBox = new System.Windows.Forms.RichTextBox();
             this._pictureBox = new System.Windows.Forms.PictureBox();
+            this._richTextBox = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this._splitContainer)).BeginInit();
             this._splitContainer.Panel1.SuspendLayout();
             this._splitContainer.Panel2.SuspendLayout();
@@ -46,6 +46,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this._splitContainer.IsSplitterFixed = true;
             this._splitContainer.Location = new System.Drawing.Point(0, 0);
+            this._splitContainer.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this._splitContainer.Name = "_splitContainer";
             this._splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -57,20 +58,31 @@ namespace AgGateway.ADAPT.Visualizer.UI
             // _splitContainer.Panel2
             // 
             this._splitContainer.Panel2.Controls.Add(this._richTextBox);
-            this._splitContainer.Size = new System.Drawing.Size(484, 412);
+            this._splitContainer.Size = new System.Drawing.Size(807, 792);
             this._splitContainer.SplitterDistance = 70;
-            this._splitContainer.SplitterWidth = 1;
+            this._splitContainer.SplitterWidth = 2;
             this._splitContainer.TabIndex = 2;
             // 
             // _label
             // 
             this._label.AutoSize = true;
-            this._label.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._label.Location = new System.Drawing.Point(155, 16);
+            this._label.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this._label.Location = new System.Drawing.Point(258, 31);
+            this._label.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this._label.Name = "_label";
-            this._label.Size = new System.Drawing.Size(169, 39);
+            this._label.Size = new System.Drawing.Size(260, 61);
             this._label.TabIndex = 1;
             this._label.Text = "Visualizer";
+            // 
+            // _pictureBox
+            // 
+            this._pictureBox.Image = global::AgGateway.ADAPT.Visualizer.Properties.Resources.Tractor_52;
+            this._pictureBox.Location = new System.Drawing.Point(20, 23);
+            this._pictureBox.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this._pictureBox.Name = "_pictureBox";
+            this._pictureBox.Size = new System.Drawing.Size(100, 96);
+            this._pictureBox.TabIndex = 0;
+            this._pictureBox.TabStop = false;
             // 
             // _richTextBox
             // 
@@ -78,29 +90,22 @@ namespace AgGateway.ADAPT.Visualizer.UI
             this._richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this._richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this._richTextBox.Location = new System.Drawing.Point(0, 0);
+            this._richTextBox.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this._richTextBox.Name = "_richTextBox";
             this._richTextBox.ReadOnly = true;
-            this._richTextBox.Size = new System.Drawing.Size(484, 341);
+            this._richTextBox.Size = new System.Drawing.Size(807, 720);
             this._richTextBox.TabIndex = 2;
             this._richTextBox.Text = resources.GetString("_richTextBox.Text");
             this._richTextBox.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this._richTextBox_LinkClicked);
             // 
-            // _pictureBox
-            // 
-            this._pictureBox.Image = global::AgGateway.ADAPT.Visualizer.Properties.Resources.Tractor_52;
-            this._pictureBox.Location = new System.Drawing.Point(12, 12);
-            this._pictureBox.Name = "_pictureBox";
-            this._pictureBox.Size = new System.Drawing.Size(60, 50);
-            this._pictureBox.TabIndex = 0;
-            this._pictureBox.TabStop = false;
-            // 
             // AboutForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 412);
+            this.ClientSize = new System.Drawing.Size(807, 792);
             this.Controls.Add(this._splitContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutForm";
