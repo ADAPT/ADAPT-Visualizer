@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AgGatewayADAPTFramework" Version="3.0.0" />
+    <PackageReference Include="AgGatewayADAPTFramework" Version="3.0.2" />
     <PackageReference Include="AgGatewayISOPlugin" Version="5.0.0" />
   </ItemGroup>
 
