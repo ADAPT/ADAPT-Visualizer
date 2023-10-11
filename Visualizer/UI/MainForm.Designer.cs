@@ -188,11 +188,11 @@
             // 
             _dataGridViewRawData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             _dataGridViewRawData.Dock = DockStyle.Fill;
-            _dataGridViewRawData.Location = new Point(0, 0);
-            _dataGridViewRawData.Margin = new Padding(0);
+            _dataGridViewRawData.Location = new Point(4, 5);
+            _dataGridViewRawData.Margin = new Padding(4, 5, 4, 5);
             _dataGridViewRawData.Name = "_dataGridViewRawData";
             _dataGridViewRawData.RowHeadersWidth = 62;
-            _dataGridViewRawData.Size = new Size(654, 329);
+            _dataGridViewRawData.Size = new Size(646, 321);
             _dataGridViewRawData.TabIndex = 0;
             _dataGridViewRawData.ColumnAdded += _dataGridViewRawData_ColumnAdded;
             _dataGridViewRawData.Paint += _dataGridViewRawData_Paint;
@@ -200,8 +200,8 @@
             // _buttonExportRawData
             // 
             _buttonExportRawData.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            _buttonExportRawData.Location = new Point(529, 335);
-            _buttonExportRawData.Margin = new Padding(6);
+            _buttonExportRawData.Location = new Point(531, 336);
+            _buttonExportRawData.Margin = new Padding(4, 5, 4, 5);
             _buttonExportRawData.Name = "_buttonExportRawData";
             _buttonExportRawData.Size = new Size(119, 35);
             _buttonExportRawData.TabIndex = 1;
