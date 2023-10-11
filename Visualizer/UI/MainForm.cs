@@ -35,6 +35,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private static BusyForm _busyForm;
 
         private string _findWhat;
+        private bool _loaded;
 
         public MainForm()
         {
@@ -47,6 +48,23 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _guidanceProcessor = new GuidanceProcessor(_tabPageSpatial);
             _spatialRecordProcessor = new SpatialRecordProcessor(_tabPageSpatial);
             _prescriptionProcessor = new PrescriptionProcessor(_tabPageSpatial);
+            _limitDataPanel.Visible = Settings.Default.ShowLimitDataUI;
+            _limitDataCheckBox.Checked = Settings.Default.ShowLimitDataUI && Settings.Default.LimitData;
+
+            _maxRowsNumericUpDown.Value = Settings.Default.MaxRows;
+            _maxColumnsNumericUpDown.Value = Settings.Default.MaxColumns;
+
+            if (Settings.Default.RememberWindowSettings)
+            {
+                SuspendLayout();
+                if (!Settings.Default.UnmaximizedLocation.IsEmpty)
+                {
+                    StartPosition = FormStartPosition.Manual;
+                    Location = Settings.Default.UnmaximizedLocation;
+                }
+                WindowState = Settings.Default.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
+                ResumeLayout();
+            }
 
             _busyForm = new BusyForm();
         }
@@ -60,7 +78,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
                     _busyForm.Hide();
                     _busyForm.UpdateLabel("Busy");
                 }));
-                
+
                 return;
             }
 
@@ -168,7 +186,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private void CheckIfBusy()
         {
             if (_model.CurrentState != Model.State.StateIdle)
-            {      
+            {
                 _busyForm.Show(this);
             }
         }
@@ -177,7 +195,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             var saveFileDialog = new SaveFileDialog
             {
-                DefaultExt = ".csv", 
+                DefaultExt = ".csv",
                 Filter = @"CSV File (.csv)|*.csv"
             };
 
@@ -214,9 +232,18 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 List<SpatialRecord> spatialRecords = new List<SpatialRecord>();
                 if (operation.GetSpatialRecords != null)
                 {
-                    spatialRecords = operation.GetSpatialRecords().ToList(); //Iterate the records once here for multiple consumers below
+                    //Iterate the records once here for multiple consumers below
+                    if (_limitDataCheckBox.Checked) // Limit iterations for a more responsive UI
+                    {
+                        spatialRecords = operation.GetSpatialRecords().Take((int)_maxRowsNumericUpDown.Value).ToList();
+                    }
+                    else
+                    {
+                        spatialRecords = operation.GetSpatialRecords().ToList();
+                    }
                 }
-                _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(operation, spatialRecords);
+
+                _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(operation, spatialRecords, _limitDataCheckBox.Checked, (int)_maxColumnsNumericUpDown.Value);
                 ApplicationDataModel.ADM.ApplicationDataModel model = _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex];
                 _spatialRecordProcessor.ProcessOperation(operation, spatialRecords, _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex].Catalog);
                 workingDataComboBox.Visible = true;
@@ -231,11 +258,13 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private void MainForm_LocationChanged(object sender, EventArgs e)
         {
             ResizeBusyForm();
+            SaveWindowSettings();
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
             ResizeBusyForm();
+            SaveWindowSettings();
         }
 
         private void ResizeBusyForm()
@@ -253,7 +282,23 @@ namespace AgGateway.ADAPT.Visualizer.UI
             waitFormLocation.X = mainFormCenter.X - (_busyForm.Width / 2);
             waitFormLocation.Y = mainFormCenter.Y - (_busyForm.Height / 2);
             _busyForm.StartPosition = FormStartPosition.Manual;
-            _busyForm.Location = waitFormLocation;  
+            _busyForm.Location = waitFormLocation;
+        }
+
+        private void SaveWindowSettings()
+        {
+            if (_loaded)
+            {
+                Settings.Default.AutoScaleWidth = CurrentAutoScaleDimensions.Width;
+                Settings.Default.AutoScaleHeight = CurrentAutoScaleDimensions.Height;
+                Settings.Default.Maximized = WindowState == FormWindowState.Maximized;
+
+                if (WindowState == FormWindowState.Normal)
+                {
+                    Settings.Default.UnmaximizedLocation = Location;
+                    Settings.Default.UnmaximizedSize = Size;
+                }
+            }
         }
 
         private Boolean _inputQuery(String caption, String prompt, ref String value)
@@ -342,6 +387,70 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private void MainForm_Load(object sender, EventArgs e)
         {
             _findWhat = Settings.Default.FindString;
+
+            ApplyWindowSettings();
+            _loaded = true;
+        }
+
+        private void ApplyWindowSettings()
+        {
+            SuspendLayout();
+            Size size = Size;
+            Rectangle bounds = Screen.GetWorkingArea(this);
+            SizeF scale = CurrentAutoScaleDimensions;
+            bool applySettings = Settings.Default.RememberWindowSettings &&
+                                 scale.Width == Settings.Default.AutoScaleWidth &&
+                                 scale.Height == Settings.Default.AutoScaleHeight;
+            if (applySettings)
+            {
+                if (!Settings.Default.UnmaximizedSize.IsEmpty)
+                {
+                    size = Settings.Default.UnmaximizedSize;
+                }
+            }
+
+            size.Width = Math.Min(size.Width, bounds.Width);
+            size.Height = Math.Min(size.Height, bounds.Height);
+
+            if (WindowState == FormWindowState.Normal)
+            {
+                Size = size;
+
+                if (Right > bounds.Right)
+                {
+                    Left = bounds.Right - Width;
+                }
+
+                if (Bottom > bounds.Bottom)
+                {
+                    Top = bounds.Bottom - Height;
+                }
+
+                if (Left < bounds.Left)
+                {
+                    Left = bounds.Left;
+                }
+
+                if (Top < bounds.Top)
+                {
+                    Top = bounds.Top;
+                }
+            }
+
+            ResumeLayout();
+
+            if (applySettings)
+            {
+                if (Settings.Default.SplitterDistanceMap != 0)
+                {
+                    _splitContainerMap.SplitterDistance = Settings.Default.SplitterDistanceMap;
+                }
+
+                if (Settings.Default.SplitterDistanceViewer != 0)
+                {
+                    _splitContainerViewer.SplitterDistance = Settings.Default.SplitterDistanceViewer;
+                }
+            }
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -388,5 +497,60 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             e.Column.FillWeight = 1;
         }
+
+        private void _limitDataCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            bool limit = _limitDataCheckBox.Checked;
+            Settings.Default.LimitData = limit;
+            _maxRowsNumericUpDown.Enabled = limit;
+            _maxColumnsNumericUpDown.Enabled = limit;
+            _maxRowsLabel.Enabled = limit;
+            _maxColumnsLabel.Enabled = limit;
+        }
+
+        private void _settingsToolStripButton_Click(object sender, EventArgs e)
+        {
+            new SettingsForm().ShowDialog(this);
+            _limitDataPanel.Visible = Settings.Default.ShowLimitDataUI;
+            if (!_limitDataPanel.Visible)
+            {
+                _limitDataCheckBox.Checked = false;
+            }
+        }
+
+        private void _splitContainerMap_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (_loaded)
+            {
+                Settings.Default.SplitterDistanceMap = _splitContainerMap.SplitterDistance;
+            }
+        }
+
+        private void _splitContainerViewer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (_loaded)
+            {
+                Settings.Default.SplitterDistanceViewer = _splitContainerViewer.SplitterDistance;
+            }
+        }
+
+        private void _maxRowsNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            Settings.Default.MaxRows = (int)_maxRowsNumericUpDown.Value;
+        }
+
+        private void _maxColumnsNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            Settings.Default.MaxColumns = (int)_maxColumnsNumericUpDown.Value;
+        }
+
+        private void _limitDataPanel_VisibleChanged(object sender, EventArgs e)
+        {
+            if (!_limitDataPanel.Visible)
+            {
+                _limitDataCheckBox.Checked = false;
+            }
+        }
+
     }
 }

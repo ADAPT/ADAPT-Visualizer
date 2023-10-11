@@ -12,7 +12,7 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -120,8 +120,20 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExportPlugin {
+            get {
+                return ((string)(this["ExportPlugin"]));
+            }
+            set {
+                this["ExportPlugin"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsd=\"http://www.w3." +
+            "org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <s" +
             "tring>TestKey;TestValue</string>\r\n</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection ImportProperties {
             get {
@@ -134,8 +146,8 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsd=\"http://www.w3." +
+            "org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <s" +
             "tring>TestKey;TestValue</string>\r\n</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection ExportProperties {
             get {
@@ -148,13 +160,145 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ExportPlugin {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowLimitDataUI {
             get {
-                return ((string)(this["ExportPlugin"]));
+                return ((bool)(this["ShowLimitDataUI"]));
             }
             set {
-                this["ExportPlugin"] = value;
+                this["ShowLimitDataUI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RememberWindowSettings {
+            get {
+                return ((bool)(this["RememberWindowSettings"]));
+            }
+            set {
+                this["RememberWindowSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Maximized {
+            get {
+                return ((bool)(this["Maximized"]));
+            }
+            set {
+                this["Maximized"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size UnmaximizedSize {
+            get {
+                return ((global::System.Drawing.Size)(this["UnmaximizedSize"]));
+            }
+            set {
+                this["UnmaximizedSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point UnmaximizedLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["UnmaximizedLocation"]));
+            }
+            set {
+                this["UnmaximizedLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public float AutoScaleWidth {
+            get {
+                return ((float)(this["AutoScaleWidth"]));
+            }
+            set {
+                this["AutoScaleWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public float AutoScaleHeight {
+            get {
+                return ((float)(this["AutoScaleHeight"]));
+            }
+            set {
+                this["AutoScaleHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SplitterDistanceMap {
+            get {
+                return ((int)(this["SplitterDistanceMap"]));
+            }
+            set {
+                this["SplitterDistanceMap"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SplitterDistanceViewer {
+            get {
+                return ((int)(this["SplitterDistanceViewer"]));
+            }
+            set {
+                this["SplitterDistanceViewer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LimitData {
+            get {
+                return ((bool)(this["LimitData"]));
+            }
+            set {
+                this["LimitData"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int MaxRows {
+            get {
+                return ((int)(this["MaxRows"]));
+            }
+            set {
+                this["MaxRows"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int MaxColumns {
+            get {
+                return ((int)(this["MaxColumns"]));
+            }
+            set {
+                this["MaxColumns"] = value;
             }
         }
     }

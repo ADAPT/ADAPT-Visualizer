@@ -24,7 +24,7 @@ namespace AgGateway.ADAPT.Visualizer
     {
         private DataTable _dataTable;
 
-        public DataTable ProcessOperationData(OperationData operationData, List<SpatialRecord> spatialRecords)
+        public DataTable ProcessOperationData(OperationData operationData, List<SpatialRecord> spatialRecords, bool useMaxCols, int maxCols)
         {
             _dataTable = new DataTable();
 
@@ -37,7 +37,7 @@ namespace AgGateway.ADAPT.Visualizer
 
             if (spatialRecords.Any())
             {
-                var meters = GetWorkingData(operationData);
+                var meters = GetWorkingData(operationData, useMaxCols, maxCols);
 
                 CreateColumns(meters);
 
@@ -53,15 +53,33 @@ namespace AgGateway.ADAPT.Visualizer
             return _dataTable;
         }
 
-        private static Dictionary<int, IEnumerable<WorkingData>> GetWorkingData(OperationData operationData)
+        private static Dictionary<int, IEnumerable<WorkingData>> GetWorkingData(OperationData operationData, bool useMaxCols, int maxCols)
         {
+            int totalCount = 0;
             var workingDataWithDepth = new Dictionary<int, IEnumerable<WorkingData>>();
             for (var i = 0; i <= operationData.MaxDepth; i++)
             {
-                var meters = operationData.GetDeviceElementUses(i).SelectMany(x=> x.GetWorkingDatas()).Where(x => x.Representation != null);
+                IEnumerable<WorkingData> meters;
+                if (useMaxCols)
+                {
+                    if (totalCount >= maxCols)
+                    {
+                        break;
+                    }
 
+                    var list = operationData.GetDeviceElementUses(i).SelectMany(x => x.GetWorkingDatas())
+                        .Where(x => x.Representation != null).Take(maxCols - totalCount).ToList();
+                    totalCount += list.Count;
+                    meters = list;
+                }
+                else
+                {
+                    meters = operationData.GetDeviceElementUses(i).SelectMany(x => x.GetWorkingDatas())
+                        .Where(x => x.Representation != null);
+                }
                 workingDataWithDepth.Add(i, meters);
             }
+
             return workingDataWithDepth;
         }
 
