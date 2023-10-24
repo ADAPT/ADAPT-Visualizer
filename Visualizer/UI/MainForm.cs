@@ -8,6 +8,7 @@
   * Contributors:
   *    Tarak Reddy - initial implementation
   *    Martin Sperlich - added Find (Ctrl+F) and Find Next (F3).
+  *    Andrew Vardeman - added Limit Data option and some performance optimizations.
   *******************************************************************************/
 
 using System;
@@ -36,6 +37,9 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private string _findWhat;
         private bool _loaded;
+        private ProcessDataRequest? _lastProcessDataRequest;
+
+        private TreeNode? ProcessedNode => _tabPageSpatial.Tag as TreeNode;
 
         public MainForm()
         {
@@ -118,18 +122,17 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 return;
 
             Cursor.Current = Cursors.WaitCursor;
-            ProcessData(treeNode);
+            ProcessData(GetProcessDataRequest(treeNode));
             Cursor.Current = Cursors.Default;
         }
 
         private void _tabPageSpatial_Paint(object sender, PaintEventArgs e)
         {
-            if (_tabPageSpatial.Tag == null)
+            if (ProcessedNode == null)
             {
                 return;
             }
-
-            ProcessData(_tabPageSpatial.Tag as TreeNode);
+            ProcessData(GetProcessDataRequest(ProcessedNode));
         }
 
         private void _aboutToolStripButton_Click(object sender, EventArgs e)
@@ -193,6 +196,11 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private void _buttonExportRawData_Click(object sender, EventArgs e)
         {
+            if (ProcessedNode == null)
+            {
+                return;
+            }
+
             var saveFileDialog = new SaveFileDialog
             {
                 DefaultExt = ".csv",
@@ -201,14 +209,22 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
+                ProcessData(GetProcessDataRequest(ProcessedNode, true));
                 _model.WriteCsvFile(saveFileDialog.FileName, _dataGridViewRawData);
             }
         }
 
-        private void ProcessData(TreeNode treeNode)
+        private void ProcessData(ProcessDataRequest request)
         {
+            var matchesLastRequest = request.Equals(_lastProcessDataRequest);
+            if (matchesLastRequest)
+            {
+                request.SpatialRecords = _lastProcessDataRequest!.SpatialRecords;
+            }
+            var treeNode = request.Node;
             var objectWithIndex = (ObjectWithIndex)treeNode.Tag;
             var element = objectWithIndex.Element;
+            ApplicationDataModel.ADM.ApplicationDataModel model = _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex];
 
             workingDataComboBox.Visible = false;
             if (element is FieldBoundary)
@@ -218,7 +234,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             }
             else if (element is GuidanceGroup)
             {
-                _guidanceProcessor.ProcessGuidance(element as GuidanceGroup, _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex].Catalog.GuidancePatterns);
+                _guidanceProcessor.ProcessGuidance(element as GuidanceGroup, model.Catalog.GuidancePatterns);
                 _tabControlViewer.SelectedTab = _tabPageSpatial;
             }
             else if (element is GuidancePattern)
@@ -226,33 +242,49 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 _guidanceProcessor.ProccessGuidancePattern(element as GuidancePattern);
                 _tabControlViewer.SelectedTab = _tabPageSpatial;
             }
-            else if (element is OperationData)
+            else if (element is OperationData operation)
             {
-                OperationData operation = element as OperationData;
                 List<SpatialRecord> spatialRecords = new List<SpatialRecord>();
-                if (operation.GetSpatialRecords != null)
+                if (request.SpatialRecords != null)
                 {
-                    //Iterate the records once here for multiple consumers below
-                    if (_limitDataCheckBox.Checked) // Limit iterations for a more responsive UI
+                    spatialRecords = request.SpatialRecords;
+                }
+                else if (operation.GetSpatialRecords != null)
+                {
+                    IEnumerable<SpatialRecord> spatialRecordsEnumerable = operation.GetSpatialRecords();
+                    if (spatialRecordsEnumerable == null)
                     {
-                        spatialRecords = operation.GetSpatialRecords().Take((int)_maxRowsNumericUpDown.Value).ToList();
+                        spatialRecords = new List<SpatialRecord>();
                     }
                     else
                     {
-                        spatialRecords = operation.GetSpatialRecords().ToList();
+                        //Iterate the records once here for multiple consumers below
+                        spatialRecords = request.LimitData ?
+                            spatialRecordsEnumerable.Take(request.MaxRows).ToList() : // Limit iterations for a more responsive UI
+                            spatialRecordsEnumerable.ToList();
                     }
+                    request.SpatialRecords = spatialRecords;
                 }
 
-                _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(operation, spatialRecords, _limitDataCheckBox.Checked, (int)_maxColumnsNumericUpDown.Value);
-                ApplicationDataModel.ADM.ApplicationDataModel model = _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex];
-                _spatialRecordProcessor.ProcessOperation(operation, spatialRecords, _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex].Catalog);
+                _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(operation, spatialRecords, request.LimitData, request.MaxColumns);
+
+                _spatialRecordProcessor.ProcessOperation(operation, spatialRecords, model.Catalog);
                 workingDataComboBox.Visible = true;
-                workingDataComboBox.DataSource = _spatialRecordProcessor.WorkingDataList;
+                if (matchesLastRequest)
+                {
+                    DrawSpatialRecords();
+                }
+                else
+                {
+                    workingDataComboBox.DataSource = _spatialRecordProcessor.WorkingDataList;
+                }
             }
             else if (element is Prescription)
             {
                 _prescriptionProcessor.ProcessPrescription(element as Prescription);
             }
+
+            _lastProcessDataRequest = request;
         }
 
         private void MainForm_LocationChanged(object sender, EventArgs e)
@@ -484,6 +516,11 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private void workingDataComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            DrawSpatialRecords();
+        }
+
+        private void DrawSpatialRecords()
+        {
             string workingDataKey = (string)workingDataComboBox.SelectedItem;
             _spatialRecordProcessor.ThemeMap(workingDataKey);
         }
@@ -506,6 +543,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _maxColumnsNumericUpDown.Enabled = limit;
             _maxRowsLabel.Enabled = limit;
             _maxColumnsLabel.Enabled = limit;
+            if (ProcessedNode != null)
+            {
+                ProcessData(GetProcessDataRequest(ProcessedNode));
+            }
         }
 
         private void _settingsToolStripButton_Click(object sender, EventArgs e)
@@ -550,6 +591,13 @@ namespace AgGateway.ADAPT.Visualizer.UI
             {
                 _limitDataCheckBox.Checked = false;
             }
+        }
+
+        private ProcessDataRequest GetProcessDataRequest(TreeNode node, bool overrideLimitDataCheckBox = false, bool overrideValue = false)
+        {
+            bool limitData = overrideLimitDataCheckBox ? overrideValue : _limitDataCheckBox.Checked;
+            return new ProcessDataRequest(node, limitData, (int)_maxRowsNumericUpDown.Value,
+                (int)_maxColumnsNumericUpDown.Value);
         }
 
     }

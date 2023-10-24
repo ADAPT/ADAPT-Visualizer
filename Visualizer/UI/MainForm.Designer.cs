@@ -128,7 +128,7 @@
             _splitContainerMap.Panel2.Controls.Add(_dataGridViewTotals);
             _splitContainerMap.Panel2.Controls.Add(_labelTotals);
             _splitContainerMap.Size = new Size(662, 682);
-            _splitContainerMap.SplitterDistance = 453;
+            _splitContainerMap.SplitterDistance = 564;
             _splitContainerMap.SplitterWidth = 6;
             _splitContainerMap.TabIndex = 0;
             _splitContainerMap.SplitterMoved += _splitContainerMap_SplitterMoved;
@@ -142,7 +142,7 @@
             _tabControlViewer.Margin = new Padding(4, 5, 4, 5);
             _tabControlViewer.Name = "_tabControlViewer";
             _tabControlViewer.SelectedIndex = 0;
-            _tabControlViewer.Size = new Size(662, 409);
+            _tabControlViewer.Size = new Size(662, 520);
             _tabControlViewer.TabIndex = 1;
             // 
             // _tabPageSpatial
@@ -151,7 +151,7 @@
             _tabPageSpatial.Margin = new Padding(4, 5, 4, 5);
             _tabPageSpatial.Name = "_tabPageSpatial";
             _tabPageSpatial.Padding = new Padding(4, 5, 4, 5);
-            _tabPageSpatial.Size = new Size(654, 376);
+            _tabPageSpatial.Size = new Size(654, 487);
             _tabPageSpatial.TabIndex = 0;
             _tabPageSpatial.Text = "Spatial Viewer";
             _tabPageSpatial.UseVisualStyleBackColor = true;
@@ -163,7 +163,7 @@
             _tabPageRawData.Location = new Point(4, 29);
             _tabPageRawData.Margin = new Padding(4, 5, 4, 5);
             _tabPageRawData.Name = "_tabPageRawData";
-            _tabPageRawData.Size = new Size(654, 376);
+            _tabPageRawData.Size = new Size(654, 487);
             _tabPageRawData.TabIndex = 1;
             _tabPageRawData.Text = "Raw data Viewer";
             _tabPageRawData.UseVisualStyleBackColor = true;
@@ -181,7 +181,7 @@
             _tableLayoutPanelRawData.RowCount = 2;
             _tableLayoutPanelRawData.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             _tableLayoutPanelRawData.RowStyles.Add(new RowStyle());
-            _tableLayoutPanelRawData.Size = new Size(654, 376);
+            _tableLayoutPanelRawData.Size = new Size(654, 487);
             _tableLayoutPanelRawData.TabIndex = 2;
             // 
             // _dataGridViewRawData
@@ -192,7 +192,7 @@
             _dataGridViewRawData.Margin = new Padding(4, 5, 4, 5);
             _dataGridViewRawData.Name = "_dataGridViewRawData";
             _dataGridViewRawData.RowHeadersWidth = 62;
-            _dataGridViewRawData.Size = new Size(646, 321);
+            _dataGridViewRawData.Size = new Size(646, 432);
             _dataGridViewRawData.TabIndex = 0;
             _dataGridViewRawData.ColumnAdded += _dataGridViewRawData_ColumnAdded;
             _dataGridViewRawData.Paint += _dataGridViewRawData_Paint;
@@ -200,7 +200,7 @@
             // _buttonExportRawData
             // 
             _buttonExportRawData.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            _buttonExportRawData.Location = new Point(531, 336);
+            _buttonExportRawData.Location = new Point(531, 447);
             _buttonExportRawData.Margin = new Padding(4, 5, 4, 5);
             _buttonExportRawData.Name = "_buttonExportRawData";
             _buttonExportRawData.Size = new Size(119, 35);
@@ -311,7 +311,7 @@
             _dataGridViewTotals.Name = "_dataGridViewTotals";
             _dataGridViewTotals.RowHeadersVisible = false;
             _dataGridViewTotals.RowHeadersWidth = 62;
-            _dataGridViewTotals.Size = new Size(662, 203);
+            _dataGridViewTotals.Size = new Size(662, 92);
             _dataGridViewTotals.TabIndex = 1;
             // 
             // _dataGridColumnDescription
@@ -460,6 +460,7 @@
             // 
             // workingDataComboBox
             // 
+            workingDataComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             workingDataComboBox.FormattingEnabled = true;
             workingDataComboBox.Location = new Point(352, 17);
             workingDataComboBox.Margin = new Padding(2);

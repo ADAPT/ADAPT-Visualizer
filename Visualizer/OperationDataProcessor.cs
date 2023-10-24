@@ -8,6 +8,7 @@
   * Contributors:
   *    Tarak Reddy - initial implementation
   *    Joseph Ross - added null checks for recntly added code
+  *    Andrew Vardeman - optimized for repeated calls with identical parameters
   *******************************************************************************/
 
 using System.Data;
@@ -22,35 +23,48 @@ namespace AgGateway.ADAPT.Visualizer
 {
     public class OperationDataProcessor
     {
-        private DataTable _dataTable;
+        private DataTable? _dataTable;
+        private OperationData? _lastOperationData;
+        private List<SpatialRecord>? _lastSpatialRecords;
+        private bool _lastUseMaxCols;
+        private int _lastMaxCols;
 
         public DataTable ProcessOperationData(OperationData operationData, List<SpatialRecord> spatialRecords, bool useMaxCols, int maxCols)
         {
-            _dataTable = new DataTable();
-
-            //Add extra columns
-            _dataTable.Columns.Add(new DataColumn("Index")); //Record Index within the OperationData
-            _dataTable.Columns.Add(new DataColumn("Latitude")); //Y
-            _dataTable.Columns.Add(new DataColumn("Longitude")); //X
-            _dataTable.Columns.Add(new DataColumn("Elevation")); //Z
-            _dataTable.Columns.Add(new DataColumn("TimeStamp")); //time
-
-            if (spatialRecords.Any())
+            if (operationData != _lastOperationData || spatialRecords != _lastSpatialRecords ||
+                useMaxCols != _lastUseMaxCols || maxCols != _lastMaxCols)
             {
-                var meters = GetWorkingData(operationData, useMaxCols, maxCols);
+                _lastOperationData = operationData;
+                _lastSpatialRecords = spatialRecords;
+                _lastUseMaxCols = useMaxCols;
+                _lastMaxCols = maxCols;
 
-                CreateColumns(meters);
+                _dataTable = new DataTable();
 
-                int index = 0;
-                foreach (var spatialRecord in spatialRecords)
+                //Add extra columns
+                _dataTable.Columns.Add(new DataColumn("Index")); //Record Index within the OperationData
+                _dataTable.Columns.Add(new DataColumn("Latitude")); //Y
+                _dataTable.Columns.Add(new DataColumn("Longitude")); //X
+                _dataTable.Columns.Add(new DataColumn("Elevation")); //Z
+                _dataTable.Columns.Add(new DataColumn("TimeStamp")); //time
+
+                if (spatialRecords.Any())
                 {
-                    CreateRow(meters, spatialRecord, index++);
-                }
+                    var meters = GetWorkingData(operationData, useMaxCols, maxCols);
 
-                UpdateColumnNamesWithUom(meters, spatialRecords);
+                    CreateColumns(meters);
+
+                    int index = 0;
+                    foreach (var spatialRecord in spatialRecords)
+                    {
+                        CreateRow(meters, spatialRecord, index++);
+                    }
+
+                    UpdateColumnNamesWithUom(meters, spatialRecords);
+                }
             }
 
-            return _dataTable;
+            return _dataTable!;
         }
 
         private static Dictionary<int, IEnumerable<WorkingData>> GetWorkingData(OperationData operationData, bool useMaxCols, int maxCols)
