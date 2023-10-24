@@ -209,8 +209,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
+                Cursor.Current = Cursors.WaitCursor;
                 ProcessData(GetProcessDataRequest(ProcessedNode, true));
                 _model.WriteCsvFile(saveFileDialog.FileName, _dataGridViewRawData);
+                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -545,7 +547,9 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _maxColumnsLabel.Enabled = limit;
             if (ProcessedNode != null)
             {
+                Cursor.Current = Cursors.WaitCursor;
                 ProcessData(GetProcessDataRequest(ProcessedNode));
+                Cursor.Current = Cursors.Default;
             }
         }
 

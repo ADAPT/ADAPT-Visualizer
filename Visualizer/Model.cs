@@ -545,10 +545,11 @@ namespace AgGateway.ADAPT.Visualizer
 
                     sb.Append(dataGridView.Columns[i].Name);
                 }
+                streamWriter.WriteLine(sb.ToString());
 
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
-                    sb.Append("\n");
+                    sb.Clear();
                     for (int j = 0; j < dataGridView.Columns.Count; j++)
                     {
                         if (j != 0)
@@ -556,9 +557,9 @@ namespace AgGateway.ADAPT.Visualizer
 
                         sb.Append(row.Cells[j].Value);
                     }
+                    streamWriter.WriteLine(sb.ToString());
                 }
 
-                streamWriter.WriteLine(sb.ToString());
                 streamWriter.Flush();
                 streamWriter.Close();
             }
