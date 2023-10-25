@@ -20,6 +20,7 @@ using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.Visualizer.Properties;
 using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace AgGateway.ADAPT.Visualizer.UI
@@ -196,7 +197,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private void _buttonExportRawData_Click(object sender, EventArgs e)
         {
-            if (ProcessedNode == null)
+            if (_dataGridViewRawData.DataSource is not DataTable dataTable)
             {
                 return;
             }
@@ -211,7 +212,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             {
                 Cursor.Current = Cursors.WaitCursor;
                 ProcessData(GetProcessDataRequest(ProcessedNode, true));
-                _model.WriteCsvFile(saveFileDialog.FileName, _dataGridViewRawData);
+                _model.WriteCsvFile(saveFileDialog.FileName, dataTable);
                 Cursor.Current = Cursors.Default;
             }
         }

@@ -294,6 +294,7 @@
             _maxColumnsNumericUpDown.Increment = new decimal(new int[] { 10, 0, 0, 0 });
             _maxColumnsNumericUpDown.Location = new Point(364, 8);
             _maxColumnsNumericUpDown.Margin = new Padding(3, 0, 3, 0);
+            _maxColumnsNumericUpDown.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             _maxColumnsNumericUpDown.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             _maxColumnsNumericUpDown.Name = "_maxColumnsNumericUpDown";
             _maxColumnsNumericUpDown.Size = new Size(57, 27);
