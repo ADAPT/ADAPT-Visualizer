@@ -8,6 +8,7 @@
   * Contributors:
   *    Tarak Reddy - initial implementation
   *    Martin Sperlich - added Find (Ctrl+F) and Find Next (F3).
+  *    Andrew Vardeman - added Limit Data option and some performance optimizations.
   *******************************************************************************/
 
 using System;
@@ -19,6 +20,7 @@ using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.Visualizer.Properties;
 using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace AgGateway.ADAPT.Visualizer.UI
@@ -35,6 +37,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private static BusyForm _busyForm;
 
         private string _findWhat;
+        private bool _loaded;
+        private ProcessDataRequest? _lastProcessDataRequest;
+
+        private TreeNode? ProcessedNode => _tabPageSpatial.Tag as TreeNode;
 
         public MainForm()
         {
@@ -47,6 +53,23 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _guidanceProcessor = new GuidanceProcessor(_tabPageSpatial);
             _spatialRecordProcessor = new SpatialRecordProcessor(_tabPageSpatial);
             _prescriptionProcessor = new PrescriptionProcessor(_tabPageSpatial);
+            _limitDataPanel.Visible = Settings.Default.ShowLimitDataUI;
+            _limitDataCheckBox.Checked = Settings.Default.ShowLimitDataUI && Settings.Default.LimitData;
+
+            _maxRowsNumericUpDown.Value = Settings.Default.MaxRows;
+            _maxColumnsNumericUpDown.Value = Settings.Default.MaxColumns;
+
+            if (Settings.Default.RememberWindowSettings)
+            {
+                SuspendLayout();
+                if (!Settings.Default.UnmaximizedLocation.IsEmpty)
+                {
+                    StartPosition = FormStartPosition.Manual;
+                    Location = Settings.Default.UnmaximizedLocation;
+                }
+                WindowState = Settings.Default.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
+                ResumeLayout();
+            }
 
             _busyForm = new BusyForm();
         }
@@ -60,7 +83,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
                     _busyForm.Hide();
                     _busyForm.UpdateLabel("Busy");
                 }));
-                
+
                 return;
             }
 
@@ -100,18 +123,17 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 return;
 
             Cursor.Current = Cursors.WaitCursor;
-            ProcessData(treeNode);
+            ProcessData(GetProcessDataRequest(treeNode));
             Cursor.Current = Cursors.Default;
         }
 
         private void _tabPageSpatial_Paint(object sender, PaintEventArgs e)
         {
-            if (_tabPageSpatial.Tag == null)
+            if (ProcessedNode == null)
             {
                 return;
             }
-
-            ProcessData(_tabPageSpatial.Tag as TreeNode);
+            ProcessData(GetProcessDataRequest(ProcessedNode));
         }
 
         private void _aboutToolStripButton_Click(object sender, EventArgs e)
@@ -168,29 +190,44 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private void CheckIfBusy()
         {
             if (_model.CurrentState != Model.State.StateIdle)
-            {      
+            {
                 _busyForm.Show(this);
             }
         }
 
         private void _buttonExportRawData_Click(object sender, EventArgs e)
         {
+            if (_dataGridViewRawData.DataSource is not DataTable dataTable)
+            {
+                return;
+            }
+
             var saveFileDialog = new SaveFileDialog
             {
-                DefaultExt = ".csv", 
+                DefaultExt = ".csv",
                 Filter = @"CSV File (.csv)|*.csv"
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _model.WriteCsvFile(saveFileDialog.FileName, _dataGridViewRawData);
+                Cursor.Current = Cursors.WaitCursor;
+                ProcessData(GetProcessDataRequest(ProcessedNode, true));
+                _model.WriteCsvFile(saveFileDialog.FileName, dataTable);
+                Cursor.Current = Cursors.Default;
             }
         }
 
-        private void ProcessData(TreeNode treeNode)
+        private void ProcessData(ProcessDataRequest request)
         {
+            var matchesLastRequest = request.Equals(_lastProcessDataRequest);
+            if (matchesLastRequest)
+            {
+                request.SpatialRecords = _lastProcessDataRequest!.SpatialRecords;
+            }
+            var treeNode = request.Node;
             var objectWithIndex = (ObjectWithIndex)treeNode.Tag;
             var element = objectWithIndex.Element;
+            ApplicationDataModel.ADM.ApplicationDataModel model = _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex];
 
             workingDataComboBox.Visible = false;
             if (element is FieldBoundary)
@@ -200,7 +237,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             }
             else if (element is GuidanceGroup)
             {
-                _guidanceProcessor.ProcessGuidance(element as GuidanceGroup, _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex].Catalog.GuidancePatterns);
+                _guidanceProcessor.ProcessGuidance(element as GuidanceGroup, model.Catalog.GuidancePatterns);
                 _tabControlViewer.SelectedTab = _tabPageSpatial;
             }
             else if (element is GuidancePattern)
@@ -208,34 +245,61 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 _guidanceProcessor.ProccessGuidancePattern(element as GuidancePattern);
                 _tabControlViewer.SelectedTab = _tabPageSpatial;
             }
-            else if (element is OperationData)
+            else if (element is OperationData operation)
             {
-                OperationData operation = element as OperationData;
                 List<SpatialRecord> spatialRecords = new List<SpatialRecord>();
-                if (operation.GetSpatialRecords != null)
+                if (request.SpatialRecords != null)
                 {
-                    spatialRecords = operation.GetSpatialRecords().ToList(); //Iterate the records once here for multiple consumers below
+                    spatialRecords = request.SpatialRecords;
                 }
-                _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(operation, spatialRecords);
-                ApplicationDataModel.ADM.ApplicationDataModel model = _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex];
-                _spatialRecordProcessor.ProcessOperation(operation, spatialRecords, _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex].Catalog);
+                else if (operation.GetSpatialRecords != null)
+                {
+                    IEnumerable<SpatialRecord> spatialRecordsEnumerable = operation.GetSpatialRecords();
+                    if (spatialRecordsEnumerable == null)
+                    {
+                        spatialRecords = new List<SpatialRecord>();
+                    }
+                    else
+                    {
+                        //Iterate the records once here for multiple consumers below
+                        spatialRecords = request.LimitData ?
+                            spatialRecordsEnumerable.Take(request.MaxRows).ToList() : // Limit iterations for a more responsive UI
+                            spatialRecordsEnumerable.ToList();
+                    }
+                    request.SpatialRecords = spatialRecords;
+                }
+
+                _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(operation, spatialRecords, request.LimitData, request.MaxColumns);
+
+                _spatialRecordProcessor.ProcessOperation(operation, spatialRecords, model.Catalog);
                 workingDataComboBox.Visible = true;
-                workingDataComboBox.DataSource = _spatialRecordProcessor.WorkingDataList;
+                if (matchesLastRequest)
+                {
+                    DrawSpatialRecords();
+                }
+                else
+                {
+                    workingDataComboBox.DataSource = _spatialRecordProcessor.WorkingDataList;
+                }
             }
             else if (element is Prescription)
             {
                 _prescriptionProcessor.ProcessPrescription(element as Prescription);
             }
+
+            _lastProcessDataRequest = request;
         }
 
         private void MainForm_LocationChanged(object sender, EventArgs e)
         {
             ResizeBusyForm();
+            SaveWindowSettings();
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
             ResizeBusyForm();
+            SaveWindowSettings();
         }
 
         private void ResizeBusyForm()
@@ -253,7 +317,23 @@ namespace AgGateway.ADAPT.Visualizer.UI
             waitFormLocation.X = mainFormCenter.X - (_busyForm.Width / 2);
             waitFormLocation.Y = mainFormCenter.Y - (_busyForm.Height / 2);
             _busyForm.StartPosition = FormStartPosition.Manual;
-            _busyForm.Location = waitFormLocation;  
+            _busyForm.Location = waitFormLocation;
+        }
+
+        private void SaveWindowSettings()
+        {
+            if (_loaded)
+            {
+                Settings.Default.AutoScaleWidth = CurrentAutoScaleDimensions.Width;
+                Settings.Default.AutoScaleHeight = CurrentAutoScaleDimensions.Height;
+                Settings.Default.Maximized = WindowState == FormWindowState.Maximized;
+
+                if (WindowState == FormWindowState.Normal)
+                {
+                    Settings.Default.UnmaximizedLocation = Location;
+                    Settings.Default.UnmaximizedSize = Size;
+                }
+            }
         }
 
         private Boolean _inputQuery(String caption, String prompt, ref String value)
@@ -342,6 +422,70 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private void MainForm_Load(object sender, EventArgs e)
         {
             _findWhat = Settings.Default.FindString;
+
+            ApplyWindowSettings();
+            _loaded = true;
+        }
+
+        private void ApplyWindowSettings()
+        {
+            SuspendLayout();
+            Size size = Size;
+            Rectangle bounds = Screen.GetWorkingArea(this);
+            SizeF scale = CurrentAutoScaleDimensions;
+            bool applySettings = Settings.Default.RememberWindowSettings &&
+                                 scale.Width == Settings.Default.AutoScaleWidth &&
+                                 scale.Height == Settings.Default.AutoScaleHeight;
+            if (applySettings)
+            {
+                if (!Settings.Default.UnmaximizedSize.IsEmpty)
+                {
+                    size = Settings.Default.UnmaximizedSize;
+                }
+            }
+
+            size.Width = Math.Min(size.Width, bounds.Width);
+            size.Height = Math.Min(size.Height, bounds.Height);
+
+            if (WindowState == FormWindowState.Normal)
+            {
+                Size = size;
+
+                if (Right > bounds.Right)
+                {
+                    Left = bounds.Right - Width;
+                }
+
+                if (Bottom > bounds.Bottom)
+                {
+                    Top = bounds.Bottom - Height;
+                }
+
+                if (Left < bounds.Left)
+                {
+                    Left = bounds.Left;
+                }
+
+                if (Top < bounds.Top)
+                {
+                    Top = bounds.Top;
+                }
+            }
+
+            ResumeLayout();
+
+            if (applySettings)
+            {
+                if (Settings.Default.SplitterDistanceMap != 0)
+                {
+                    _splitContainerMap.SplitterDistance = Settings.Default.SplitterDistanceMap;
+                }
+
+                if (Settings.Default.SplitterDistanceViewer != 0)
+                {
+                    _splitContainerViewer.SplitterDistance = Settings.Default.SplitterDistanceViewer;
+                }
+            }
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -375,6 +519,11 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private void workingDataComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            DrawSpatialRecords();
+        }
+
+        private void DrawSpatialRecords()
+        {
             string workingDataKey = (string)workingDataComboBox.SelectedItem;
             _spatialRecordProcessor.ThemeMap(workingDataKey);
         }
@@ -388,5 +537,73 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             e.Column.FillWeight = 1;
         }
+
+        private void _limitDataCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            bool limit = _limitDataCheckBox.Checked;
+            Settings.Default.LimitData = limit;
+            _maxRowsNumericUpDown.Enabled = limit;
+            _maxColumnsNumericUpDown.Enabled = limit;
+            _maxRowsLabel.Enabled = limit;
+            _maxColumnsLabel.Enabled = limit;
+            if (ProcessedNode != null)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                ProcessData(GetProcessDataRequest(ProcessedNode));
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void _settingsToolStripButton_Click(object sender, EventArgs e)
+        {
+            new SettingsForm().ShowDialog(this);
+            _limitDataPanel.Visible = Settings.Default.ShowLimitDataUI;
+            if (!_limitDataPanel.Visible)
+            {
+                _limitDataCheckBox.Checked = false;
+            }
+        }
+
+        private void _splitContainerMap_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (_loaded)
+            {
+                Settings.Default.SplitterDistanceMap = _splitContainerMap.SplitterDistance;
+            }
+        }
+
+        private void _splitContainerViewer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (_loaded)
+            {
+                Settings.Default.SplitterDistanceViewer = _splitContainerViewer.SplitterDistance;
+            }
+        }
+
+        private void _maxRowsNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            Settings.Default.MaxRows = (int)_maxRowsNumericUpDown.Value;
+        }
+
+        private void _maxColumnsNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            Settings.Default.MaxColumns = (int)_maxColumnsNumericUpDown.Value;
+        }
+
+        private void _limitDataPanel_VisibleChanged(object sender, EventArgs e)
+        {
+            if (!_limitDataPanel.Visible)
+            {
+                _limitDataCheckBox.Checked = false;
+            }
+        }
+
+        private ProcessDataRequest GetProcessDataRequest(TreeNode node, bool overrideLimitDataCheckBox = false, bool overrideValue = false)
+        {
+            bool limitData = overrideLimitDataCheckBox ? overrideValue : _limitDataCheckBox.Checked;
+            return new ProcessDataRequest(node, limitData, (int)_maxRowsNumericUpDown.Value,
+                (int)_maxColumnsNumericUpDown.Value);
+        }
+
     }
 }

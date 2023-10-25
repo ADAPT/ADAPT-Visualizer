@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -532,33 +533,35 @@ namespace AgGateway.ADAPT.Visualizer
             }
         }
 
-        public void WriteCsvFile(string fileName, DataGridView dataGridView)
+        public void WriteCsvFile(string fileName, DataTable dataTable)
         {
+            int columnCount = dataTable.Columns.Count;
             using (var streamWriter = new StreamWriter(fileName))
             {
                 var sb = new StringBuilder();
 
-                for (int i = 0; i < dataGridView.Columns.Count; i++)
+                for (int i = 0; i < columnCount; i++)
                 {
                     if (i != 0)
                         sb.Append(",");
 
-                    sb.Append(dataGridView.Columns[i].Name);
+                    sb.Append(dataTable.Columns[i].ColumnName);
                 }
+                streamWriter.WriteLine(sb.ToString());
 
-                foreach (DataGridViewRow row in dataGridView.Rows)
+                foreach (DataRow row in dataTable.Rows)
                 {
-                    sb.Append("\n");
-                    for (int j = 0; j < dataGridView.Columns.Count; j++)
+                    sb.Clear();
+                    for (int j = 0; j < columnCount; j++)
                     {
                         if (j != 0)
                             sb.Append(",");
 
-                        sb.Append(row.Cells[j].Value);
+                        sb.Append(row[j]);
                     }
+                    streamWriter.WriteLine(sb.ToString());
                 }
 
-                streamWriter.WriteLine(sb.ToString());
                 streamWriter.Flush();
                 streamWriter.Close();
             }

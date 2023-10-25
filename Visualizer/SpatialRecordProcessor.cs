@@ -7,11 +7,12 @@
   *
   * Contributors:
   *    Kelly Nelson - implemented based on like classes in this project
+  *    Andrew Vardeman - optimized rendering of large datasets
   *******************************************************************************/
 
+using System.Drawing.Imaging;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.ApplicationDataModel.Equipment;
-using AgGateway.ADAPT.ApplicationDataModel.Shapes;
 using AgGateway.ADAPT.ApplicationDataModel.ADM;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
 using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
@@ -25,6 +26,7 @@ namespace AgGateway.ADAPT.Visualizer
         private Dictionary<string, WorkingData> _workingDataDictionary;
         private OperationData _lastOperationData;
         private List<SpatialRecord> _spatialRecords;
+        private Bitmap? _bitmap;
 
         public SpatialRecordProcessor(TabPage spatialViewer)
         {
@@ -52,8 +54,10 @@ namespace AgGateway.ADAPT.Visualizer
         {
             using (var graphics = _spatialViewer.CreateGraphics())
             {
-                graphics.Clear(System.Drawing.Color.White);
-                _drawingUtil = new DrawingUtil(_spatialViewer.Width, _spatialViewer.Height, graphics);
+                int width = _spatialViewer.Width;
+                int height = _spatialViewer.Height;
+                graphics.Clear(Color.White);
+                _drawingUtil = new DrawingUtil(width, height, graphics);
 
                 List<Point> projectedPoints = new List<Point>();
                 List<double> doubleValues = null;
@@ -127,12 +131,11 @@ namespace AgGateway.ADAPT.Visualizer
                             double min = doubleValues.Min();
                             double average = doubleValues.Average();
                             List<double> removedZeroValues = doubleValues.Where(dv => dv != 0).ToList();
-                            double avarageWithoutZeroes = removedZeroValues.Average();
-                            if (average != avarageWithoutZeroes)
+                            double averageWithoutZeroes = removedZeroValues.Average();
+                            if (average != averageWithoutZeroes)
                             {
                                 min = removedZeroValues.Min();
                             }
-
 
                             int i = 0;
                             double range = (max - min) / 7.0;
@@ -145,48 +148,93 @@ namespace AgGateway.ADAPT.Visualizer
                             double k7th = j7th + range;
                             double l7th = max;
 
-                            foreach (System.Drawing.PointF f in screenPolygon)
+                            if (width <= 0 || height <= 0)
                             {
-                                double dbl = i < doubleValues.Count ? doubleValues[i] : 0d;  //Values will be in same order as points
-                                System.Drawing.Pen pen = DrawingUtil.B_Black;
+                                return;
+                            }
+
+                            if (_bitmap == null || _bitmap.Width < width || _bitmap.Height < height)
+                            {
+                                int maxWidth = _bitmap == null ? width : Math.Max(width, _bitmap.Width);
+                                int maxHeight = _bitmap == null ? height : Math.Max(height, _bitmap.Height);
+                                _bitmap?.Dispose();
+                                _bitmap = new Bitmap(maxWidth, maxHeight, PixelFormat.Format32bppArgb);
+                            }
+
+                            using (Graphics g = Graphics.FromImage(_bitmap))
+                            {
+                                g.Clear(Color.White);
+                            }
+
+                            BitmapData bitmapData = _bitmap.LockBits(new Rectangle(0, 0, width, height),
+                                ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+
+                            foreach (PointF f in screenPolygon)
+                            {
+                                double dbl = i < doubleValues.Count
+                                    ? doubleValues[i]
+                                    : 0d; //Values will be in same order as points
+                                Color color = Color.Black;
 
                                 if (dbl <= e7th)
                                 {
-                                    pen = DrawingUtil.E_Red;
+                                    color = DrawingUtil.E_Red.Color;
                                 }
                                 else if (dbl <= f7th)
                                 {
-                                    pen = DrawingUtil.F_DarkOrange;
+                                    color = DrawingUtil.F_DarkOrange.Color;
                                 }
                                 else if (dbl <= g7th)
                                 {
-                                    pen = DrawingUtil.G_Gold;
+                                    color = DrawingUtil.G_Gold.Color;
                                 }
                                 else if (dbl <= h7th)
                                 {
-                                    pen = DrawingUtil.H_YellowGreen;
+                                    color = DrawingUtil.H_YellowGreen.Color;
                                 }
                                 else if (dbl <= i7th)
                                 {
-                                    pen = DrawingUtil.I_LawnGreen;
+                                    color = DrawingUtil.I_LawnGreen.Color;
                                 }
                                 else if (dbl <= j7th)
                                 {
-                                    pen = DrawingUtil.J_LimeGreen;
+                                    color = DrawingUtil.J_LimeGreen.Color;
                                 }
                                 else if (dbl <= k7th)
                                 {
-                                    pen = DrawingUtil.K_ForestGreen;
+                                    color = DrawingUtil.K_ForestGreen.Color;
                                 }
                                 else if (dbl <= l7th)
                                 {
-                                    pen = DrawingUtil.L_DarkGreen;
+                                    color = DrawingUtil.L_DarkGreen.Color;
                                 }
 
-                                graphics.DrawEllipse(pen, new System.Drawing.RectangleF(f.X, f.Y, 2, 2));
+                                unsafe
+                                {
+                                    byte* bytes = (byte*) bitmapData.Scan0;
+                                    int cx = (int) f.X;
+                                    int cy = (int) f.Y;
+                                    for (int x = Math.Max(cx - 2, 0); x <= Math.Min(cx + 1, width - 1); x++)
+                                    {
+                                        for (int y = Math.Max(cy - 2, 0); y <= Math.Min(cy + 1, height - 1); y++)
+                                        {
+                                            byte* p = bytes + y * bitmapData.Stride + x * 4;
+                                            p[0] = color.B;
+                                            p[1] = color.G;
+                                            p[2] = color.R;
+                                            p[3] = color.A;
+                                        }
+                                    }
+                                }
+
                                 i++;
                             }
+
+                            _bitmap.UnlockBits(bitmapData);
+                            graphics.DrawImage(_bitmap, 0, 0);
                         }
+
                     }
                 }
             }

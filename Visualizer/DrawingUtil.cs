@@ -10,7 +10,8 @@ using System.Drawing.Drawing2D;
   *
   * Contributors:
   *    Tarak Reddy - initial implementation
-  *    Joseph Ross - Made Changes to Account for mapping multiple guidence patterns with the same context
+  *    Joseph Ross - Made Changes to Account for mapping multiple guidance patterns with the same context
+  *    Andrew Vardeman - Plugged GDI+ memory leaks due to un-disposed pens
   *******************************************************************************/
 
 using System.Linq;
@@ -39,48 +40,19 @@ namespace AgGateway.ADAPT.Visualizer
         public Graphics Graphics { get; private set; }
 
         //Default values
-        public static Pen B_Black //WorkingData is not numeric
-        {
-            get { return new Pen(Color.Black, 2); }
-        }
-        public static Pen C_DarkMagenta //Non-zero values
-        {
-            get { return new Pen(Color.DarkMagenta, 2); }
-        }
-        public static Pen E_Red //Zero values or minimum values
-        {
-            get { return new Pen(Color.Red, 2); }
-        }
+        public static Pen B_Black { get; } = new Pen(Color.Black, 2); //WorkingData is not numeric
+        public static Pen C_DarkMagenta { get; } = new Pen(Color.DarkMagenta, 2); //Non-zero values
+        public static Pen E_Red { get; } = new Pen(Color.Red, 2); //Zero values or minimum values
 
         //Range 7 levels
-        public static Pen F_DarkOrange
-        {
-            get { return new Pen(Color.DarkOrange, 2); }
-        }
-        public static Pen G_Gold
-        {
-            get { return new Pen(Color.Gold, 2); }
-        }
-        public static Pen H_YellowGreen
-        {
-            get { return new Pen(Color.YellowGreen, 2); }
-        }
-        public static Pen I_LawnGreen
-        {
-            get { return new Pen(Color.LawnGreen, 2); }
-        }
-        public static Pen J_LimeGreen
-        {
-            get { return new Pen(Color.LimeGreen, 2); }
-        }
-        public static Pen K_ForestGreen
-        {
-            get { return new Pen(Color.ForestGreen, 2); }
-        }
-        public static Pen L_DarkGreen
-        {
-            get { return new Pen(Color.DarkGreen, 2); }
-        }
+        public static Pen F_DarkOrange { get; } = new Pen(Color.DarkOrange, 2);
+        public static Pen G_Gold { get; } = new Pen(Color.Gold, 2);
+        public static Pen H_YellowGreen { get; } = new Pen(Color.YellowGreen, 2);
+        public static Pen I_LawnGreen { get; } = new Pen(Color.LawnGreen, 2);
+        public static Pen J_LimeGreen { get; } = new Pen(Color.LimeGreen, 2);
+        public static Pen K_ForestGreen { get; } = new Pen(Color.ForestGreen, 2);
+        public static Pen L_DarkGreen { get; } = new Pen(Color.DarkGreen, 2);
+
 
         public double GetDelta()
         {
