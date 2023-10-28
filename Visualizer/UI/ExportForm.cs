@@ -1,7 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+﻿/* Copyright (C) 2015-16 AgGateway and ADAPT Contributors
+  * Copyright (C) 2015-16 Deere and Company
+  * All rights reserved. This program and the accompanying materials
+  * are made available under the terms of the Eclipse Public License v1.0
+  * which accompanies this distribution, and is available at
+  * http://www.eclipse.org/legal/epl-v10.html <http://www.eclipse.org/legal/epl-v10.html> 
+  *
+  * Contributors:
+  *    ? - initial implementation
+  *    Andrew Vardeman - Added support for loading and saving properties
+  *******************************************************************************/
 using AgGateway.ADAPT.Visualizer.Properties;
 
 namespace AgGateway.ADAPT.Visualizer.UI
@@ -9,13 +16,16 @@ namespace AgGateway.ADAPT.Visualizer.UI
     public partial class ExportForm : Form
     {
         private readonly Model _model;
-        private bool _isDirty;  
+        private readonly string _propsFilter;
+        private bool _isDirty;
 
-        public ExportForm(Model model)
+        public ExportForm(Model model, string propsFilter)
         {
             InitializeComponent();
 
             _model = model;
+
+            _propsFilter = propsFilter;
 
             if (_model.AvailablePlugins().Any())
                 _loadedPluginsListBox.DataSource = _model.AvailablePlugins();
@@ -24,13 +34,14 @@ namespace AgGateway.ADAPT.Visualizer.UI
             foreach (var applicationDataModel in _model.ApplicationDataModels.OrderBy(x => x.Catalog.Description))
             {
                 cardProfileSelection.Items.Add(applicationDataModel.Catalog.Description);
-                if ((!string.IsNullOrEmpty(lastProfile)) && (applicationDataModel.Catalog.Description.Equals(lastProfile, StringComparison.CurrentCultureIgnoreCase))) {
+                if ((!string.IsNullOrEmpty(lastProfile)) && (applicationDataModel.Catalog.Description.Equals(lastProfile, StringComparison.CurrentCultureIgnoreCase)))
+                {
                     cardProfileSelection.SelectedIndex = cardProfileSelection.Items.Count - 1;
                 }
             }
             if ((cardProfileSelection.Items.Count > 0) && (cardProfileSelection.SelectedIndex < 0))
             {
-                cardProfileSelection.SelectedIndex = 0;               
+                cardProfileSelection.SelectedIndex = 0;
             }
         }
 
@@ -66,9 +77,9 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 }
             }
 
-            _model.Export(((KeyValuePair<string, string>)_loadedPluginsListBox.SelectedItem).Key, 
-                           _initializeStringTextBox.Text, 
-                           _exportPathTextBox.Text, 
+            _model.Export(((KeyValuePair<string, string>)_loadedPluginsListBox.SelectedItem).Key,
+                           _initializeStringTextBox.Text,
+                           _exportPathTextBox.Text,
                            cardProfileSelection.SelectedItem.ToString(),
                            properties);
 
@@ -89,7 +100,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _exportPathTextBox.Text = Settings.Default.ExportPath;
 
             _proprietaryDataGridView.LoadFromCollection(Settings.Default.ExportProperties);
-            
+
             if (Settings.Default.AutoLoadPlugins)
             {   // Issue a click
                 _loadPluginsButton_Click(null, null);
@@ -111,13 +122,47 @@ namespace AgGateway.ADAPT.Visualizer.UI
             Settings.Default.InitializeString = _initializeStringTextBox.Text;
             Settings.Default.ExportPlugin = _loadedPluginsListBox.Text;
             Settings.Default.ExportPath = _exportPathTextBox.Text;
-            Settings.Default.ExportProfile = cardProfileSelection.Text; 
+            Settings.Default.ExportProfile = cardProfileSelection.Text;
             Settings.Default.Save();
         }
 
         private void _proprietaryDataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             _isDirty = true;
+        }
+
+        private void _loadPropertiesButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = _propsFilter;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    _proprietaryDataGridView.LoadFromFile(ofd.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, $"Error loading properties: {ex.Message}");
+                }
+            }
+        }
+
+        private void _savePropertiesButton_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = _propsFilter;
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    _proprietaryDataGridView.PersistToFile(sfd.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, $"Error saving properties: {ex.Message}");
+                }
+            }
         }
     }
 }

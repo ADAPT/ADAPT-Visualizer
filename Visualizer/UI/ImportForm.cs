@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Forms;
+﻿/* Copyright (C) 2015-16 AgGateway and ADAPT Contributors
+  * Copyright (C) 2015-16 Deere and Company
+  * All rights reserved. This program and the accompanying materials
+  * are made available under the terms of the Eclipse Public License v1.0
+  * which accompanies this distribution, and is available at
+  * http://www.eclipse.org/legal/epl-v10.html <http://www.eclipse.org/legal/epl-v10.html> 
+  *
+  * Contributors:
+  *    ? - initial implementation
+  *    Andrew Vardeman - Added support for loading and saving properties
+  *******************************************************************************/
 using AgGateway.ADAPT.Visualizer.Properties;
-using System.Collections.Specialized;
-using System.Collections;
 
 namespace AgGateway.ADAPT.Visualizer.UI
 {
@@ -15,10 +20,12 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private readonly DataGridView _dataGridViewRawData;
         private bool _isDirty;
         private AutoCompleteStringCollection _importPathHistory;
+        private readonly string _propsFilter;
 
-        public ImportForm(Model model, TreeView treeView, DataGridView dataGridViewRawData)
+        public ImportForm(Model model, TreeView treeView, DataGridView dataGridViewRawData, string propsFilter)
         {
             InitializeComponent();
+            _propsFilter = propsFilter;
 
             _model = model;
             _treeView = treeView;
@@ -124,6 +131,40 @@ namespace AgGateway.ADAPT.Visualizer.UI
         private void _validateDataButton_Click(object sender, EventArgs e)
         {
             _model.ValidateDataOnCard(_importPathTextbox, _initializeStringTextBox.Text, this);
+        }
+
+        private void _loadPropertiesButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = _propsFilter;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    _proprietaryDataGridView.LoadFromFile(ofd.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, $"Error loading properties: {ex.Message}");
+                }
+            }
+        }
+
+        private void _savePropertiesButton_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = _propsFilter;
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    _proprietaryDataGridView.PersistToFile(sfd.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, $"Error saving properties: {ex.Message}");
+                }
+            }
         }
     }
 }
