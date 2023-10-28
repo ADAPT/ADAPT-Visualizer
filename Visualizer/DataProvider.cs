@@ -7,11 +7,10 @@
  *
  * Contributors:
  *    Tarak Reddy - initial implementation
+ *    Andrew Vardeman - don't crash when initialization fails
  *******************************************************************************/
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using AgGateway.ADAPT.ApplicationDataModel.ADM;
 using AgGateway.ADAPT.PluginManager;
 
@@ -55,13 +54,20 @@ namespace AgGateway.ADAPT.Visualizer
 			foreach (var availablePlugin in AvailablePlugins)
             {
                 var plugin = GetPlugin(availablePlugin.Key);
-                InitializePlugin(plugin, initializeString);
-
-                if (plugin.IsDataCardSupported(datacardPath))
+                try
                 {
-	                list.AddRange(plugin.Import(datacardPath, properties));
-				}
-			}
+                    InitializePlugin(plugin, initializeString);
+
+                    if (plugin.IsDataCardSupported(datacardPath))
+                    {
+                        list.AddRange(plugin.Import(datacardPath, properties));
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+            }
 			if (list.Any())
 			{
 				return list;

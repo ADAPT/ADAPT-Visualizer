@@ -11,9 +11,9 @@
   *******************************************************************************/
 
 using System.Drawing.Imaging;
-using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
-using AgGateway.ADAPT.ApplicationDataModel.Equipment;
 using AgGateway.ADAPT.ApplicationDataModel.ADM;
+using AgGateway.ADAPT.ApplicationDataModel.Equipment;
+using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
 using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
 
@@ -63,7 +63,12 @@ namespace AgGateway.ADAPT.Visualizer
                 List<double> doubleValues = null;
                 foreach (SpatialRecord record in _spatialRecords)
                 {
-                    Point point = record.Geometry as Point;
+                    Point? point = record.Geometry.FirstPoint();
+                    if (point is null)
+                    {
+                        continue;
+                    }
+
                     projectedPoints.Add(point.ToUtm());
 
                     if (_workingDataDictionary.ContainsKey(workingDataKey))
