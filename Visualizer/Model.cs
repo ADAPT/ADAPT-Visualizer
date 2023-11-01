@@ -100,7 +100,7 @@ namespace AgGateway.ADAPT.Visualizer
         {
             if (_dataProvider.PluginFactory == null)
             {
-                MessageBox.Show(@"Select a valid plugin path and load them before importing a datacard.");
+                MessageBox.Show(_treeView.FindForm(),@"Select a valid plugin path and load them before importing a datacard.");
                 pluginPathTextBox.Focus();
                 return false;
             }
@@ -116,7 +116,7 @@ namespace AgGateway.ADAPT.Visualizer
 
                 if (ApplicationDataModels == null || ApplicationDataModels.Count == 0 || plugin == null)
                 {
-                    MessageBox.Show(@"Could not export, either not a comptable plugin or no data model to export");
+                    MessageBox.Show(_treeView.FindForm(), @"Could not export, either not a comptable plugin or no data model to export");
                     return;
                 }
 
@@ -129,11 +129,18 @@ namespace AgGateway.ADAPT.Visualizer
                     var selectApplicationDataModel =
                         ApplicationDataModels.First(
                             x => x.Catalog.Description.ToLower().Equals(cardProfileSelectedText.ToLower()));
-                    DataProvider.Export(plugin, 
-                                        selectApplicationDataModel, 
-                                        initializeString,
-                                        GetExportDirectory(exportPath), 
-                                        properties);
+                    try
+                    {
+                        DataProvider.Export(plugin,
+                            selectApplicationDataModel,
+                            initializeString,
+                            GetExportDirectory(exportPath),
+                            properties);
+                    }
+                    catch (Exception ex)
+                    {
+                        _treeView.Invoke(() => MessageBox.Show(_treeView.FindForm(), ex.Message));
+                    }
 
                     CurrentState = State.StateIdle;
                     _updateStatusAction(CurrentState, "Done");
@@ -141,7 +148,7 @@ namespace AgGateway.ADAPT.Visualizer
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message);
+                MessageBox.Show(_treeView.FindForm(), exception.Message);
             }
         }
 
@@ -265,7 +272,7 @@ namespace AgGateway.ADAPT.Visualizer
                 ApplicationDataModels = _dataProvider.Import(datacardPath, initializeString, properties);
                 if (ApplicationDataModels == null || ApplicationDataModels.Count == 0)
                 {
-                    MessageBox.Show(@"Not supported data format.");
+                    MessageBox.Show(_treeView.FindForm(), @"Not supported data format.");
                     CurrentState = State.StateIdle;
                     _updateStatusAction(CurrentState, "Done");
                     return;
@@ -507,7 +514,7 @@ namespace AgGateway.ADAPT.Visualizer
         {
             if (textBox.Text == null || !Directory.Exists(textBox.Text))
             {
-                MessageBox.Show(String.Format(@"Select a valid {0} path.", text));
+                MessageBox.Show(_treeView.FindForm(),String.Format(@"Select a valid {0} path.", text));
                 textBox.Focus();
                 return false;
             }

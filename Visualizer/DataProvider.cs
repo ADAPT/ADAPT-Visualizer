@@ -11,6 +11,7 @@
  *******************************************************************************/
 
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using AgGateway.ADAPT.ApplicationDataModel.ADM;
 using AgGateway.ADAPT.PluginManager;
 
@@ -63,9 +64,10 @@ namespace AgGateway.ADAPT.Visualizer
                         list.AddRange(plugin.Import(datacardPath, properties));
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    // Likely due to an initialize string that is valid for one plugin but not another
+                    Debug.WriteLine(ex.ToString());
                 }
             }
 			if (list.Any())
@@ -104,11 +106,20 @@ namespace AgGateway.ADAPT.Visualizer
             foreach (var availablePlugin in AvailablePlugins)
             {
                 var plugin = GetPlugin(availablePlugin.Key);
-                InitializePlugin(plugin, initializeString);
 
-                if (plugin.IsDataCardSupported(datacardPath))
+                try
                 {
-                    return plugin.ValidateDataOnCard(datacardPath);
+                    InitializePlugin(plugin, initializeString);
+
+                    if (plugin.IsDataCardSupported(datacardPath))
+                    {
+                        return plugin.ValidateDataOnCard(datacardPath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Likely due to an initialize string that is valid for one plugin but not another
+                    Debug.WriteLine(ex.ToString());
                 }
             }
 
