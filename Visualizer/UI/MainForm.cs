@@ -39,6 +39,20 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private TreeNode? ProcessedNode => _tabPageSpatial.Tag as TreeNode;
 
+        private string PropsFilter
+        {
+            get
+            {
+                string extension = Settings.Default.PropertyFileExtension;
+                if (!extension.StartsWith("."))
+                {
+                    extension = "." + extension;
+                }
+
+                return $"Properties files (*{extension})|*{extension}|All files (*.*)|*.*";
+            }
+        }
+
         public MainForm()
         {
             InitializeComponent();
@@ -171,7 +185,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             if (OkToShowImportExport())
             {
-                ShowForm(new ImportForm(_model, _treeViewMetadata, _dataGridViewRawData));
+                ShowForm(new ImportForm(_model, _treeViewMetadata, _dataGridViewRawData, PropsFilter));
                 CheckIfBusy();
             }
         }
@@ -180,7 +194,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             if (OkToShowImportExport())
             {
-                ShowForm(new ExportForm(_model));
+                ShowForm(new ExportForm(_model, PropsFilter));
                 CheckIfBusy();
             }
         }

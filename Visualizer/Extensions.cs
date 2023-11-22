@@ -1,11 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/* Copyright (C) 2015-16 AgGateway and ADAPT Contributors
+  * Copyright (C) 2015-16 Deere and Company
+  * All rights reserved. This program and the accompanying materials
+  * are made available under the terms of the Eclipse Public License v1.0
+  * which accompanies this distribution, and is available at
+  * http://www.eclipse.org/legal/epl-v10.html <http://www.eclipse.org/legal/epl-v10.html> 
+  *
+  * Contributors:
+  *    ? - initial implementation
+  *    Andrew Vardeman - Added PersistToFile and LoadFromFile
+  *******************************************************************************/
 using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using AgGateway.ADAPT.Visualizer.UI;
 
 namespace AgGateway.ADAPT.Visualizer
 {
@@ -53,6 +58,40 @@ namespace AgGateway.ADAPT.Visualizer
                 }
             }
 
+            return dataGridView.Rows.Count;
+        }
+
+        public static int PersistToFile(this DataGridView dataGridView, string fileName)
+        {
+            PropertyFile pf = new PropertyFile();
+
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                string key = (string) row.Cells[0].Value;
+                if (!string.IsNullOrEmpty(key))
+                {
+                    string value = (string) row.Cells[1].Value;
+                    var property = new PropertyFile.Property { PropertyName = key, PropertyValue = value };
+                    pf.Properties.Add(property);
+                }
+            }
+
+            pf.Save(fileName);
+
+            return pf.Properties.Count;
+        }
+
+        public static int LoadFromFile(this DataGridView dataGridView, string fileName)
+        {
+            dataGridView.Rows.Clear();
+            PropertyFile? pf = PropertyFile.Load(fileName);
+            if (pf != null)
+            {
+                foreach (var p in pf.Properties)
+                {
+                    dataGridView.Rows.Add(p.PropertyName, p.PropertyValue);
+                }
+            }
             return dataGridView.Rows.Count;
         }
     }

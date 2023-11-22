@@ -18,29 +18,31 @@ namespace AgGateway.ADAPT.Visualizer.UI
         public SettingsForm()
         {
             InitializeComponent();
-            showLimitDataUICheckBox.Checked = Settings.Default.ShowLimitDataUI;
-            rememberWindowSettingsCheckBox.Checked = Settings.Default.RememberWindowSettings;
+            _showLimitDataUICheckBox.Checked = Settings.Default.ShowLimitDataUI;
+            _rememberWindowSettingsCheckBox.Checked = Settings.Default.RememberWindowSettings;
+            _propsFileExtensionTextBox.Text = Settings.Default.PropertyFileExtension;
         }
 
         private void SettingsForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (DialogResult == DialogResult.OK)
             {
-                bool showLimitData = showLimitDataUICheckBox.Checked;
+                bool showLimitData = _showLimitDataUICheckBox.Checked;
 
                 Settings.Default.ShowLimitDataUI = showLimitData;
                 if (!showLimitData)
                 {
                     Settings.Default.LimitData = false;
                 }
-                
-                Settings.Default.RememberWindowSettings = rememberWindowSettingsCheckBox.Checked;
+
+                Settings.Default.RememberWindowSettings = _rememberWindowSettingsCheckBox.Checked;
+                Settings.Default.PropertyFileExtension = _propsFileExtensionTextBox.Text;
             }
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        private void _okButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK; 
+            DialogResult = DialogResult.OK;
             Close();
         }
     }
