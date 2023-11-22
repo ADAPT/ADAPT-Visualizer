@@ -11,34 +11,31 @@
   *    Andrew Vardeman - added Limit Data option and some performance optimizations.
   *******************************************************************************/
 
-using System;
-using System.Drawing;
-using System.Windows.Forms;
+using System.Data;
 using AgGateway.ADAPT.ApplicationDataModel.FieldBoundaries;
 using AgGateway.ADAPT.ApplicationDataModel.Guidance;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
-using AgGateway.ADAPT.Visualizer.Properties;
 using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+using AgGateway.ADAPT.Visualizer.Properties;
 
 namespace AgGateway.ADAPT.Visualizer.UI
 {
     public partial class MainForm : Form
     {
+        private readonly object _mutex = new();
         private readonly Model _model;
         private readonly BoundaryProcessor _boundaryProcessor;
         private readonly GuidanceProcessor _guidanceProcessor;
         private readonly OperationDataProcessor _operationDataProcessor;
         private readonly SpatialRecordProcessor _spatialRecordProcessor;
         private readonly PrescriptionProcessor _prescriptionProcessor;
-        private Action<Model.State, string> _updateStatusAction;
-        private static BusyForm _busyForm;
+        private readonly BusyForm _busyForm = new();
 
         private string _findWhat;
         private bool _loaded;
         private ProcessDataRequest? _lastProcessDataRequest;
+        private DateTime _lastStatusTime = DateTime.Now;
+        private string _lastStatusLabel = string.Empty;
 
         private TreeNode? ProcessedNode => _tabPageSpatial.Tag as TreeNode;
 
@@ -46,8 +43,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             InitializeComponent();
 
-            _updateStatusAction = UpdateStatus;
-            _model = new Model(_updateStatusAction);
+            _model = new Model(UpdateStatus);
             _operationDataProcessor = new OperationDataProcessor();
             _boundaryProcessor = new BoundaryProcessor(_tabPageSpatial);
             _guidanceProcessor = new GuidanceProcessor(_tabPageSpatial);
@@ -71,14 +67,13 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 ResumeLayout();
             }
 
-            _busyForm = new BusyForm();
         }
 
         private void UpdateStatus(Model.State state, string s)
         {
             if (state == Model.State.StateIdle)
             {
-                _busyForm.Invoke(new Action(() =>
+                _busyForm.BeginInvoke(new Action(() =>
                 {
                     _busyForm.Hide();
                     _busyForm.UpdateLabel("Busy");
@@ -87,14 +82,22 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 return;
             }
 
-            if (_busyForm != null)
+            bool update = false;
+            lock (_mutex)
+            {
+                if (s != _lastStatusLabel && DateTime.Now - _lastStatusTime > TimeSpan.FromMilliseconds(100))
+                {
+                    _lastStatusLabel = s;
+                    _lastStatusTime = DateTime.Now;
+                    update = true;
+                }
+            }
+
+            if (update)
             {
                 if (_busyForm.InvokeRequired)
                 {
-                    _busyForm.Invoke(new Action(() =>
-                    {
-                        _busyForm.UpdateLabel(s);
-                    }));
+                    _busyForm.BeginInvoke(new Action(() => { _busyForm.UpdateLabel(s); }));
                 }
                 else
                 {
