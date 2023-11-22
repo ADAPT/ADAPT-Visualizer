@@ -7,11 +7,11 @@
  *
  * Contributors:
  *    Tarak Reddy - initial implementation
+ *    Andrew Vardeman - don't crash when initialization fails
  *******************************************************************************/
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Diagnostics;
 using AgGateway.ADAPT.ApplicationDataModel.ADM;
 using AgGateway.ADAPT.PluginManager;
 
@@ -55,13 +55,21 @@ namespace AgGateway.ADAPT.Visualizer
 			foreach (var availablePlugin in AvailablePlugins)
             {
                 var plugin = GetPlugin(availablePlugin.Key);
-                InitializePlugin(plugin, initializeString);
-
-                if (plugin.IsDataCardSupported(datacardPath))
+                try
                 {
-	                list.AddRange(plugin.Import(datacardPath, properties));
-				}
-			}
+                    InitializePlugin(plugin, initializeString);
+
+                    if (plugin.IsDataCardSupported(datacardPath))
+                    {
+                        list.AddRange(plugin.Import(datacardPath, properties));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Likely due to an initialize string that is valid for one plugin but not another
+                    Debug.WriteLine(ex.ToString());
+                }
+            }
 			if (list.Any())
 			{
 				return list;
@@ -98,11 +106,20 @@ namespace AgGateway.ADAPT.Visualizer
             foreach (var availablePlugin in AvailablePlugins)
             {
                 var plugin = GetPlugin(availablePlugin.Key);
-                InitializePlugin(plugin, initializeString);
 
-                if (plugin.IsDataCardSupported(datacardPath))
+                try
                 {
-                    return plugin.ValidateDataOnCard(datacardPath);
+                    InitializePlugin(plugin, initializeString);
+
+                    if (plugin.IsDataCardSupported(datacardPath))
+                    {
+                        return plugin.ValidateDataOnCard(datacardPath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Likely due to an initialize string that is valid for one plugin but not another
+                    Debug.WriteLine(ex.ToString());
                 }
             }
 

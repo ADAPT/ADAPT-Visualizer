@@ -9,12 +9,11 @@
  *    Tarak Reddy - initial implementation
  *******************************************************************************/
 
-using System;
-using System.Drawing;
+using AgGateway.ADAPT.ApplicationDataModel.Shapes;
 
 namespace AgGateway.ADAPT.Visualizer
 {
-   public static class PointExtension
+    public static class PointExtension
     {
         private const double ConstDeg2Rad = 0.0174532925;
         private const double A = 6378137;
@@ -62,6 +61,34 @@ namespace AgGateway.ADAPT.Visualizer
             var y = (point.Y - minY)/delta+25;
              
             return new PointF((float)x, (float)y);
+        }
+
+        public static ApplicationDataModel.Shapes.Point? FirstPoint(this ApplicationDataModel.Shapes.Shape geometry)
+        {
+            if (geometry is null)
+            {
+                return null;
+            }
+            switch (geometry.Type)
+            {
+                case ShapeTypeEnum.LineString:
+                    return ((LineString)geometry).Points[0];
+                case ShapeTypeEnum.LinearRing:
+                    return ((LinearRing)geometry).Points[0];
+                case ShapeTypeEnum.MultiLineString:
+                    return ((MultiLineString)geometry).LineStrings[0].Points[0];
+                case ShapeTypeEnum.MultiPoint:
+                    return ((MultiPoint)geometry).Points[0];
+                case ShapeTypeEnum.MultiPolygon:
+                    return ((MultiPolygon)geometry).Polygons[0].ExteriorRing.Points[0];
+                case ShapeTypeEnum.Point:
+                    return (ApplicationDataModel.Shapes.Point)geometry;
+                    break;
+                case ShapeTypeEnum.Polygon:
+                    return ((Polygon)geometry).ExteriorRing.Points[0];
+                default:
+                    return null;
+            }
         }
 
         private static double GetLongOrigin(double lon)

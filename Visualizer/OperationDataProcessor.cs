@@ -15,7 +15,6 @@ using System.Data;
 using System.Globalization;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
-using AgGateway.ADAPT.ApplicationDataModel.Shapes;
 
 using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
 
@@ -129,12 +128,12 @@ namespace AgGateway.ADAPT.Visualizer
             }
 
             dataRow["Index"] = index;
-            if (spatialRecord.Geometry != null)
+            if (spatialRecord.Geometry is Point ptData)
             {
                 //Fill in the other cells
-                dataRow["Latitude"] = (spatialRecord.Geometry as Point).Y.ToString(); //Y
-                dataRow["Longitude"] = (spatialRecord.Geometry as Point).X.ToString(); //X
-                dataRow["Elevation"] = (spatialRecord.Geometry as Point).Z.ToString(); //Z
+                dataRow["Latitude"] = ptData.Y.ToString(); //Y
+                dataRow["Longitude"] = ptData.X.ToString(); //X
+                dataRow["Elevation"] = ptData.Z.ToString(); //Z
             }
             if (spatialRecord.Timestamp != null)
             {
@@ -173,7 +172,7 @@ namespace AgGateway.ADAPT.Visualizer
                     var uoms = numericRepresentationValues.Select(x => x.Value.UnitOfMeasure).ToList();
                 
                     if (uoms.Any())
-                        _dataTable.Columns[GetColumnName(data, kvp.Key)].ColumnName += "-" + uoms.First().Code;
+                        _dataTable.Columns[GetColumnName(data, kvp.Key)].ColumnName += "-" + uoms.First()?.Code;
                 }
             }
         }
