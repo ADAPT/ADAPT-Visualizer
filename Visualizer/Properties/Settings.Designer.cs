@@ -301,5 +301,17 @@ namespace AgGateway.ADAPT.Visualizer.Properties {
                 this["MaxColumns"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".props")]
+        public string PropertyFileExtension {
+            get {
+                return ((string)(this["PropertyFileExtension"]));
+            }
+            set {
+                this["PropertyFileExtension"] = value;
+            }
+        }
     }
 }
