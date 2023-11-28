@@ -279,7 +279,7 @@ namespace AgGateway.ADAPT.Visualizer
                 ApplicationDataModels = _dataProvider.Import(datacardPath, initializeString, properties);
                 if (ApplicationDataModels == null || ApplicationDataModels.Count == 0)
                 {
-                    MessageBox.Show(TreeViewForm, @"Not supported data format.");
+                    ShowMessageBox(@"Not supported data format.");
                     CurrentState = State.StateIdle;
                     _updateStatusAction(CurrentState, "Done");
                     return;
