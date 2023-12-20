@@ -29,396 +29,528 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this._splitContainerViewer = new System.Windows.Forms.SplitContainer();
-            this._treeViewMetadata = new System.Windows.Forms.TreeView();
-            this._splitContainerMap = new System.Windows.Forms.SplitContainer();
-            this._tabControlViewer = new System.Windows.Forms.TabControl();
-            this._tabPageSpatial = new System.Windows.Forms.TabPage();
-            this._tabPageRawData = new System.Windows.Forms.TabPage();
-            this._buttonExportRawData = new System.Windows.Forms.Button();
-            this._dataGridViewRawData = new System.Windows.Forms.DataGridView();
-            this._dataGridViewTotals = new System.Windows.Forms.DataGridView();
-            this._dataGridColumnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this._dataGridColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this._labelTotals = new System.Windows.Forms.Label();
-            this._toolStrip = new System.Windows.Forms.ToolStrip();
-            this._importToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this._exportToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this._findToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this._aboutToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this._menuStrip = new System.Windows.Forms.MenuStrip();
-            this._dummyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._importMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._exportMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._findMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._findNextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.workingDataComboBox = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this._splitContainerViewer)).BeginInit();
-            this._splitContainerViewer.Panel1.SuspendLayout();
-            this._splitContainerViewer.Panel2.SuspendLayout();
-            this._splitContainerViewer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._splitContainerMap)).BeginInit();
-            this._splitContainerMap.Panel1.SuspendLayout();
-            this._splitContainerMap.Panel2.SuspendLayout();
-            this._splitContainerMap.SuspendLayout();
-            this._tabControlViewer.SuspendLayout();
-            this._tabPageRawData.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._dataGridViewRawData)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this._dataGridViewTotals)).BeginInit();
-            this._toolStrip.SuspendLayout();
-            this._menuStrip.SuspendLayout();
-            this.SuspendLayout();
+            _splitContainerViewer = new SplitContainer();
+            _treeViewMetadata = new TreeView();
+            _splitContainerMap = new SplitContainer();
+            _tabControlViewer = new TabControl();
+            _tabPageSpatial = new TabPage();
+            _tabPageRawData = new TabPage();
+            _tableLayoutPanelRawData = new TableLayoutPanel();
+            _dataGridViewRawData = new DataGridView();
+            _buttonExportRawData = new Button();
+            _limitDataPanel = new TableLayoutPanel();
+            _limitDataCheckBox = new CheckBox();
+            _maxRowsLabel = new Label();
+            _maxColumnsLabel = new Label();
+            _maxRowsNumericUpDown = new NumericUpDown();
+            _maxColumnsNumericUpDown = new NumericUpDown();
+            _dataGridViewTotals = new DataGridView();
+            _dataGridColumnDescription = new DataGridViewTextBoxColumn();
+            _dataGridColumnValue = new DataGridViewTextBoxColumn();
+            _labelTotals = new Label();
+            _toolStrip = new ToolStrip();
+            _importToolStripButton = new ToolStripButton();
+            _exportToolStripButton = new ToolStripButton();
+            _findToolStripButton = new ToolStripButton();
+            _settingsToolStripButton = new ToolStripButton();
+            _aboutToolStripButton = new ToolStripButton();
+            _menuStrip = new MenuStrip();
+            _dummyMenuItem = new ToolStripMenuItem();
+            _importMenuItem = new ToolStripMenuItem();
+            _exportMenuItem = new ToolStripMenuItem();
+            _findMenuItem = new ToolStripMenuItem();
+            _findNextMenuItem = new ToolStripMenuItem();
+            workingDataComboBox = new ComboBox();
+            ((System.ComponentModel.ISupportInitialize)_splitContainerViewer).BeginInit();
+            _splitContainerViewer.Panel1.SuspendLayout();
+            _splitContainerViewer.Panel2.SuspendLayout();
+            _splitContainerViewer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)_splitContainerMap).BeginInit();
+            _splitContainerMap.Panel1.SuspendLayout();
+            _splitContainerMap.Panel2.SuspendLayout();
+            _splitContainerMap.SuspendLayout();
+            _tabControlViewer.SuspendLayout();
+            _tabPageRawData.SuspendLayout();
+            _tableLayoutPanelRawData.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)_dataGridViewRawData).BeginInit();
+            _limitDataPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)_maxRowsNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)_maxColumnsNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)_dataGridViewTotals).BeginInit();
+            _toolStrip.SuspendLayout();
+            _menuStrip.SuspendLayout();
+            SuspendLayout();
             // 
             // _splitContainerViewer
             // 
-            this._splitContainerViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._splitContainerViewer.Location = new System.Drawing.Point(0, 194);
-            this._splitContainerViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._splitContainerViewer.Name = "_splitContainerViewer";
+            _splitContainerViewer.Dock = DockStyle.Fill;
+            _splitContainerViewer.Location = new Point(0, 79);
+            _splitContainerViewer.Margin = new Padding(4, 5, 4, 5);
+            _splitContainerViewer.Name = "_splitContainerViewer";
             // 
             // _splitContainerViewer.Panel1
             // 
-            this._splitContainerViewer.Panel1.Controls.Add(this._treeViewMetadata);
+            _splitContainerViewer.Panel1.Controls.Add(_treeViewMetadata);
             // 
             // _splitContainerViewer.Panel2
             // 
-            this._splitContainerViewer.Panel2.Controls.Add(this._splitContainerMap);
-            this._splitContainerViewer.Size = new System.Drawing.Size(1497, 948);
-            this._splitContainerViewer.SplitterDistance = 373;
-            this._splitContainerViewer.SplitterWidth = 6;
-            this._splitContainerViewer.TabIndex = 0;
+            _splitContainerViewer.Panel2.Controls.Add(_splitContainerMap);
+            _splitContainerViewer.Size = new Size(887, 682);
+            _splitContainerViewer.SplitterDistance = 221;
+            _splitContainerViewer.TabIndex = 1;
+            _splitContainerViewer.SplitterMoved += _splitContainerViewer_SplitterMoved;
             // 
             // _treeViewMetadata
             // 
-            this._treeViewMetadata.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._treeViewMetadata.Location = new System.Drawing.Point(0, 0);
-            this._treeViewMetadata.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._treeViewMetadata.Name = "_treeViewMetadata";
-            this._treeViewMetadata.Size = new System.Drawing.Size(373, 948);
-            this._treeViewMetadata.TabIndex = 0;
-            this._treeViewMetadata.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._treeViewMetadata_NodeMouseClick);
+            _treeViewMetadata.Dock = DockStyle.Fill;
+            _treeViewMetadata.Location = new Point(0, 0);
+            _treeViewMetadata.Margin = new Padding(4, 5, 4, 5);
+            _treeViewMetadata.Name = "_treeViewMetadata";
+            _treeViewMetadata.Size = new Size(221, 682);
+            _treeViewMetadata.TabIndex = 0;
+            _treeViewMetadata.NodeMouseClick += _treeViewMetadata_NodeMouseClick;
             // 
             // _splitContainerMap
             // 
-            this._splitContainerMap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._splitContainerMap.Location = new System.Drawing.Point(0, 0);
-            this._splitContainerMap.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._splitContainerMap.Name = "_splitContainerMap";
-            this._splitContainerMap.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            _splitContainerMap.Dock = DockStyle.Fill;
+            _splitContainerMap.Location = new Point(0, 0);
+            _splitContainerMap.Margin = new Padding(4, 5, 4, 5);
+            _splitContainerMap.Name = "_splitContainerMap";
+            _splitContainerMap.Orientation = Orientation.Horizontal;
             // 
             // _splitContainerMap.Panel1
             // 
-            this._splitContainerMap.Panel1.Controls.Add(this._tabControlViewer);
+            _splitContainerMap.Panel1.Controls.Add(_tabControlViewer);
+            _splitContainerMap.Panel1.Controls.Add(_limitDataPanel);
             // 
             // _splitContainerMap.Panel2
             // 
-            this._splitContainerMap.Panel2.Controls.Add(this._dataGridViewTotals);
-            this._splitContainerMap.Panel2.Controls.Add(this._labelTotals);
-            this._splitContainerMap.Size = new System.Drawing.Size(1118, 948);
-            this._splitContainerMap.SplitterDistance = 631;
-            this._splitContainerMap.SplitterWidth = 6;
-            this._splitContainerMap.TabIndex = 0;
+            _splitContainerMap.Panel2.Controls.Add(_dataGridViewTotals);
+            _splitContainerMap.Panel2.Controls.Add(_labelTotals);
+            _splitContainerMap.Size = new Size(662, 682);
+            _splitContainerMap.SplitterDistance = 564;
+            _splitContainerMap.SplitterWidth = 6;
+            _splitContainerMap.TabIndex = 0;
+            _splitContainerMap.SplitterMoved += _splitContainerMap_SplitterMoved;
             // 
             // _tabControlViewer
             // 
-            this._tabControlViewer.Controls.Add(this._tabPageSpatial);
-            this._tabControlViewer.Controls.Add(this._tabPageRawData);
-            this._tabControlViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._tabControlViewer.Location = new System.Drawing.Point(0, 0);
-            this._tabControlViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._tabControlViewer.Name = "_tabControlViewer";
-            this._tabControlViewer.SelectedIndex = 0;
-            this._tabControlViewer.Size = new System.Drawing.Size(1118, 631);
-            this._tabControlViewer.TabIndex = 0;
+            _tabControlViewer.Controls.Add(_tabPageSpatial);
+            _tabControlViewer.Controls.Add(_tabPageRawData);
+            _tabControlViewer.Dock = DockStyle.Fill;
+            _tabControlViewer.Location = new Point(0, 44);
+            _tabControlViewer.Margin = new Padding(4, 5, 4, 5);
+            _tabControlViewer.Name = "_tabControlViewer";
+            _tabControlViewer.SelectedIndex = 0;
+            _tabControlViewer.Size = new Size(662, 520);
+            _tabControlViewer.TabIndex = 1;
             // 
             // _tabPageSpatial
             // 
-            this._tabPageSpatial.Location = new System.Drawing.Point(4, 29);
-            this._tabPageSpatial.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._tabPageSpatial.Name = "_tabPageSpatial";
-            this._tabPageSpatial.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._tabPageSpatial.Size = new System.Drawing.Size(1110, 670);
-            this._tabPageSpatial.TabIndex = 0;
-            this._tabPageSpatial.Text = "Spatial Viewer";
-            this._tabPageSpatial.UseVisualStyleBackColor = true;
-            this._tabPageSpatial.Paint += new System.Windows.Forms.PaintEventHandler(this._tabPageSpatial_Paint);
+            _tabPageSpatial.Location = new Point(4, 29);
+            _tabPageSpatial.Margin = new Padding(4, 5, 4, 5);
+            _tabPageSpatial.Name = "_tabPageSpatial";
+            _tabPageSpatial.Padding = new Padding(4, 5, 4, 5);
+            _tabPageSpatial.Size = new Size(654, 487);
+            _tabPageSpatial.TabIndex = 0;
+            _tabPageSpatial.Text = "Spatial Viewer";
+            _tabPageSpatial.UseVisualStyleBackColor = true;
+            _tabPageSpatial.Paint += _tabPageSpatial_Paint;
             // 
             // _tabPageRawData
             // 
-            this._tabPageRawData.Controls.Add(this._buttonExportRawData);
-            this._tabPageRawData.Controls.Add(this._dataGridViewRawData);
-            this._tabPageRawData.Location = new System.Drawing.Point(4, 29);
-            this._tabPageRawData.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._tabPageRawData.Name = "_tabPageRawData";
-            this._tabPageRawData.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._tabPageRawData.Size = new System.Drawing.Size(1110, 598);
-            this._tabPageRawData.TabIndex = 1;
-            this._tabPageRawData.Text = "Raw data Viewer";
-            this._tabPageRawData.UseVisualStyleBackColor = true;
+            _tabPageRawData.Controls.Add(_tableLayoutPanelRawData);
+            _tabPageRawData.Location = new Point(4, 29);
+            _tabPageRawData.Margin = new Padding(4, 5, 4, 5);
+            _tabPageRawData.Name = "_tabPageRawData";
+            _tabPageRawData.Size = new Size(654, 487);
+            _tabPageRawData.TabIndex = 1;
+            _tabPageRawData.Text = "Raw data Viewer";
+            _tabPageRawData.UseVisualStyleBackColor = true;
             // 
-            // _buttonExportRawData
+            // _tableLayoutPanelRawData
             // 
-            this._buttonExportRawData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._buttonExportRawData.Location = new System.Drawing.Point(951, 528);
-            this._buttonExportRawData.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._buttonExportRawData.Name = "_buttonExportRawData";
-            this._buttonExportRawData.Size = new System.Drawing.Size(134, 35);
-            this._buttonExportRawData.TabIndex = 1;
-            this._buttonExportRawData.Text = "Export";
-            this._buttonExportRawData.UseVisualStyleBackColor = true;
-            this._buttonExportRawData.Click += new System.EventHandler(this._buttonExportRawData_Click);
+            _tableLayoutPanelRawData.ColumnCount = 1;
+            _tableLayoutPanelRawData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            _tableLayoutPanelRawData.Controls.Add(_dataGridViewRawData, 0, 0);
+            _tableLayoutPanelRawData.Controls.Add(_buttonExportRawData, 0, 1);
+            _tableLayoutPanelRawData.Dock = DockStyle.Fill;
+            _tableLayoutPanelRawData.Location = new Point(0, 0);
+            _tableLayoutPanelRawData.Margin = new Padding(0);
+            _tableLayoutPanelRawData.Name = "_tableLayoutPanelRawData";
+            _tableLayoutPanelRawData.RowCount = 2;
+            _tableLayoutPanelRawData.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            _tableLayoutPanelRawData.RowStyles.Add(new RowStyle());
+            _tableLayoutPanelRawData.Size = new Size(654, 487);
+            _tableLayoutPanelRawData.TabIndex = 2;
             // 
             // _dataGridViewRawData
             // 
-            this._dataGridViewRawData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._dataGridViewRawData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._dataGridViewRawData.Location = new System.Drawing.Point(4, 5);
-            this._dataGridViewRawData.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._dataGridViewRawData.Name = "_dataGridViewRawData";
-            this._dataGridViewRawData.RowHeadersWidth = 62;
-            this._dataGridViewRawData.Size = new System.Drawing.Size(1090, 517);
-            this._dataGridViewRawData.TabIndex = 0;
-            this._dataGridViewRawData.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this._dataGridViewRawData_ColumnAdded);
-            this._dataGridViewRawData.Paint += new System.Windows.Forms.PaintEventHandler(this._dataGridViewRawData_Paint);
+            _dataGridViewRawData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            _dataGridViewRawData.Dock = DockStyle.Fill;
+            _dataGridViewRawData.Location = new Point(4, 5);
+            _dataGridViewRawData.Margin = new Padding(4, 5, 4, 5);
+            _dataGridViewRawData.Name = "_dataGridViewRawData";
+            _dataGridViewRawData.RowHeadersWidth = 62;
+            _dataGridViewRawData.Size = new Size(646, 432);
+            _dataGridViewRawData.TabIndex = 0;
+            _dataGridViewRawData.ColumnAdded += _dataGridViewRawData_ColumnAdded;
+            _dataGridViewRawData.Paint += _dataGridViewRawData_Paint;
+            // 
+            // _buttonExportRawData
+            // 
+            _buttonExportRawData.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            _buttonExportRawData.Location = new Point(531, 447);
+            _buttonExportRawData.Margin = new Padding(4, 5, 4, 5);
+            _buttonExportRawData.Name = "_buttonExportRawData";
+            _buttonExportRawData.Size = new Size(119, 35);
+            _buttonExportRawData.TabIndex = 1;
+            _buttonExportRawData.Text = "Export";
+            _buttonExportRawData.UseVisualStyleBackColor = true;
+            _buttonExportRawData.Click += _buttonExportRawData_Click;
+            // 
+            // _limitDataPanel
+            // 
+            _limitDataPanel.AutoSize = true;
+            _limitDataPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            _limitDataPanel.ColumnCount = 6;
+            _limitDataPanel.ColumnStyles.Add(new ColumnStyle());
+            _limitDataPanel.ColumnStyles.Add(new ColumnStyle());
+            _limitDataPanel.ColumnStyles.Add(new ColumnStyle());
+            _limitDataPanel.ColumnStyles.Add(new ColumnStyle());
+            _limitDataPanel.ColumnStyles.Add(new ColumnStyle());
+            _limitDataPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            _limitDataPanel.Controls.Add(_limitDataCheckBox, 0, 0);
+            _limitDataPanel.Controls.Add(_maxRowsLabel, 1, 0);
+            _limitDataPanel.Controls.Add(_maxColumnsLabel, 3, 0);
+            _limitDataPanel.Controls.Add(_maxRowsNumericUpDown, 2, 0);
+            _limitDataPanel.Controls.Add(_maxColumnsNumericUpDown, 4, 0);
+            _limitDataPanel.Dock = DockStyle.Top;
+            _limitDataPanel.Location = new Point(0, 0);
+            _limitDataPanel.Margin = new Padding(3, 4, 3, 4);
+            _limitDataPanel.Name = "_limitDataPanel";
+            _limitDataPanel.Padding = new Padding(0, 6, 0, 6);
+            _limitDataPanel.RowCount = 1;
+            _limitDataPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            _limitDataPanel.Size = new Size(662, 44);
+            _limitDataPanel.TabIndex = 0;
+            _limitDataPanel.VisibleChanged += _limitDataPanel_VisibleChanged;
+            // 
+            // _limitDataCheckBox
+            // 
+            _limitDataCheckBox.Anchor = AnchorStyles.Left;
+            _limitDataCheckBox.AutoSize = true;
+            _limitDataCheckBox.Location = new Point(3, 10);
+            _limitDataCheckBox.Margin = new Padding(3, 4, 3, 4);
+            _limitDataCheckBox.Name = "_limitDataCheckBox";
+            _limitDataCheckBox.Size = new Size(100, 24);
+            _limitDataCheckBox.TabIndex = 0;
+            _limitDataCheckBox.Text = "Limit Data";
+            _limitDataCheckBox.UseVisualStyleBackColor = true;
+            _limitDataCheckBox.CheckedChanged += _limitDataCheckBox_CheckedChanged;
+            // 
+            // _maxRowsLabel
+            // 
+            _maxRowsLabel.Anchor = AnchorStyles.Left;
+            _maxRowsLabel.AutoSize = true;
+            _maxRowsLabel.Enabled = false;
+            _maxRowsLabel.Location = new Point(112, 12);
+            _maxRowsLabel.Margin = new Padding(6, 0, 3, 0);
+            _maxRowsLabel.Name = "_maxRowsLabel";
+            _maxRowsLabel.Size = new Size(76, 20);
+            _maxRowsLabel.TabIndex = 1;
+            _maxRowsLabel.Text = "Max Rows";
+            // 
+            // _maxColumnsLabel
+            // 
+            _maxColumnsLabel.Anchor = AnchorStyles.Left;
+            _maxColumnsLabel.AutoSize = true;
+            _maxColumnsLabel.Enabled = false;
+            _maxColumnsLabel.Location = new Point(260, 12);
+            _maxColumnsLabel.Margin = new Padding(6, 0, 3, 0);
+            _maxColumnsLabel.Name = "_maxColumnsLabel";
+            _maxColumnsLabel.Size = new Size(98, 20);
+            _maxColumnsLabel.TabIndex = 3;
+            _maxColumnsLabel.Text = "Max Columns";
+            // 
+            // _maxRowsNumericUpDown
+            // 
+            _maxRowsNumericUpDown.Anchor = AnchorStyles.Left;
+            _maxRowsNumericUpDown.Enabled = false;
+            _maxRowsNumericUpDown.Increment = new decimal(new int[] { 100, 0, 0, 0 });
+            _maxRowsNumericUpDown.Location = new Point(194, 8);
+            _maxRowsNumericUpDown.Margin = new Padding(3, 0, 3, 0);
+            _maxRowsNumericUpDown.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            _maxRowsNumericUpDown.Name = "_maxRowsNumericUpDown";
+            _maxRowsNumericUpDown.Size = new Size(57, 27);
+            _maxRowsNumericUpDown.TabIndex = 2;
+            _maxRowsNumericUpDown.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            _maxRowsNumericUpDown.ValueChanged += _maxRowsNumericUpDown_ValueChanged;
+            // 
+            // _maxColumnsNumericUpDown
+            // 
+            _maxColumnsNumericUpDown.Anchor = AnchorStyles.Left;
+            _maxColumnsNumericUpDown.Enabled = false;
+            _maxColumnsNumericUpDown.Increment = new decimal(new int[] { 10, 0, 0, 0 });
+            _maxColumnsNumericUpDown.Location = new Point(364, 8);
+            _maxColumnsNumericUpDown.Margin = new Padding(3, 0, 3, 0);
+            _maxColumnsNumericUpDown.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            _maxColumnsNumericUpDown.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            _maxColumnsNumericUpDown.Name = "_maxColumnsNumericUpDown";
+            _maxColumnsNumericUpDown.Size = new Size(57, 27);
+            _maxColumnsNumericUpDown.TabIndex = 4;
+            _maxColumnsNumericUpDown.Value = new decimal(new int[] { 50, 0, 0, 0 });
+            _maxColumnsNumericUpDown.ValueChanged += _maxColumnsNumericUpDown_ValueChanged;
             // 
             // _dataGridViewTotals
             // 
-            this._dataGridViewTotals.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._dataGridViewTotals.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this._dataGridColumnDescription,
-            this._dataGridColumnValue});
-            this._dataGridViewTotals.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dataGridViewTotals.Location = new System.Drawing.Point(0, 20);
-            this._dataGridViewTotals.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this._dataGridViewTotals.Name = "_dataGridViewTotals";
-            this._dataGridViewTotals.RowHeadersVisible = false;
-            this._dataGridViewTotals.RowHeadersWidth = 62;
-            this._dataGridViewTotals.Size = new System.Drawing.Size(1118, 291);
-            this._dataGridViewTotals.TabIndex = 1;
+            _dataGridViewTotals.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            _dataGridViewTotals.Columns.AddRange(new DataGridViewColumn[] { _dataGridColumnDescription, _dataGridColumnValue });
+            _dataGridViewTotals.Dock = DockStyle.Fill;
+            _dataGridViewTotals.Location = new Point(0, 20);
+            _dataGridViewTotals.Margin = new Padding(4, 5, 4, 5);
+            _dataGridViewTotals.Name = "_dataGridViewTotals";
+            _dataGridViewTotals.RowHeadersVisible = false;
+            _dataGridViewTotals.RowHeadersWidth = 62;
+            _dataGridViewTotals.Size = new Size(662, 92);
+            _dataGridViewTotals.TabIndex = 1;
             // 
             // _dataGridColumnDescription
             // 
-            this._dataGridColumnDescription.HeaderText = "Description";
-            this._dataGridColumnDescription.MinimumWidth = 8;
-            this._dataGridColumnDescription.Name = "_dataGridColumnDescription";
-            this._dataGridColumnDescription.Width = 250;
+            _dataGridColumnDescription.HeaderText = "Description";
+            _dataGridColumnDescription.MinimumWidth = 8;
+            _dataGridColumnDescription.Name = "_dataGridColumnDescription";
+            _dataGridColumnDescription.Width = 250;
             // 
             // _dataGridColumnValue
             // 
-            this._dataGridColumnValue.HeaderText = "Value";
-            this._dataGridColumnValue.MinimumWidth = 8;
-            this._dataGridColumnValue.Name = "_dataGridColumnValue";
-            this._dataGridColumnValue.Width = 150;
+            _dataGridColumnValue.HeaderText = "Value";
+            _dataGridColumnValue.MinimumWidth = 8;
+            _dataGridColumnValue.Name = "_dataGridColumnValue";
+            _dataGridColumnValue.Width = 150;
             // 
             // _labelTotals
             // 
-            this._labelTotals.AutoSize = true;
-            this._labelTotals.Dock = System.Windows.Forms.DockStyle.Top;
-            this._labelTotals.Location = new System.Drawing.Point(0, 0);
-            this._labelTotals.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this._labelTotals.Name = "_labelTotals";
-            this._labelTotals.Size = new System.Drawing.Size(52, 20);
-            this._labelTotals.TabIndex = 0;
-            this._labelTotals.Text = "Totals";
+            _labelTotals.AutoSize = true;
+            _labelTotals.Dock = DockStyle.Top;
+            _labelTotals.Location = new Point(0, 0);
+            _labelTotals.Name = "_labelTotals";
+            _labelTotals.Size = new Size(48, 20);
+            _labelTotals.TabIndex = 0;
+            _labelTotals.Text = "Totals";
             // 
             // _toolStrip
             // 
-            this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this._toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._importToolStripButton,
-            this._exportToolStripButton,
-            this._findToolStripButton,
-            this._aboutToolStripButton});
-            this._toolStrip.Location = new System.Drawing.Point(0, 0);
-            this._toolStrip.Name = "_toolStrip";
-            this._toolStrip.Size = new System.Drawing.Size(1497, 129);
-            this._toolStrip.TabIndex = 9;
-            this._toolStrip.Text = "toolStrip1";
+            _toolStrip.GripStyle = ToolStripGripStyle.Hidden;
+            _toolStrip.ImageScalingSize = new Size(32, 32);
+            _toolStrip.Items.AddRange(new ToolStripItem[] { _importToolStripButton, _exportToolStripButton, _findToolStripButton, _settingsToolStripButton, _aboutToolStripButton });
+            _toolStrip.Location = new Point(0, 0);
+            _toolStrip.Name = "_toolStrip";
+            _toolStrip.Size = new Size(887, 79);
+            _toolStrip.TabIndex = 2;
+            _toolStrip.Text = "toolStrip1";
             // 
             // _importToolStripButton
             // 
-            this._importToolStripButton.Image = global::AgGateway.ADAPT.Visualizer.Properties.Resources.Enter;
-            this._importToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this._importToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._importToolStripButton.Name = "_importToolStripButton";
-            this._importToolStripButton.Size = new System.Drawing.Size(71, 124);
-            this._importToolStripButton.Text = "Import";
-            this._importToolStripButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this._importToolStripButton.ToolTipText = "Import (Ctrl+I)";
-            this._importToolStripButton.Click += new System.EventHandler(this._importToolStripButton_Click);
+            _importToolStripButton.Image = Properties.Resources.Enter;
+            _importToolStripButton.ImageScaling = ToolStripItemImageScaling.None;
+            _importToolStripButton.ImageTransparentColor = Color.Magenta;
+            _importToolStripButton.Name = "_importToolStripButton";
+            _importToolStripButton.Size = new Size(58, 76);
+            _importToolStripButton.Text = "Import";
+            _importToolStripButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            _importToolStripButton.ToolTipText = "Import (Ctrl+I)";
+            _importToolStripButton.Click += _importToolStripButton_Click;
             // 
             // _exportToolStripButton
             // 
-            this._exportToolStripButton.Image = global::AgGateway.ADAPT.Visualizer.Properties.Resources.Exit;
-            this._exportToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this._exportToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._exportToolStripButton.Name = "_exportToolStripButton";
-            this._exportToolStripButton.Size = new System.Drawing.Size(67, 124);
-            this._exportToolStripButton.Text = "Export";
-            this._exportToolStripButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this._exportToolStripButton.ToolTipText = "Export (Ctrl+E)";
-            this._exportToolStripButton.Click += new System.EventHandler(this._exportToolStripButton_Click);
+            _exportToolStripButton.Image = Properties.Resources.Exit;
+            _exportToolStripButton.ImageScaling = ToolStripItemImageScaling.None;
+            _exportToolStripButton.ImageTransparentColor = Color.Magenta;
+            _exportToolStripButton.Name = "_exportToolStripButton";
+            _exportToolStripButton.Size = new Size(56, 76);
+            _exportToolStripButton.Text = "Export";
+            _exportToolStripButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            _exportToolStripButton.ToolTipText = "Export (Ctrl+E)";
+            _exportToolStripButton.Click += _exportToolStripButton_Click;
             // 
             // _findToolStripButton
             // 
-            this._findToolStripButton.Image = global::AgGateway.ADAPT.Visualizer.Properties.Resources.Search;
-            this._findToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this._findToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._findToolStripButton.Name = "_findToolStripButton";
-            this._findToolStripButton.Size = new System.Drawing.Size(56, 124);
-            this._findToolStripButton.Text = "Find";
-            this._findToolStripButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this._findToolStripButton.ToolTipText = "Find (Ctrl+F)";
-            this._findToolStripButton.Click += new System.EventHandler(this._findMenuItem_Click);
+            _findToolStripButton.Image = Properties.Resources.Search;
+            _findToolStripButton.ImageScaling = ToolStripItemImageScaling.None;
+            _findToolStripButton.ImageTransparentColor = Color.Magenta;
+            _findToolStripButton.Name = "_findToolStripButton";
+            _findToolStripButton.Size = new Size(56, 76);
+            _findToolStripButton.Text = "Find";
+            _findToolStripButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            _findToolStripButton.ToolTipText = "Find (Ctrl+F)";
+            _findToolStripButton.Click += _findMenuItem_Click;
+            // 
+            // _settingsToolStripButton
+            // 
+            _settingsToolStripButton.Image = Properties.Resources.Settings_3;
+            _settingsToolStripButton.ImageScaling = ToolStripItemImageScaling.None;
+            _settingsToolStripButton.ImageTransparentColor = Color.Magenta;
+            _settingsToolStripButton.Name = "_settingsToolStripButton";
+            _settingsToolStripButton.Size = new Size(66, 76);
+            _settingsToolStripButton.Text = "Settings";
+            _settingsToolStripButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            _settingsToolStripButton.Click += _settingsToolStripButton_Click;
             // 
             // _aboutToolStripButton
             // 
-            this._aboutToolStripButton.Image = global::AgGateway.ADAPT.Visualizer.Properties.Resources.About_52;
-            this._aboutToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this._aboutToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._aboutToolStripButton.Name = "_aboutToolStripButton";
-            this._aboutToolStripButton.Size = new System.Drawing.Size(66, 124);
-            this._aboutToolStripButton.Text = "About";
-            this._aboutToolStripButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this._aboutToolStripButton.Click += new System.EventHandler(this._aboutToolStripButton_Click);
+            _aboutToolStripButton.Image = Properties.Resources.About_52;
+            _aboutToolStripButton.ImageScaling = ToolStripItemImageScaling.None;
+            _aboutToolStripButton.ImageTransparentColor = Color.Magenta;
+            _aboutToolStripButton.Name = "_aboutToolStripButton";
+            _aboutToolStripButton.Size = new Size(56, 76);
+            _aboutToolStripButton.Text = "About";
+            _aboutToolStripButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            _aboutToolStripButton.Click += _aboutToolStripButton_Click;
             // 
             // _menuStrip
             // 
-            this._menuStrip.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
-            this._menuStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this._menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._dummyMenuItem});
-            this._menuStrip.Location = new System.Drawing.Point(0, 0);
-            this._menuStrip.Name = "_menuStrip";
-            this._menuStrip.Size = new System.Drawing.Size(1498, 37);
-            this._menuStrip.TabIndex = 10;
-            this._menuStrip.Text = "menuStrip1";
-            this._menuStrip.Visible = false;
+            _menuStrip.ImageScalingSize = new Size(32, 32);
+            _menuStrip.Items.AddRange(new ToolStripItem[] { _dummyMenuItem });
+            _menuStrip.Location = new Point(0, 0);
+            _menuStrip.Name = "_menuStrip";
+            _menuStrip.Padding = new Padding(4, 2, 0, 2);
+            _menuStrip.Size = new Size(831, 37);
+            _menuStrip.TabIndex = 10;
+            _menuStrip.Text = "menuStrip1";
+            _menuStrip.Visible = false;
             // 
             // _dummyMenuItem
             // 
-            this._dummyMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._importMenuItem,
-            this._exportMenuItem,
-            this._findMenuItem,
-            this._findNextMenuItem});
-            this._dummyMenuItem.Name = "_dummyMenuItem";
-            this._dummyMenuItem.Size = new System.Drawing.Size(238, 33);
-            this._dummyMenuItem.Text = "{dummy_for_shorcut_keys}";
+            _dummyMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _importMenuItem, _exportMenuItem, _findMenuItem, _findNextMenuItem });
+            _dummyMenuItem.Name = "_dummyMenuItem";
+            _dummyMenuItem.Size = new Size(196, 33);
+            _dummyMenuItem.Text = "{dummy_for_shorcut_keys}";
             // 
             // _importMenuItem
             // 
-            this._importMenuItem.Name = "_importMenuItem";
-            this._importMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this._importMenuItem.Size = new System.Drawing.Size(225, 34);
-            this._importMenuItem.Text = "import";
-            this._importMenuItem.Click += new System.EventHandler(this._importMenuItem_Click);
+            _importMenuItem.Name = "_importMenuItem";
+            _importMenuItem.ShortcutKeys = Keys.Control | Keys.I;
+            _importMenuItem.Size = new Size(185, 26);
+            _importMenuItem.Text = "import";
+            _importMenuItem.Click += _importMenuItem_Click;
             // 
             // _exportMenuItem
             // 
-            this._exportMenuItem.Name = "_exportMenuItem";
-            this._exportMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this._exportMenuItem.Size = new System.Drawing.Size(225, 34);
-            this._exportMenuItem.Text = "export";
-            this._exportMenuItem.Click += new System.EventHandler(this._exportMenuItem_Click);
+            _exportMenuItem.Name = "_exportMenuItem";
+            _exportMenuItem.ShortcutKeys = Keys.Control | Keys.E;
+            _exportMenuItem.Size = new Size(185, 26);
+            _exportMenuItem.Text = "export";
+            _exportMenuItem.Click += _exportMenuItem_Click;
             // 
             // _findMenuItem
             // 
-            this._findMenuItem.Name = "_findMenuItem";
-            this._findMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this._findMenuItem.Size = new System.Drawing.Size(225, 34);
-            this._findMenuItem.Text = "find";
-            this._findMenuItem.Click += new System.EventHandler(this._findMenuItem_Click);
+            _findMenuItem.Name = "_findMenuItem";
+            _findMenuItem.ShortcutKeys = Keys.Control | Keys.F;
+            _findMenuItem.Size = new Size(185, 26);
+            _findMenuItem.Text = "find";
+            _findMenuItem.Click += _findMenuItem_Click;
             // 
             // _findNextMenuItem
             // 
-            this._findNextMenuItem.Name = "_findNextMenuItem";
-            this._findNextMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this._findNextMenuItem.Size = new System.Drawing.Size(225, 34);
-            this._findNextMenuItem.Text = "find_next";
-            this._findNextMenuItem.Click += new System.EventHandler(this._findNextMenuItem_Click);
+            _findNextMenuItem.Name = "_findNextMenuItem";
+            _findNextMenuItem.ShortcutKeys = Keys.F3;
+            _findNextMenuItem.Size = new Size(185, 26);
+            _findNextMenuItem.Text = "find_next";
+            _findNextMenuItem.Click += _findNextMenuItem_Click;
             // 
             // workingDataComboBox
             // 
-            this.workingDataComboBox.FormattingEnabled = true;
-            this.workingDataComboBox.Location = new System.Drawing.Point(557, 17);
-            this.workingDataComboBox.Margin = new System.Windows.Forms.Padding(2);
-            this.workingDataComboBox.Name = "workingDataComboBox";
-            this.workingDataComboBox.Size = new System.Drawing.Size(533, 28);
-            this.workingDataComboBox.TabIndex = 0;
-            this.workingDataComboBox.Visible = false;
-            this.workingDataComboBox.SelectedIndexChanged += new System.EventHandler(this.workingDataComboBox_SelectedIndexChanged);
+            workingDataComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            workingDataComboBox.FormattingEnabled = true;
+            workingDataComboBox.Location = new Point(352, 17);
+            workingDataComboBox.Margin = new Padding(2);
+            workingDataComboBox.Name = "workingDataComboBox";
+            workingDataComboBox.Size = new Size(474, 28);
+            workingDataComboBox.TabIndex = 0;
+            workingDataComboBox.Visible = false;
+            workingDataComboBox.SelectedIndexChanged += workingDataComboBox_SelectedIndexChanged;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(998, 761);
-            this.Controls.Add(this.workingDataComboBox);
-            this.Controls.Add(this._splitContainerViewer);
-            this.Controls.Add(this._toolStrip);
-            this.Controls.Add(this._menuStrip);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this._menuStrip;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Name = "MainForm";
-            this.Text = "ADAPT - Visualizer";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
-            this.Load += new System.EventHandler(this.MainForm_Load);
-            this.LocationChanged += new System.EventHandler(this.MainForm_LocationChanged);
-            this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
-            this._splitContainerViewer.Panel1.ResumeLayout(false);
-            this._splitContainerViewer.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this._splitContainerViewer)).EndInit();
-            this._splitContainerViewer.ResumeLayout(false);
-            this._splitContainerMap.Panel1.ResumeLayout(false);
-            this._splitContainerMap.Panel2.ResumeLayout(false);
-            this._splitContainerMap.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._splitContainerMap)).EndInit();
-            this._splitContainerMap.ResumeLayout(false);
-            this._tabControlViewer.ResumeLayout(false);
-            this._tabPageRawData.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this._dataGridViewRawData)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this._dataGridViewTotals)).EndInit();
-            this._toolStrip.ResumeLayout(false);
-            this._toolStrip.PerformLayout();
-            this._menuStrip.ResumeLayout(false);
-            this._menuStrip.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(887, 761);
+            Controls.Add(workingDataComboBox);
+            Controls.Add(_splitContainerViewer);
+            Controls.Add(_toolStrip);
+            Controls.Add(_menuStrip);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            MainMenuStrip = _menuStrip;
+            Margin = new Padding(4, 5, 4, 5);
+            Name = "MainForm";
+            Text = "ADAPT - Visualizer";
+            WindowState = FormWindowState.Maximized;
+            FormClosed += MainForm_FormClosed;
+            Load += MainForm_Load;
+            LocationChanged += MainForm_LocationChanged;
+            SizeChanged += MainForm_SizeChanged;
+            _splitContainerViewer.Panel1.ResumeLayout(false);
+            _splitContainerViewer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)_splitContainerViewer).EndInit();
+            _splitContainerViewer.ResumeLayout(false);
+            _splitContainerMap.Panel1.ResumeLayout(false);
+            _splitContainerMap.Panel1.PerformLayout();
+            _splitContainerMap.Panel2.ResumeLayout(false);
+            _splitContainerMap.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)_splitContainerMap).EndInit();
+            _splitContainerMap.ResumeLayout(false);
+            _tabControlViewer.ResumeLayout(false);
+            _tabPageRawData.ResumeLayout(false);
+            _tableLayoutPanelRawData.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)_dataGridViewRawData).EndInit();
+            _limitDataPanel.ResumeLayout(false);
+            _limitDataPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)_maxRowsNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)_maxColumnsNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)_dataGridViewTotals).EndInit();
+            _toolStrip.ResumeLayout(false);
+            _toolStrip.PerformLayout();
+            _menuStrip.ResumeLayout(false);
+            _menuStrip.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer _splitContainerViewer;
-        private System.Windows.Forms.TreeView _treeViewMetadata;
-        private System.Windows.Forms.SplitContainer _splitContainerMap;
-        private System.Windows.Forms.TabControl _tabControlViewer;
-        private System.Windows.Forms.TabPage _tabPageSpatial;
-        private System.Windows.Forms.TabPage _tabPageRawData;
-        private System.Windows.Forms.Button _buttonExportRawData;
-        private System.Windows.Forms.DataGridView _dataGridViewRawData;
-        private System.Windows.Forms.DataGridView _dataGridViewTotals;
-        private System.Windows.Forms.DataGridViewTextBoxColumn _dataGridColumnDescription;
-        private System.Windows.Forms.DataGridViewTextBoxColumn _dataGridColumnValue;
-        private System.Windows.Forms.Label _labelTotals;
-        private System.Windows.Forms.ToolStripButton _importToolStripButton;
-        private System.Windows.Forms.ToolStrip _toolStrip;
-        private System.Windows.Forms.ToolStripButton _findToolStripButton;
-        private System.Windows.Forms.ToolStripButton _aboutToolStripButton;
-        private System.Windows.Forms.MenuStrip _menuStrip;
-        private System.Windows.Forms.ToolStripMenuItem _dummyMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem _importMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem _exportMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem _findMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem _findNextMenuItem;
-        private System.Windows.Forms.ToolStripButton _exportToolStripButton;
-        private System.Windows.Forms.ComboBox workingDataComboBox;
+        private SplitContainer _splitContainerViewer;
+        private TreeView _treeViewMetadata;
+        private SplitContainer _splitContainerMap;
+        private TabControl _tabControlViewer;
+        private TabPage _tabPageSpatial;
+        private TabPage _tabPageRawData;
+        private Button _buttonExportRawData;
+        private DataGridView _dataGridViewRawData;
+        private DataGridView _dataGridViewTotals;
+        private DataGridViewTextBoxColumn _dataGridColumnDescription;
+        private DataGridViewTextBoxColumn _dataGridColumnValue;
+        private Label _labelTotals;
+        private ToolStripButton _importToolStripButton;
+        private ToolStrip _toolStrip;
+        private ToolStripButton _findToolStripButton;
+        private ToolStripButton _aboutToolStripButton;
+        private MenuStrip _menuStrip;
+        private ToolStripMenuItem _dummyMenuItem;
+        private ToolStripMenuItem _importMenuItem;
+        private ToolStripMenuItem _exportMenuItem;
+        private ToolStripMenuItem _findMenuItem;
+        private ToolStripMenuItem _findNextMenuItem;
+        private ToolStripButton _exportToolStripButton;
+        private ComboBox workingDataComboBox;
+        private CheckBox _limitDataCheckBox;
+        private TableLayoutPanel _limitDataPanel;
+        private Label _maxRowsLabel;
+        private Label _maxColumnsLabel;
+        private NumericUpDown _maxRowsNumericUpDown;
+        private NumericUpDown _maxColumnsNumericUpDown;
+        private ToolStripButton _settingsToolStripButton;
+        private TableLayoutPanel _tableLayoutPanelRawData;
     }
 }
 

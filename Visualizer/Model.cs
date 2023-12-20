@@ -1,20 +1,28 @@
-using System;
+/* Copyright (C) 2015-16 AgGateway and ADAPT Contributors
+  * Copyright (C) 2015-16 Deere and Company
+  * All rights reserved. This program and the accompanying materials
+  * are made available under the terms of the Eclipse Public License v1.0
+  * which accompanies this distribution, and is available at
+  * http://www.eclipse.org/legal/epl-v10.html <http://www.eclipse.org/legal/epl-v10.html> 
+  *
+  * Contributors:
+  *    ??? - initial implementation
+  *    Andrew Vardeman - optimized import performance
+  *******************************************************************************/
+
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
+using System.Data;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using AgGateway.ADAPT.ApplicationDataModel.Common;
+using AgGateway.ADAPT.ApplicationDataModel.Documents;
 using AgGateway.ADAPT.ApplicationDataModel.Equipment;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
-using AgGateway.ADAPT.Visualizer.UI;
-using AgGateway.ADAPT.ApplicationDataModel.Common;
-using AgGateway.ADAPT.ApplicationDataModel.Representations;
-using AgGateway.ADAPT.ApplicationDataModel.Documents;
 using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
+using AgGateway.ADAPT.ApplicationDataModel.Representations;
+using AgGateway.ADAPT.Visualizer.UI;
 
 namespace AgGateway.ADAPT.Visualizer
 {
@@ -32,7 +40,7 @@ namespace AgGateway.ADAPT.Visualizer
 
         private readonly DataProvider _dataProvider;
         private int _admIndex;
-        private static TreeView _treeView;
+        private TreeView _treeView;
 
         private string _findWhat;
 #if detectCircularRecursions
@@ -52,12 +60,14 @@ namespace AgGateway.ADAPT.Visualizer
                 if (_currentState == State.StateImporting && value == State.StateIdle)
                     ShowMessageBox(@"Import Complete");
 
-                if(_currentState == State.StateExporting && value == State.StateIdle)
+                if (_currentState == State.StateExporting && value == State.StateIdle)
                     ShowMessageBox(@"Data exported successfully.");
 
                 _currentState = value;
             }
         }
+
+        private Form? TreeViewForm => _treeView?.FindForm();
 
         public Model(Action<State, string> updateStatusAction)
         {
@@ -99,7 +109,7 @@ namespace AgGateway.ADAPT.Visualizer
         {
             if (_dataProvider.PluginFactory == null)
             {
-                MessageBox.Show(@"Select a valid plugin path and load them before importing a datacard.");
+                MessageBox.Show(TreeViewForm,@"Select a valid plugin path and load them before importing a datacard.");
                 pluginPathTextBox.Focus();
                 return false;
             }
@@ -115,7 +125,7 @@ namespace AgGateway.ADAPT.Visualizer
 
                 if (ApplicationDataModels == null || ApplicationDataModels.Count == 0 || plugin == null)
                 {
-                    MessageBox.Show(@"Could not export, either not a comptable plugin or no data model to export");
+                    MessageBox.Show(TreeViewForm, @"Could not export, either not a comptable plugin or no data model to export");
                     return;
                 }
 
@@ -128,11 +138,19 @@ namespace AgGateway.ADAPT.Visualizer
                     var selectApplicationDataModel =
                         ApplicationDataModels.First(
                             x => x.Catalog.Description.ToLower().Equals(cardProfileSelectedText.ToLower()));
-                    DataProvider.Export(plugin, 
-                                        selectApplicationDataModel, 
-                                        initializeString,
-                                        GetExportDirectory(exportPath), 
-                                        properties);
+
+                    try
+                    {
+                        DataProvider.Export(plugin,
+                            selectApplicationDataModel,
+                            initializeString,
+                            GetExportDirectory(exportPath),
+                            properties);
+                    }
+                    catch (Exception ex)
+                    {
+                        _treeView.Invoke(() => MessageBox.Show(TreeViewForm, ex.Message));
+                    }
 
                     CurrentState = State.StateIdle;
                     _updateStatusAction(CurrentState, "Done");
@@ -140,7 +158,7 @@ namespace AgGateway.ADAPT.Visualizer
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message);
+                MessageBox.Show(TreeViewForm, exception.Message);
             }
         }
 
@@ -210,7 +228,7 @@ namespace AgGateway.ADAPT.Visualizer
                 TreeNode sibling = nodeA.NextNode;
                 if (sibling != null) result = _findWorker(sibling);
             }
-            if ((result == null) && (isStartNode)) 
+            if ((result == null) && (isStartNode))
             {
                 // If I'm the start node I also try to walk up the parent line towards the root.
                 TreeNode parent = nodeA.Parent;
@@ -234,21 +252,18 @@ namespace AgGateway.ADAPT.Visualizer
             if (IsValid(dataCardTextBox, "Datacard"))
             {
                 CurrentState = State.StateImporting;
-                treeView.BeginUpdate();
 
                 ImportDataCard(dataCardTextBox.Text, initializeString, treeView, properties);
-
-                treeView.EndUpdate();
 
                 return true;
             }
 
-            return false;  
+            return false;
         }
 
         private void ShowMessageBox(string message)
         {
-            _treeView.Invoke(new Action(() => MessageBox.Show(message)));
+            _treeView.Invoke(new Action(() => MessageBox.Show(_treeView.FindForm(), message)));
         }
 
         private void ImportDataCard(string datacardPath, string initializeString, TreeView treeView, ApplicationDataModel.ADM.Properties properties)
@@ -264,7 +279,7 @@ namespace AgGateway.ADAPT.Visualizer
                 ApplicationDataModels = _dataProvider.Import(datacardPath, initializeString, properties);
                 if (ApplicationDataModels == null || ApplicationDataModels.Count == 0)
                 {
-                    MessageBox.Show(@"Not supported data format.");
+                    ShowMessageBox(@"Not supported data format.");
                     CurrentState = State.StateIdle;
                     _updateStatusAction(CurrentState, "Done");
                     return;
@@ -275,21 +290,47 @@ namespace AgGateway.ADAPT.Visualizer
                 {
                     var applicationDataModel = ApplicationDataModels[_admIndex];
 
+                    // This line is apparently here for its data-loading side effects.
+                    // Note that, at least with the Deere GS4 plugin, multiple enumerations of these IEnumerables
+                    // can add duplicate data (with different IDs) to the ADM.
                     applicationDataModel.Documents?.LoggedData.SelectMany(x => x.OperationData.ToList()).ToList();
-                    
-                    var parentNode = (TreeNode)_treeView.Invoke(new Func<TreeNode>(() => treeView.Nodes.Add("ApplicationDataModel")));
+
+                    var parentNode = new TreeNode("ApplicationDataModel");
 
                     AddNode(applicationDataModel, parentNode);
+
+                    _updateStatusAction(CurrentState, "Building Tree");
+
+                    treeView.Invoke(() =>
+                    {
+                        treeView.Nodes.Add(parentNode);
+                    });
+
+                    int count = 0;
+                    CountNodes(parentNode, ref count);
+                    Debug.WriteLine($"Tree has {count} nodes");
                 }
-                
-                CurrentState = State.StateIdle;
-                _updateStatusAction(CurrentState, "Done");
 
                 //170629 MSp How long did it take to parse the data model into the tree?
                 DateTime stop = DateTime.Now;
                 TimeSpan duration = new TimeSpan(stop.Ticks - start.Ticks);
-                System.Diagnostics.Debug.Print($"ImportDataCard had a duration of {duration.Seconds:#,##0.0}.");
+                Debug.Print($"ImportDataCard had a duration of {duration.TotalSeconds:#,##0.0}.");
+
+                CurrentState = State.StateIdle;
+                _updateStatusAction(CurrentState, "Done");
             });
+        }
+
+        private void CountNodes(TreeNode node, ref int count)
+        {
+            count++;
+            if (node.Nodes != null)
+            {
+                foreach (TreeNode childNode in node.Nodes)
+                {
+                    CountNodes(childNode, ref count);
+                }
+            }
         }
 
         public void ValidateDataOnCard(TextBox dataCardTextBox, string initializeString, Form parent)
@@ -309,7 +350,7 @@ namespace AgGateway.ADAPT.Visualizer
         }
 
 
-        private void AddNode(object element, TreeNode parentNode)
+        private void AddNode(object? element, TreeNode parentNode)
         {
             if (element == null)
                 return;
@@ -322,9 +363,9 @@ namespace AgGateway.ADAPT.Visualizer
             }
         }
 
-       
 
-        private static Type CheckType(ref object element, Type type)
+
+        private static Type CheckType(ref object? element, Type type)
         {
             if (!type.Namespace.StartsWith("System") && !type.Namespace.StartsWith("AgGateway.ADAPT.ApplicationDataModel"))
             {
@@ -353,8 +394,7 @@ namespace AgGateway.ADAPT.Visualizer
 
             if (propertyType.IsPrimitive || propertyType == typeof(string) || propertyType == typeof(DateTime) || propertyType.IsEnum)
             {
-                _treeView.Invoke(new Action(() => parentNode.Nodes.Add(String.Format(@"{0}: {1}", propertyInfo.Name,
-                    propertyValue))));
+                parentNode.Nodes.Add($@"{propertyInfo.Name}: {propertyValue}");
             }
             else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
             {
@@ -362,8 +402,8 @@ namespace AgGateway.ADAPT.Visualizer
             }
             else
             {
-                string nodeText = _extendNodeText(propertyInfo.Name, propertyValue, propertyType);                      //170623 MSp 
-                var childNode = (TreeNode)_treeView.Invoke(new Func<TreeNode>(() => parentNode.Nodes.Add(nodeText)));   //170623 MSp 
+                string nodeText = _extendNodeText(propertyInfo.Name, propertyValue, propertyType); //170623 MSp 
+                var childNode = parentNode.Nodes.Add(nodeText); //170623 MSp 
                 //170623 MSp var childNode = (TreeNode)_treeView.Invoke(new Func<TreeNode>(() => parentNode.Nodes.Add(propertyInfo.Name)));
                 parentNode.Tag = new ObjectWithIndex(_admIndex, element);
 
@@ -377,7 +417,7 @@ namespace AgGateway.ADAPT.Visualizer
 
             _updateStatusAction(CurrentState, "Parsing: " + propertyInfo.Name);
 
-            var collectionNode = (TreeNode)_treeView.Invoke(new Func<TreeNode>(() => parentNode.Nodes.Add(propertyInfo.Name)));
+            var collectionNode = parentNode.Nodes.Add(propertyInfo.Name);
             var collection = (IEnumerable)propertyValue;
             if (collection != null)
             {
@@ -389,26 +429,26 @@ namespace AgGateway.ADAPT.Visualizer
                     string nodeText;            //190502 MSp
                     if (child == null)          //190502 MSp
                     {                           //190502 MSp
-                         nodeText = "#null#";   //190502 MSp
+                        nodeText = "#null#";   //190502 MSp
                     }                           //190502 MSp
                     else                        //190502 MSp
                     {                           //190502 MSp
                         var childObject = child;
                         var type = CheckType(ref childObject, childObject.GetType());
-                        nodeText = _extendNodeText(type.Name, childObject, type);    
+                        nodeText = _extendNodeText(type.Name, childObject, type);
                     }                           //190429 MS
                     var node = new TreeNode(nodeText)                                   //170623 MSp 
                     {
                         Tag = new ObjectWithIndex(_admIndex, child)
                     };
 
-                    _treeView.Invoke(new Action(() => collectionNode.Nodes.Add(node)));
+                    collectionNode.Nodes.Add(node);
                     AddNode(child, node);
                 }
             }
         }
 
-        private string _extendNodeText(string nodeText, object obj, Type type)
+        private string _extendNodeText(string nodeText, object? obj, Type type)
         {
             if (obj == null) return nodeText;
 
@@ -420,7 +460,7 @@ namespace AgGateway.ADAPT.Visualizer
             if (nodeText.IndexOf(':') >= 0) // Don't overwrite existing Values
             {
                 System.Diagnostics.Debug.Assert(false, "Does this ever happen?");
-                return nodeText;    
+                return nodeText;
             }
 
             // OK, Text property doesn't hold a value...
@@ -506,7 +546,7 @@ namespace AgGateway.ADAPT.Visualizer
         {
             if (textBox.Text == null || !Directory.Exists(textBox.Text))
             {
-                MessageBox.Show(String.Format(@"Select a valid {0} path.", text));
+                MessageBox.Show(TreeViewForm,String.Format(@"Select a valid {0} path.", text));
                 textBox.Focus();
                 return false;
             }
@@ -532,33 +572,35 @@ namespace AgGateway.ADAPT.Visualizer
             }
         }
 
-        public void WriteCsvFile(string fileName, DataGridView dataGridView)
+        public void WriteCsvFile(string fileName, DataTable dataTable)
         {
+            int columnCount = dataTable.Columns.Count;
             using (var streamWriter = new StreamWriter(fileName))
             {
                 var sb = new StringBuilder();
 
-                for (int i = 0; i < dataGridView.Columns.Count; i++)
+                for (int i = 0; i < columnCount; i++)
                 {
                     if (i != 0)
                         sb.Append(",");
 
-                    sb.Append(dataGridView.Columns[i].Name);
+                    sb.Append(dataTable.Columns[i].ColumnName);
                 }
+                streamWriter.WriteLine(sb.ToString());
 
-                foreach (DataGridViewRow row in dataGridView.Rows)
+                foreach (DataRow row in dataTable.Rows)
                 {
-                    sb.Append("\n");
-                    for (int j = 0; j < dataGridView.Columns.Count; j++)
+                    sb.Clear();
+                    for (int j = 0; j < columnCount; j++)
                     {
                         if (j != 0)
                             sb.Append(",");
 
-                        sb.Append(row.Cells[j].Value);
+                        sb.Append(row[j]);
                     }
+                    streamWriter.WriteLine(sb.ToString());
                 }
 
-                streamWriter.WriteLine(sb.ToString());
                 streamWriter.Flush();
                 streamWriter.Close();
             }

@@ -8,13 +8,13 @@
   * Contributors:
   *    Tarak Reddy - initial implementation
   *    Joseph Ross - added null checks for recntly added code
+  *    Andrew Vardeman - optimized for repeated calls with identical parameters
   *******************************************************************************/
 
 using System.Data;
 using System.Globalization;
 using AgGateway.ADAPT.ApplicationDataModel.LoggedData;
 using AgGateway.ADAPT.ApplicationDataModel.Representations;
-using AgGateway.ADAPT.ApplicationDataModel.Shapes;
 
 using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
 
@@ -22,85 +22,118 @@ namespace AgGateway.ADAPT.Visualizer
 {
     public class OperationDataProcessor
     {
-        private DataTable _dataTable;
+        private DataTable? _dataTable;
+        private int _firstDynamicColumnIndex;
+        private OperationData? _lastOperationData;
+        private List<SpatialRecord>? _lastSpatialRecords;
+        private bool _lastUseMaxCols;
+        private int _lastMaxCols;
 
-        public DataTable ProcessOperationData(OperationData operationData, List<SpatialRecord> spatialRecords)
+        public DataTable ProcessOperationData(OperationData operationData, List<SpatialRecord> spatialRecords, bool useMaxCols, int maxCols)
         {
-            _dataTable = new DataTable();
-
-            //Add extra columns
-            _dataTable.Columns.Add(new DataColumn("Index")); //Record Index within the OperationData
-            _dataTable.Columns.Add(new DataColumn("Latitude")); //Y
-            _dataTable.Columns.Add(new DataColumn("Longitude")); //X
-            _dataTable.Columns.Add(new DataColumn("Elevation")); //Z
-            _dataTable.Columns.Add(new DataColumn("TimeStamp")); //time
-
-            if (spatialRecords.Any())
+            if (operationData != _lastOperationData || spatialRecords != _lastSpatialRecords ||
+                useMaxCols != _lastUseMaxCols || maxCols != _lastMaxCols)
             {
-                var meters = GetWorkingData(operationData);
+                _lastOperationData = operationData;
+                _lastSpatialRecords = spatialRecords;
+                _lastUseMaxCols = useMaxCols;
+                _lastMaxCols = maxCols;
 
-                CreateColumns(meters);
+                _dataTable = new DataTable();
 
-                int index = 0;
-                foreach (var spatialRecord in spatialRecords)
+                //Add extra columns
+                _dataTable.Columns.Add(new DataColumn("Index")); //Record Index within the OperationData
+                _dataTable.Columns.Add(new DataColumn("Latitude")); //Y
+                _dataTable.Columns.Add(new DataColumn("Longitude")); //X
+                _dataTable.Columns.Add(new DataColumn("Elevation")); //Z
+                _dataTable.Columns.Add(new DataColumn("TimeStamp")); //time
+                _firstDynamicColumnIndex = _dataTable.Columns.Count;
+
+                if (spatialRecords.Any())
                 {
-                    CreateRow(meters, spatialRecord, index++);
-                }
+                    var meters = GetWorkingData(operationData, useMaxCols, maxCols);
 
-                UpdateColumnNamesWithUom(meters, spatialRecords);
+                    CreateColumns(meters);
+
+                    int index = 0;
+                    foreach (var spatialRecord in spatialRecords)
+                    {
+                        CreateRow(meters, spatialRecord, index++);
+                    }
+
+                    UpdateColumnNamesWithUom(meters, spatialRecords);
+                }
             }
 
-            return _dataTable;
+            return _dataTable!;
         }
 
-        private static Dictionary<int, IEnumerable<WorkingData>> GetWorkingData(OperationData operationData)
+        private static Dictionary<int, IEnumerable<WorkingData>> GetWorkingData(OperationData operationData, bool useMaxCols, int maxCols)
         {
+            int totalCount = 0;
             var workingDataWithDepth = new Dictionary<int, IEnumerable<WorkingData>>();
             for (var i = 0; i <= operationData.MaxDepth; i++)
             {
-                var meters = operationData.GetDeviceElementUses(i).SelectMany(x=> x.GetWorkingDatas()).Where(x => x.Representation != null);
+                IEnumerable<WorkingData> meters;
+                if (useMaxCols)
+                {
+                    if (totalCount >= maxCols)
+                    {
+                        break;
+                    }
 
+                    var list = operationData.GetDeviceElementUses(i).SelectMany(x => x.GetWorkingDatas())
+                        .Where(x => x.Representation != null).Take(maxCols - totalCount).ToList();
+                    totalCount += list.Count;
+                    meters = list;
+                }
+                else
+                {
+                    meters = operationData.GetDeviceElementUses(i).SelectMany(x => x.GetWorkingDatas())
+                        .Where(x => x.Representation != null);
+                }
                 workingDataWithDepth.Add(i, meters);
             }
+
             return workingDataWithDepth;
         }
 
         private void CreateColumns(Dictionary<int, IEnumerable<WorkingData>> workingDataDictionary)
         {
-            foreach (var kvp in workingDataDictionary)
+            for (int depth = 0; depth < workingDataDictionary.Count; depth++)
             {
-                foreach (var workingData in kvp.Value)
+                foreach (var workingData in workingDataDictionary[depth])
                 {
-                    _dataTable.Columns.Add(GetColumnName(workingData, kvp.Key));
+                    _dataTable!.Columns.Add(GetColumnName(workingData, depth));
                 }
             }
         }
 
         private void CreateRow(Dictionary<int, IEnumerable<WorkingData>> workingDataDictionary, SpatialRecord spatialRecord, int index)
         {
-            var dataRow = _dataTable.NewRow();
+            var dataRow = _dataTable!.NewRow();
 
-            foreach(var key in workingDataDictionary.Keys)
+            int colIdx = _firstDynamicColumnIndex;
+            for (int depth = 0; depth < workingDataDictionary.Count; depth++)
             {
-                var depth = key;
-
-                foreach (var workingData in workingDataDictionary[key])
+                foreach (var workingData in workingDataDictionary[depth])
                 {
                     if (workingData as NumericWorkingData != null)
-                        CreateNumericMeterCell(spatialRecord, workingData, depth, dataRow);
+                        CreateNumericMeterCell(spatialRecord, workingData, depth, dataRow, colIdx);
 
                     if (workingData as EnumeratedWorkingData != null)
-                        CreateEnumeratedMeterCell(spatialRecord, workingData, depth, dataRow);
+                        CreateEnumeratedMeterCell(spatialRecord, workingData, depth, dataRow, colIdx);
+                    colIdx++;
                 }
             }
 
             dataRow["Index"] = index;
-            if (spatialRecord.Geometry != null)
+            if (spatialRecord.Geometry is Point ptData)
             {
                 //Fill in the other cells
-                dataRow["Latitude"] = (spatialRecord.Geometry as Point).Y.ToString(); //Y
-                dataRow["Longitude"] = (spatialRecord.Geometry as Point).X.ToString(); //X
-                dataRow["Elevation"] = (spatialRecord.Geometry as Point).Z.ToString(); //Z
+                dataRow["Latitude"] = ptData.Y.ToString(); //Y
+                dataRow["Longitude"] = ptData.X.ToString(); //X
+                dataRow["Elevation"] = ptData.Z.ToString(); //Z
             }
             if (spatialRecord.Timestamp != null)
             {
@@ -110,21 +143,21 @@ namespace AgGateway.ADAPT.Visualizer
             _dataTable.Rows.Add(dataRow);
         }
 
-        private static void CreateEnumeratedMeterCell(SpatialRecord spatialRecord, WorkingData workingData, int depth, DataRow dataRow)
+        private static void CreateEnumeratedMeterCell(SpatialRecord spatialRecord, WorkingData workingData, int depth, DataRow dataRow, int columnIndex)
         {
             var enumeratedValue = spatialRecord.GetMeterValue(workingData) as EnumeratedValue;
 
-            dataRow[GetColumnName(workingData, depth)] = enumeratedValue != null && enumeratedValue.Value != null ? enumeratedValue.Value.Value : "";
+            dataRow[columnIndex] = enumeratedValue != null && enumeratedValue.Value != null ? enumeratedValue.Value.Value : "";
         }
 
-        private static void CreateNumericMeterCell(SpatialRecord spatialRecord, WorkingData workingData, int depth, DataRow dataRow)
+        private static void CreateNumericMeterCell(SpatialRecord spatialRecord, WorkingData workingData, int depth, DataRow dataRow, int columnIndex)
         {
             var numericRepresentationValue = spatialRecord.GetMeterValue(workingData) as NumericRepresentationValue;
             var value = numericRepresentationValue != null
                 ? numericRepresentationValue.Value.Value.ToString(CultureInfo.InvariantCulture)
                 : "";
 
-            dataRow[GetColumnName(workingData, depth)] = value;
+            dataRow[columnIndex] = value;
         }
 
         private void UpdateColumnNamesWithUom(Dictionary<int, IEnumerable<WorkingData>> workingDatas, List<SpatialRecord> spatialRecords)
@@ -139,7 +172,7 @@ namespace AgGateway.ADAPT.Visualizer
                     var uoms = numericRepresentationValues.Select(x => x.Value.UnitOfMeasure).ToList();
                 
                     if (uoms.Any())
-                        _dataTable.Columns[GetColumnName(data, kvp.Key)].ColumnName += "-" + uoms.First().Code;
+                        _dataTable.Columns[GetColumnName(data, kvp.Key)].ColumnName += "-" + uoms.First()?.Code;
                 }
             }
         }

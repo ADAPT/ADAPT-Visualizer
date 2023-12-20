@@ -28,309 +28,334 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this._preferencesGroupBox = new System.Windows.Forms.GroupBox();
-            this._proprietaryDataGridView = new System.Windows.Forms.DataGridView();
-            this._keyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this._valueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this._proprietaryLabel = new System.Windows.Forms.Label();
-            this._initializeStringTextBox = new System.Windows.Forms.TextBox();
-            this._loadedPluginsListBox = new System.Windows.Forms.ListBox();
-            this._pluginLocationLabel = new System.Windows.Forms.Label();
-            this._loadedPluginsLabel = new System.Windows.Forms.Label();
-            this._browsePluginLocationButton = new System.Windows.Forms.Button();
-            this._loadPluginsButton = new System.Windows.Forms.Button();
-            this._initializeStringLabel = new System.Windows.Forms.Label();
-            this._pluginPathTextBox = new System.Windows.Forms.TextBox();
-            this._importGroupBox = new System.Windows.Forms.GroupBox();
-            this._validateDataButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._importButton = new System.Windows.Forms.Button();
-            this._browseDatacardButton = new System.Windows.Forms.Button();
-            this._importPathTextbox = new System.Windows.Forms.TextBox();
-            this._dataCardLabel = new System.Windows.Forms.Label();
-            this._preferencesGroupBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._proprietaryDataGridView)).BeginInit();
-            this._importGroupBox.SuspendLayout();
-            this.SuspendLayout();
+            _preferencesGroupBox = new GroupBox();
+            _savePropertiesButton = new Button();
+            _loadPropertiesButton = new Button();
+            _proprietaryDataGridView = new DataGridView();
+            _keyColumn = new DataGridViewTextBoxColumn();
+            _valueColumn = new DataGridViewTextBoxColumn();
+            _proprietaryLabel = new Label();
+            _initializeStringTextBox = new TextBox();
+            _loadedPluginsListBox = new ListBox();
+            _pluginLocationLabel = new Label();
+            _loadedPluginsLabel = new Label();
+            _browsePluginLocationButton = new Button();
+            _loadPluginsButton = new Button();
+            _initializeStringLabel = new Label();
+            _pluginPathTextBox = new TextBox();
+            _importGroupBox = new GroupBox();
+            _validateDataButton = new Button();
+            _cancelButton = new Button();
+            _importButton = new Button();
+            _browseDatacardButton = new Button();
+            _importPathTextbox = new TextBox();
+            _dataCardLabel = new Label();
+            _preferencesGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)_proprietaryDataGridView).BeginInit();
+            _importGroupBox.SuspendLayout();
+            SuspendLayout();
             // 
             // _preferencesGroupBox
             // 
-            this._preferencesGroupBox.Controls.Add(this._proprietaryDataGridView);
-            this._preferencesGroupBox.Controls.Add(this._proprietaryLabel);
-            this._preferencesGroupBox.Controls.Add(this._initializeStringTextBox);
-            this._preferencesGroupBox.Controls.Add(this._loadedPluginsListBox);
-            this._preferencesGroupBox.Controls.Add(this._pluginLocationLabel);
-            this._preferencesGroupBox.Controls.Add(this._loadedPluginsLabel);
-            this._preferencesGroupBox.Controls.Add(this._browsePluginLocationButton);
-            this._preferencesGroupBox.Controls.Add(this._loadPluginsButton);
-            this._preferencesGroupBox.Controls.Add(this._initializeStringLabel);
-            this._preferencesGroupBox.Controls.Add(this._pluginPathTextBox);
-            this._preferencesGroupBox.Location = new System.Drawing.Point(24, 4);
-            this._preferencesGroupBox.Margin = new System.Windows.Forms.Padding(6);
-            this._preferencesGroupBox.Name = "_preferencesGroupBox";
-            this._preferencesGroupBox.Padding = new System.Windows.Forms.Padding(6);
-            this._preferencesGroupBox.Size = new System.Drawing.Size(920, 581);
-            this._preferencesGroupBox.TabIndex = 0;
-            this._preferencesGroupBox.TabStop = false;
-            this._preferencesGroupBox.Text = "Preferences";
+            _preferencesGroupBox.Controls.Add(_savePropertiesButton);
+            _preferencesGroupBox.Controls.Add(_loadPropertiesButton);
+            _preferencesGroupBox.Controls.Add(_proprietaryDataGridView);
+            _preferencesGroupBox.Controls.Add(_proprietaryLabel);
+            _preferencesGroupBox.Controls.Add(_initializeStringTextBox);
+            _preferencesGroupBox.Controls.Add(_loadedPluginsListBox);
+            _preferencesGroupBox.Controls.Add(_pluginLocationLabel);
+            _preferencesGroupBox.Controls.Add(_loadedPluginsLabel);
+            _preferencesGroupBox.Controls.Add(_browsePluginLocationButton);
+            _preferencesGroupBox.Controls.Add(_loadPluginsButton);
+            _preferencesGroupBox.Controls.Add(_initializeStringLabel);
+            _preferencesGroupBox.Controls.Add(_pluginPathTextBox);
+            _preferencesGroupBox.Location = new Point(16, 3);
+            _preferencesGroupBox.Margin = new Padding(4, 5, 4, 5);
+            _preferencesGroupBox.Name = "_preferencesGroupBox";
+            _preferencesGroupBox.Padding = new Padding(4, 5, 4, 5);
+            _preferencesGroupBox.Size = new Size(613, 465);
+            _preferencesGroupBox.TabIndex = 0;
+            _preferencesGroupBox.TabStop = false;
+            _preferencesGroupBox.Text = "Preferences";
+            // 
+            // _savePropertiesButton
+            // 
+            _savePropertiesButton.Location = new Point(13, 380);
+            _savePropertiesButton.Name = "_savePropertiesButton";
+            _savePropertiesButton.Size = new Size(92, 54);
+            _savePropertiesButton.TabIndex = 12;
+            _savePropertiesButton.Text = "Save to File";
+            _savePropertiesButton.UseVisualStyleBackColor = true;
+            _savePropertiesButton.Click += _savePropertiesButton_Click;
+            // 
+            // _loadPropertiesButton
+            // 
+            _loadPropertiesButton.Location = new Point(13, 320);
+            _loadPropertiesButton.Name = "_loadPropertiesButton";
+            _loadPropertiesButton.Size = new Size(92, 54);
+            _loadPropertiesButton.TabIndex = 11;
+            _loadPropertiesButton.Text = "Load from File";
+            _loadPropertiesButton.UseVisualStyleBackColor = true;
+            _loadPropertiesButton.Click += _loadPropertiesButton_Click;
             // 
             // _proprietaryDataGridView
             // 
-            this._proprietaryDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._proprietaryDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this._keyColumn,
-            this._valueColumn});
-            this._proprietaryDataGridView.Location = new System.Drawing.Point(180, 344);
-            this._proprietaryDataGridView.Margin = new System.Windows.Forms.Padding(6);
-            this._proprietaryDataGridView.Name = "_proprietaryDataGridView";
-            this._proprietaryDataGridView.Size = new System.Drawing.Size(720, 225);
-            this._proprietaryDataGridView.TabIndex = 10;
-            this._proprietaryDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this._proprietaryDataGridView_CellEndEdit);
+            _proprietaryDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            _proprietaryDataGridView.Columns.AddRange(new DataGridViewColumn[] { _keyColumn, _valueColumn });
+            _proprietaryDataGridView.Location = new Point(120, 275);
+            _proprietaryDataGridView.Margin = new Padding(4, 5, 4, 5);
+            _proprietaryDataGridView.Name = "_proprietaryDataGridView";
+            _proprietaryDataGridView.RowHeadersWidth = 51;
+            _proprietaryDataGridView.Size = new Size(480, 180);
+            _proprietaryDataGridView.TabIndex = 10;
+            _proprietaryDataGridView.CellEndEdit += _proprietaryDataGridView_CellEndEdit;
             // 
             // _keyColumn
             // 
-            this._keyColumn.HeaderText = "Key";
-            this._keyColumn.Name = "_keyColumn";
+            _keyColumn.HeaderText = "Key";
+            _keyColumn.MinimumWidth = 6;
+            _keyColumn.Name = "_keyColumn";
+            _keyColumn.Width = 125;
             // 
             // _valueColumn
             // 
-            this._valueColumn.HeaderText = "Value";
-            this._valueColumn.Name = "_valueColumn";
-            this._valueColumn.Width = 200;
+            _valueColumn.HeaderText = "Value";
+            _valueColumn.MinimumWidth = 6;
+            _valueColumn.Name = "_valueColumn";
+            _valueColumn.Width = 200;
             // 
             // _proprietaryLabel
             // 
-            this._proprietaryLabel.AutoEllipsis = true;
-            this._proprietaryLabel.Location = new System.Drawing.Point(20, 344);
-            this._proprietaryLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this._proprietaryLabel.Name = "_proprietaryLabel";
-            this._proprietaryLabel.Size = new System.Drawing.Size(116, 52);
-            this._proprietaryLabel.TabIndex = 8;
-            this._proprietaryLabel.Text = "Import Properties";
+            _proprietaryLabel.AutoEllipsis = true;
+            _proprietaryLabel.Location = new Point(13, 275);
+            _proprietaryLabel.Margin = new Padding(4, 0, 4, 0);
+            _proprietaryLabel.Name = "_proprietaryLabel";
+            _proprietaryLabel.Size = new Size(77, 42);
+            _proprietaryLabel.TabIndex = 8;
+            _proprietaryLabel.Text = "Import Properties";
             // 
             // _initializeStringTextBox
             // 
-            this._initializeStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._initializeStringTextBox.Location = new System.Drawing.Point(180, 37);
-            this._initializeStringTextBox.Margin = new System.Windows.Forms.Padding(6);
-            this._initializeStringTextBox.Name = "_initializeStringTextBox";
-            this._initializeStringTextBox.Size = new System.Drawing.Size(716, 31);
-            this._initializeStringTextBox.TabIndex = 1;
+            _initializeStringTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _initializeStringTextBox.Location = new Point(120, 30);
+            _initializeStringTextBox.Margin = new Padding(4, 5, 4, 5);
+            _initializeStringTextBox.Name = "_initializeStringTextBox";
+            _initializeStringTextBox.Size = new Size(479, 27);
+            _initializeStringTextBox.TabIndex = 1;
             // 
             // _loadedPluginsListBox
             // 
-            this._loadedPluginsListBox.FormattingEnabled = true;
-            this._loadedPluginsListBox.ItemHeight = 25;
-            this._loadedPluginsListBox.Location = new System.Drawing.Point(180, 198);
-            this._loadedPluginsListBox.Margin = new System.Windows.Forms.Padding(6);
-            this._loadedPluginsListBox.MultiColumn = true;
-            this._loadedPluginsListBox.Name = "_loadedPluginsListBox";
-            this._loadedPluginsListBox.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this._loadedPluginsListBox.Size = new System.Drawing.Size(716, 129);
-            this._loadedPluginsListBox.TabIndex = 7;
+            _loadedPluginsListBox.FormattingEnabled = true;
+            _loadedPluginsListBox.ItemHeight = 20;
+            _loadedPluginsListBox.Location = new Point(120, 158);
+            _loadedPluginsListBox.Margin = new Padding(4, 5, 4, 5);
+            _loadedPluginsListBox.MultiColumn = true;
+            _loadedPluginsListBox.Name = "_loadedPluginsListBox";
+            _loadedPluginsListBox.SelectionMode = SelectionMode.None;
+            _loadedPluginsListBox.Size = new Size(479, 104);
+            _loadedPluginsListBox.TabIndex = 7;
             // 
             // _pluginLocationLabel
             // 
-            this._pluginLocationLabel.AutoSize = true;
-            this._pluginLocationLabel.Location = new System.Drawing.Point(20, 125);
-            this._pluginLocationLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this._pluginLocationLabel.Name = "_pluginLocationLabel";
-            this._pluginLocationLabel.Size = new System.Drawing.Size(153, 25);
-            this._pluginLocationLabel.TabIndex = 2;
-            this._pluginLocationLabel.Text = "&Plugin location";
+            _pluginLocationLabel.AutoSize = true;
+            _pluginLocationLabel.Location = new Point(13, 100);
+            _pluginLocationLabel.Margin = new Padding(4, 0, 4, 0);
+            _pluginLocationLabel.Name = "_pluginLocationLabel";
+            _pluginLocationLabel.Size = new Size(108, 20);
+            _pluginLocationLabel.TabIndex = 2;
+            _pluginLocationLabel.Text = "&Plugin location";
             // 
             // _loadedPluginsLabel
             // 
-            this._loadedPluginsLabel.AutoSize = true;
-            this._loadedPluginsLabel.Location = new System.Drawing.Point(20, 198);
-            this._loadedPluginsLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this._loadedPluginsLabel.Name = "_loadedPluginsLabel";
-            this._loadedPluginsLabel.Size = new System.Drawing.Size(159, 25);
-            this._loadedPluginsLabel.TabIndex = 6;
-            this._loadedPluginsLabel.Text = "Loaded plugins";
+            _loadedPluginsLabel.AutoSize = true;
+            _loadedPluginsLabel.Location = new Point(13, 158);
+            _loadedPluginsLabel.Margin = new Padding(4, 0, 4, 0);
+            _loadedPluginsLabel.Name = "_loadedPluginsLabel";
+            _loadedPluginsLabel.Size = new Size(111, 20);
+            _loadedPluginsLabel.TabIndex = 6;
+            _loadedPluginsLabel.Text = "Loaded plugins";
             // 
             // _browsePluginLocationButton
             // 
-            this._browsePluginLocationButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._browsePluginLocationButton.Location = new System.Drawing.Point(614, 115);
-            this._browsePluginLocationButton.Margin = new System.Windows.Forms.Padding(6);
-            this._browsePluginLocationButton.Name = "_browsePluginLocationButton";
-            this._browsePluginLocationButton.Size = new System.Drawing.Size(108, 44);
-            this._browsePluginLocationButton.TabIndex = 4;
-            this._browsePluginLocationButton.Text = "&Browse";
-            this._browsePluginLocationButton.UseVisualStyleBackColor = true;
-            this._browsePluginLocationButton.Click += new System.EventHandler(this.BrowsePluginLocation_Click);
+            _browsePluginLocationButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _browsePluginLocationButton.Location = new Point(409, 92);
+            _browsePluginLocationButton.Margin = new Padding(4, 5, 4, 5);
+            _browsePluginLocationButton.Name = "_browsePluginLocationButton";
+            _browsePluginLocationButton.Size = new Size(72, 35);
+            _browsePluginLocationButton.TabIndex = 4;
+            _browsePluginLocationButton.Text = "&Browse";
+            _browsePluginLocationButton.UseVisualStyleBackColor = true;
+            _browsePluginLocationButton.Click += BrowsePluginLocation_Click;
             // 
             // _loadPluginsButton
             // 
-            this._loadPluginsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._loadPluginsButton.Location = new System.Drawing.Point(734, 115);
-            this._loadPluginsButton.Margin = new System.Windows.Forms.Padding(6);
-            this._loadPluginsButton.Name = "_loadPluginsButton";
-            this._loadPluginsButton.Size = new System.Drawing.Size(158, 44);
-            this._loadPluginsButton.TabIndex = 5;
-            this._loadPluginsButton.Text = "&Load Plugins";
-            this._loadPluginsButton.UseVisualStyleBackColor = true;
-            this._loadPluginsButton.Click += new System.EventHandler(this._loadPluginsButton_Click);
+            _loadPluginsButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _loadPluginsButton.Location = new Point(489, 92);
+            _loadPluginsButton.Margin = new Padding(4, 5, 4, 5);
+            _loadPluginsButton.Name = "_loadPluginsButton";
+            _loadPluginsButton.Size = new Size(105, 35);
+            _loadPluginsButton.TabIndex = 5;
+            _loadPluginsButton.Text = "&Load Plugins";
+            _loadPluginsButton.UseVisualStyleBackColor = true;
+            _loadPluginsButton.Click += _loadPluginsButton_Click;
             // 
             // _initializeStringLabel
             // 
-            this._initializeStringLabel.AccessibleDescription = "";
-            this._initializeStringLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._initializeStringLabel.AutoSize = true;
-            this._initializeStringLabel.Location = new System.Drawing.Point(20, 42);
-            this._initializeStringLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this._initializeStringLabel.Name = "_initializeStringLabel";
-            this._initializeStringLabel.Size = new System.Drawing.Size(152, 25);
-            this._initializeStringLabel.TabIndex = 0;
-            this._initializeStringLabel.Text = "&Initialize String";
+            _initializeStringLabel.AccessibleDescription = "";
+            _initializeStringLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _initializeStringLabel.AutoSize = true;
+            _initializeStringLabel.Location = new Point(13, 34);
+            _initializeStringLabel.Margin = new Padding(4, 0, 4, 0);
+            _initializeStringLabel.Name = "_initializeStringLabel";
+            _initializeStringLabel.Size = new Size(108, 20);
+            _initializeStringLabel.TabIndex = 0;
+            _initializeStringLabel.Text = "&Initialize String";
             // 
             // _pluginPathTextBox
             // 
-            this._pluginPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._pluginPathTextBox.Location = new System.Drawing.Point(180, 117);
-            this._pluginPathTextBox.Margin = new System.Windows.Forms.Padding(6);
-            this._pluginPathTextBox.Name = "_pluginPathTextBox";
-            this._pluginPathTextBox.Size = new System.Drawing.Size(418, 31);
-            this._pluginPathTextBox.TabIndex = 3;
+            _pluginPathTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            _pluginPathTextBox.Location = new Point(120, 94);
+            _pluginPathTextBox.Margin = new Padding(4, 5, 4, 5);
+            _pluginPathTextBox.Name = "_pluginPathTextBox";
+            _pluginPathTextBox.Size = new Size(280, 27);
+            _pluginPathTextBox.TabIndex = 3;
             // 
             // _importGroupBox
             // 
-            this._importGroupBox.Controls.Add(this._validateDataButton);
-            this._importGroupBox.Controls.Add(this._cancelButton);
-            this._importGroupBox.Controls.Add(this._importButton);
-            this._importGroupBox.Controls.Add(this._browseDatacardButton);
-            this._importGroupBox.Controls.Add(this._importPathTextbox);
-            this._importGroupBox.Controls.Add(this._dataCardLabel);
-            this._importGroupBox.Location = new System.Drawing.Point(24, 596);
-            this._importGroupBox.Margin = new System.Windows.Forms.Padding(6);
-            this._importGroupBox.Name = "_importGroupBox";
-            this._importGroupBox.Padding = new System.Windows.Forms.Padding(6);
-            this._importGroupBox.Size = new System.Drawing.Size(920, 199);
-            this._importGroupBox.TabIndex = 1;
-            this._importGroupBox.TabStop = false;
-            this._importGroupBox.Text = "Import";
+            _importGroupBox.Controls.Add(_validateDataButton);
+            _importGroupBox.Controls.Add(_cancelButton);
+            _importGroupBox.Controls.Add(_importButton);
+            _importGroupBox.Controls.Add(_browseDatacardButton);
+            _importGroupBox.Controls.Add(_importPathTextbox);
+            _importGroupBox.Controls.Add(_dataCardLabel);
+            _importGroupBox.Location = new Point(16, 477);
+            _importGroupBox.Margin = new Padding(4, 5, 4, 5);
+            _importGroupBox.Name = "_importGroupBox";
+            _importGroupBox.Padding = new Padding(4, 5, 4, 5);
+            _importGroupBox.Size = new Size(613, 159);
+            _importGroupBox.TabIndex = 1;
+            _importGroupBox.TabStop = false;
+            _importGroupBox.Text = "Import";
             // 
             // _validateDataButton
             // 
-            this._validateDataButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._validateDataButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._validateDataButton.Location = new System.Drawing.Point(664, 93);
-            this._validateDataButton.Margin = new System.Windows.Forms.Padding(6);
-            this._validateDataButton.Name = "_validateDataButton";
-            this._validateDataButton.Size = new System.Drawing.Size(228, 44);
-            this._validateDataButton.TabIndex = 5;
-            this._validateDataButton.Text = "Validate Data";
-            this._validateDataButton.UseVisualStyleBackColor = true;
-            this._validateDataButton.Click += new System.EventHandler(this._validateDataButton_Click);
+            _validateDataButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _validateDataButton.DialogResult = DialogResult.Cancel;
+            _validateDataButton.Location = new Point(443, 74);
+            _validateDataButton.Margin = new Padding(4, 5, 4, 5);
+            _validateDataButton.Name = "_validateDataButton";
+            _validateDataButton.Size = new Size(152, 35);
+            _validateDataButton.TabIndex = 5;
+            _validateDataButton.Text = "Validate Data";
+            _validateDataButton.UseVisualStyleBackColor = true;
+            _validateDataButton.Click += _validateDataButton_Click;
             // 
             // _cancelButton
             // 
-            this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancelButton.Location = new System.Drawing.Point(664, 149);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(6);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(108, 44);
-            this._cancelButton.TabIndex = 4;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+            _cancelButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _cancelButton.DialogResult = DialogResult.Cancel;
+            _cancelButton.Location = new Point(443, 119);
+            _cancelButton.Margin = new Padding(4, 5, 4, 5);
+            _cancelButton.Name = "_cancelButton";
+            _cancelButton.Size = new Size(72, 35);
+            _cancelButton.TabIndex = 4;
+            _cancelButton.Text = "Cancel";
+            _cancelButton.UseVisualStyleBackColor = true;
+            _cancelButton.Click += _cancelButton_Click;
             // 
             // _importButton
             // 
-            this._importButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._importButton.Location = new System.Drawing.Point(784, 149);
-            this._importButton.Margin = new System.Windows.Forms.Padding(6);
-            this._importButton.Name = "_importButton";
-            this._importButton.Size = new System.Drawing.Size(108, 44);
-            this._importButton.TabIndex = 3;
-            this._importButton.Text = "Import";
-            this._importButton.UseVisualStyleBackColor = true;
-            this._importButton.Click += new System.EventHandler(this._importButton_Click);
+            _importButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _importButton.Location = new Point(523, 119);
+            _importButton.Margin = new Padding(4, 5, 4, 5);
+            _importButton.Name = "_importButton";
+            _importButton.Size = new Size(72, 35);
+            _importButton.TabIndex = 3;
+            _importButton.Text = "Import";
+            _importButton.UseVisualStyleBackColor = true;
+            _importButton.Click += _importButton_Click;
             // 
             // _browseDatacardButton
             // 
-            this._browseDatacardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._browseDatacardButton.Location = new System.Drawing.Point(784, 37);
-            this._browseDatacardButton.Margin = new System.Windows.Forms.Padding(6);
-            this._browseDatacardButton.Name = "_browseDatacardButton";
-            this._browseDatacardButton.Size = new System.Drawing.Size(108, 44);
-            this._browseDatacardButton.TabIndex = 2;
-            this._browseDatacardButton.Text = "Br&owse";
-            this._browseDatacardButton.UseVisualStyleBackColor = true;
-            this._browseDatacardButton.Click += new System.EventHandler(this.BrowseDataCardPath_Click);
+            _browseDatacardButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _browseDatacardButton.Location = new Point(523, 30);
+            _browseDatacardButton.Margin = new Padding(4, 5, 4, 5);
+            _browseDatacardButton.Name = "_browseDatacardButton";
+            _browseDatacardButton.Size = new Size(72, 35);
+            _browseDatacardButton.TabIndex = 2;
+            _browseDatacardButton.Text = "Br&owse";
+            _browseDatacardButton.UseVisualStyleBackColor = true;
+            _browseDatacardButton.Click += BrowseDataCardPath_Click;
             // 
             // _importPathTextbox
             // 
-            this._importPathTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._importPathTextbox.Location = new System.Drawing.Point(180, 40);
-            this._importPathTextbox.Margin = new System.Windows.Forms.Padding(6);
-            this._importPathTextbox.Name = "_importPathTextbox";
-            this._importPathTextbox.Size = new System.Drawing.Size(588, 31);
-            this._importPathTextbox.TabIndex = 1;
+            _importPathTextbox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            _importPathTextbox.Location = new Point(120, 32);
+            _importPathTextbox.Margin = new Padding(4, 5, 4, 5);
+            _importPathTextbox.Name = "_importPathTextbox";
+            _importPathTextbox.Size = new Size(393, 27);
+            _importPathTextbox.TabIndex = 1;
             // 
             // _dataCardLabel
             // 
-            this._dataCardLabel.AutoSize = true;
-            this._dataCardLabel.Location = new System.Drawing.Point(20, 46);
-            this._dataCardLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this._dataCardLabel.Name = "_dataCardLabel";
-            this._dataCardLabel.Size = new System.Drawing.Size(149, 25);
-            this._dataCardLabel.TabIndex = 0;
-            this._dataCardLabel.Text = "&Datacard Path";
+            _dataCardLabel.AutoSize = true;
+            _dataCardLabel.Location = new Point(13, 37);
+            _dataCardLabel.Margin = new Padding(4, 0, 4, 0);
+            _dataCardLabel.Name = "_dataCardLabel";
+            _dataCardLabel.Size = new Size(102, 20);
+            _dataCardLabel.TabIndex = 0;
+            _dataCardLabel.Text = "&Datacard Path";
             // 
             // ImportForm
             // 
-            this.AcceptButton = this._importButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this._cancelButton;
-            this.ClientSize = new System.Drawing.Size(968, 820);
-            this.Controls.Add(this._importGroupBox);
-            this.Controls.Add(this._preferencesGroupBox);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(6);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "ImportForm";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Import";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ImportForm_FormClosing);
-            this.Load += new System.EventHandler(this.ImportForm_Load);
-            this._preferencesGroupBox.ResumeLayout(false);
-            this._preferencesGroupBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._proprietaryDataGridView)).EndInit();
-            this._importGroupBox.ResumeLayout(false);
-            this._importGroupBox.PerformLayout();
-            this.ResumeLayout(false);
-
+            AcceptButton = _importButton;
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = _cancelButton;
+            ClientSize = new Size(645, 656);
+            Controls.Add(_importGroupBox);
+            Controls.Add(_preferencesGroupBox);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(4, 5, 4, 5);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "ImportForm";
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Import";
+            FormClosing += ImportForm_FormClosing;
+            Load += ImportForm_Load;
+            _preferencesGroupBox.ResumeLayout(false);
+            _preferencesGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)_proprietaryDataGridView).EndInit();
+            _importGroupBox.ResumeLayout(false);
+            _importGroupBox.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox _preferencesGroupBox;
-        private System.Windows.Forms.Label _proprietaryLabel;
-        private System.Windows.Forms.TextBox _initializeStringTextBox;
-        private System.Windows.Forms.ListBox _loadedPluginsListBox;
-        private System.Windows.Forms.Label _pluginLocationLabel;
-        private System.Windows.Forms.Label _loadedPluginsLabel;
-        private System.Windows.Forms.Button _browsePluginLocationButton;
-        private System.Windows.Forms.Button _loadPluginsButton;
-        private System.Windows.Forms.Label _initializeStringLabel;
-        private System.Windows.Forms.TextBox _pluginPathTextBox;
-        private System.Windows.Forms.GroupBox _importGroupBox;
-        private System.Windows.Forms.Label _dataCardLabel;
-        private System.Windows.Forms.TextBox _importPathTextbox;
-        private System.Windows.Forms.Button _browseDatacardButton;
-        private System.Windows.Forms.Button _importButton;
-        private System.Windows.Forms.Button _cancelButton;
-        private System.Windows.Forms.DataGridView _proprietaryDataGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn _keyColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn _valueColumn;
-        private System.Windows.Forms.Button _validateDataButton;
+        private GroupBox _preferencesGroupBox;
+        private Label _proprietaryLabel;
+        private TextBox _initializeStringTextBox;
+        private ListBox _loadedPluginsListBox;
+        private Label _pluginLocationLabel;
+        private Label _loadedPluginsLabel;
+        private Button _browsePluginLocationButton;
+        private Button _loadPluginsButton;
+        private Label _initializeStringLabel;
+        private TextBox _pluginPathTextBox;
+        private GroupBox _importGroupBox;
+        private Label _dataCardLabel;
+        private TextBox _importPathTextbox;
+        private Button _browseDatacardButton;
+        private Button _importButton;
+        private Button _cancelButton;
+        private DataGridView _proprietaryDataGridView;
+        private DataGridViewTextBoxColumn _keyColumn;
+        private DataGridViewTextBoxColumn _valueColumn;
+        private Button _validateDataButton;
+        private Button _savePropertiesButton;
+        private Button _loadPropertiesButton;
     }
 }
