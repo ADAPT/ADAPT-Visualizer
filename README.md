@@ -12,9 +12,9 @@ The ADAPT Visualizer is a .Net WinForms Utility that includes the ability to imp
  3. A small "Import complete" dialog will pop up when complete.  Note, if you have changed focus during the import, you won't see this popup automatically.
  4. Data will display in a tree view at left, reflecting the ADAPT Framework ApplicationDataModel.   
  5. Where LoggedData exists with spatial detail, expand Documents, LoggedData and OperationData.  
-    a. Having selected an OperationData entity, the Visualizer will display a spatial view and grid view in the main window.
-    b. The "map" may be themed using the dropdown at the top of that tab.
-    c. The grid may be sorted by clicking the column headings.
+    - Having selected an OperationData entity, the Visualizer will display a spatial view and grid view in the main window.
+    - The "map" may be themed using the dropdown at the top of that tab.
+    - The grid may be sorted by clicking the column headings.
 
 ## Export
 1. Import Data.
