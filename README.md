@@ -2,7 +2,7 @@
 
 The ADAPT Visualizer is a .Net WinForms Utility that includes the ability to import data from a valid plugin, navigate a tree-view control, display grids and themed spatial data, and export the data.  Desired improvements in the form of pull requests welcome.
 
-##Import
+## Import
  1. Click the Import button.
  2. On the import dialog
     a. Browse to a directory that contains a valid ADAPT Plugin and click Load Plugins
@@ -16,7 +16,7 @@ The ADAPT Visualizer is a .Net WinForms Utility that includes the ability to imp
     b. The "map" may be themed using the dropdown at the top of that tab.
     c. The grid may be sorted by clicking the column headings.
 
-##Export
+## Export
 1. Import Data.
 2. Click the Export button.
 3. On the export dialog
