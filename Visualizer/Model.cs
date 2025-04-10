@@ -367,7 +367,7 @@ namespace AgGateway.ADAPT.Visualizer
 
         private static Type CheckType(ref object? element, Type type)
         {
-            if (!type.Namespace.StartsWith("System") && !type.Namespace.StartsWith("AgGateway.ADAPT.ApplicationDataModel"))
+            if (!type.Namespace.StartsWith("System") && !type.Namespace.StartsWith("AgGateway.ADAPT"))
             {
                 type = type.BaseType;
                 element = Convert.ChangeType(element, type);
