@@ -116,7 +116,6 @@
             _treeViewMetadata.Size = new Size(193, 497);
             _treeViewMetadata.TabIndex = 0;
             _treeViewMetadata.AfterSelect += _treeViewMetadata_AfterSelect;
-            _treeViewMetadata.NodeMouseClick += _treeViewMetadata_NodeMouseClick;
             // 
             // _splitContainerMap
             // 

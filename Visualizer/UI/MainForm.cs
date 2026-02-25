@@ -120,11 +120,6 @@ namespace AgGateway.ADAPT.Visualizer.UI
             }
         }
 
-        private void _treeViewMetadata_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-
-        }
-
         private void _aboutToolStripButton_Click(object sender, EventArgs e)
         {
             ShowForm(new AboutForm());
