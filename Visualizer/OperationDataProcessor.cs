@@ -154,7 +154,7 @@ namespace AgGateway.ADAPT.Visualizer
         {
             var numericRepresentationValue = spatialRecord.GetMeterValue(workingData) as NumericRepresentationValue;
             var value = numericRepresentationValue != null
-                ? numericRepresentationValue.Value.Value.ToString(CultureInfo.InvariantCulture)
+                ? numericRepresentationValue.Value?.Value.ToString(CultureInfo.InvariantCulture)
                 : "";
 
             dataRow[columnIndex] = value;
@@ -169,7 +169,7 @@ namespace AgGateway.ADAPT.Visualizer
                     var data1 = data;
                     var workingDataValues = spatialRecords.Select(x => x.GetMeterValue(data1) as NumericRepresentationValue);
                     var numericRepresentationValues = workingDataValues.Where(x => x != null);
-                    var uoms = numericRepresentationValues.Select(x => x.Value.UnitOfMeasure).ToList();
+                    var uoms = numericRepresentationValues.Select(x => x?.Value?.UnitOfMeasure).ToList();
                 
                     if (uoms.Any())
                         _dataTable.Columns[GetColumnName(data, kvp.Key)].ColumnName += "-" + uoms.First()?.Code;

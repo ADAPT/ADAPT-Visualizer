@@ -13,34 +13,30 @@
 using System.Linq;
 using System.Windows.Forms;
 using AgGateway.ADAPT.ApplicationDataModel.FieldBoundaries;
+using AgGateway.ADAPT.Visualizer.Mapping;
+using AgGateway.ADAPT.Visualizer.UI;
 
 namespace AgGateway.ADAPT.Visualizer
 {
     public class BoundaryProcessor
     {
-        private DrawingUtil _drawingUtil;
-        private readonly TabPage _spatialViewer;
+        private readonly MapControl _mapControl;
 
-        public BoundaryProcessor(TabPage spatialViewer)
+        public BoundaryProcessor(MapControl mapControl)
         {
-            _spatialViewer = spatialViewer;
+            _mapControl = mapControl;
         }
 
         public void ProcessBoundary(FieldBoundary fieldBoundary)
         {
-            using (var graphics = _spatialViewer.CreateGraphics())
-            {
-                _drawingUtil = new DrawingUtil(_spatialViewer.Width, _spatialViewer.Height, graphics);
-                foreach (var polygon in fieldBoundary.SpatialData.Polygons)
-                {
-                    var projectedPoints = polygon.ExteriorRing.Points.Select(point => point.ToUtm()).ToList();
-                    _drawingUtil.SetMinMax(projectedPoints);
-                    
-                    var screenPolygon = projectedPoints.Select(point => point.ToXy(_drawingUtil.MinX, _drawingUtil.MinY, _drawingUtil.GetDelta())).ToArray();
+            Map map = new Map();
 
-                    graphics.DrawPolygon(DrawingUtil.B_Black, screenPolygon);
-                }
+            foreach (var polygon in fieldBoundary.SpatialData.Polygons)
+            {
+                map.AddMapObject(new MapPolygon { Polygon = polygon.ToUtm(), Pen = DrawingUtil.B_Black });
             }
+
+            _mapControl.Map = map;
         }
     }
 }

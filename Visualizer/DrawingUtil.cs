@@ -14,100 +14,24 @@ using System.Drawing.Drawing2D;
   *    Andrew Vardeman - Plugged GDI+ memory leaks due to un-disposed pens
   *******************************************************************************/
 
-using System.Linq;
 using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
 
 namespace AgGateway.ADAPT.Visualizer
 {
     public class DrawingUtil
     {
-        private readonly int _width;
-        private readonly int _height;
-        private bool _isMaxMinSet;
-
-        public DrawingUtil(int width, int height, Graphics graphics)
-        {
-            _width = width;
-            _height = height;
-            Graphics = graphics;
-            _isMaxMinSet = false;
-        }
-
-        public double MinX { get; private set; }
-        public double MinY { get; private set; }
-        public double MaxX { get; private set; }
-        public double MaxY { get; private set; }
-        public Graphics Graphics { get; private set; }
-
         //Default values
-        public static Pen B_Black { get; } = new Pen(Color.Black, 2); //WorkingData is not numeric
-        public static Pen C_DarkMagenta { get; } = new Pen(Color.DarkMagenta, 2); //Non-zero values
-        public static Pen E_Red { get; } = new Pen(Color.Red, 2); //Zero values or minimum values
+        public static Pen B_Black { get; } = new Pen(Color.Black, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 }; //WorkingData is not numeric
+        public static Pen C_DarkMagenta { get; } = new Pen(Color.DarkMagenta, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 }; //Non-zero values
+        public static Pen E_Red { get; } = new Pen(Color.Red, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 }; //Zero values or minimum values
 
         //Range 7 levels
-        public static Pen F_DarkOrange { get; } = new Pen(Color.DarkOrange, 2);
-        public static Pen G_Gold { get; } = new Pen(Color.Gold, 2);
-        public static Pen H_YellowGreen { get; } = new Pen(Color.YellowGreen, 2);
-        public static Pen I_LawnGreen { get; } = new Pen(Color.LawnGreen, 2);
-        public static Pen J_LimeGreen { get; } = new Pen(Color.LimeGreen, 2);
-        public static Pen K_ForestGreen { get; } = new Pen(Color.ForestGreen, 2);
-        public static Pen L_DarkGreen { get; } = new Pen(Color.DarkGreen, 2);
-
-
-        public double GetDelta()
-        {
-            double delta;
-            var lonDistance = (MaxX - MinX);
-            var latDistance = (MaxY - MinY);
-
-            var width = _width - 50;
-            var height = _height - 50;
-
-            if (width < height && latDistance > lonDistance)
-            {
-                delta = lonDistance / width;
-            }
-            else
-            {
-                delta = latDistance / height;
-            }
-
-            return delta;
-        }
-
-        public void SetMinMax(IList<Point> points)
-        {
-            if (_isMaxMinSet)
-            {
-                var minX = points.Min(point => point.X);
-                MinX = minX < MinX ? minX : MinX;
-
-                var maxX = points.Max(point => point.X);
-                MaxX = maxX > MaxX ? maxX : MaxX;
-
-                var minY = points.Min(point => point.Y);
-                MinY = minY < MinY ? minY : MinY;
-
-                var maxY = points.Max(point => point.Y);
-                MaxY = maxY > MaxY ? maxY : MaxY;
-            }
-            else if (points.Any())
-            {
-                MinX = points.Min(point => point.X);
-                MaxX = points.Max(point => point.X);
-                MinY = points.Min(point => point.Y);
-                MaxY = points.Max(point => point.Y);
-                _isMaxMinSet = true;
-            }
-            SetOriginPoint(GetDelta());
-        }
-
-        public void SetOriginPoint(double delta)
-        {
-            if (delta == 0.0)
-                delta = 1.0;
-            var max = ((MaxY - MinY)/delta + 25) + 20;
-            Graphics.Transform = new Matrix(1, 0, 0, -1, 0, (float) max);
-        }
+        public static Pen F_DarkOrange { get; } = new Pen(Color.DarkOrange, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 };
+        public static Pen G_Gold { get; } = new Pen(Color.Gold, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 };
+        public static Pen H_YellowGreen { get; } = new Pen(Color.YellowGreen, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 };
+        public static Pen I_LawnGreen { get; } = new Pen(Color.LawnGreen, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 };
+        public static Pen J_LimeGreen { get; } = new Pen(Color.LimeGreen, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 };
+        public static Pen K_ForestGreen { get; } = new Pen(Color.ForestGreen, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 };
+        public static Pen L_DarkGreen { get; } = new Pen(Color.DarkGreen, 2) { LineJoin = LineJoin.MiterClipped, MiterLimit = 4 };
     }
 }
