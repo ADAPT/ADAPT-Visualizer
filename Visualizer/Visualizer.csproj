@@ -9,6 +9,7 @@
     <RootNamespace>AgGateway.ADAPT.Visualizer</RootNamespace>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
+    <ApplicationIcon>Resources\tractor.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
