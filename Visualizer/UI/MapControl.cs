@@ -184,24 +184,33 @@ namespace AgGateway.ADAPT.Visualizer.UI
             if (mapPolygon.Polygon != null)
             {
                 PointF[] exteriorPoints = ProjectToControl(mapPolygon.Polygon.ExteriorRing.Points);
-                if (mapPolygon.Brush != null)
+                if (exteriorPoints != null && exteriorPoints.Length > 2)
                 {
-                    graphics.FillPolygon(mapPolygon.Brush, exteriorPoints);
+                    if (mapPolygon.Brush != null)
+                    {
+                        graphics.FillPolygon(mapPolygon.Brush, exteriorPoints);
+                    }
+
+                    if (mapPolygon.Pen != null)
+                    {
+                        graphics.DrawPolygon(mapPolygon.Pen, exteriorPoints);
+                    }
                 }
-                if (mapPolygon.Pen != null)
-                {
-                    graphics.DrawPolygon(mapPolygon.Pen, exteriorPoints);
-                }
+
                 foreach (var interiorRing in mapPolygon.Polygon.InteriorRings)
                 {
                     PointF[] interiorPoints = ProjectToControl(interiorRing.Points);
-                    if (mapPolygon.Brush != null)
+                    if (interiorPoints != null && interiorPoints.Length > 2)
                     {
-                        graphics.FillPolygon(mapPolygon.Brush, interiorPoints);
-                    }
-                    if (mapPolygon.Pen != null)
-                    {
-                        graphics.DrawPolygon(mapPolygon.Pen, interiorPoints);
+                        if (mapPolygon.Brush != null)
+                        {
+                            graphics.FillPolygon(mapPolygon.Brush, interiorPoints);
+                        }
+
+                        if (mapPolygon.Pen != null)
+                        {
+                            graphics.DrawPolygon(mapPolygon.Pen, interiorPoints);
+                        }
                     }
                 }
             }
@@ -216,6 +225,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private PointF[] ProjectToControl(IEnumerable<ADAPT.ApplicationDataModel.Shapes.Point> points)
         {
+            if (points == null)
+            {
+                return Array.Empty<PointF>();
+            }
             return points.Select(p => ProjectToControl(p)).ToArray();
         }
 

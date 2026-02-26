@@ -221,22 +221,11 @@ namespace AgGateway.ADAPT.Visualizer
                     Pen = pen
                 });
             }
-            else if (points.Count == 2)
+            else
             {
                 map.AddMapObject(new MapLineString
                 {
                     LineString = new LineString { Points = points },
-                    Pen = pen
-                });
-            }
-            else
-            {
-                map.AddMapObject(new MapPolygon
-                {
-                    Polygon = new Polygon
-                    {
-                        ExteriorRing = new LinearRing { Points = points },
-                    },
                     Pen = pen
                 });
             }

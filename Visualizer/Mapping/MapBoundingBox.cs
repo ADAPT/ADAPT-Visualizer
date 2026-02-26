@@ -40,7 +40,7 @@ namespace AgGateway.ADAPT.Visualizer.Mapping
             {
                 Update(point);
             }
-            else if (shape is LineString lineString)
+            else if (shape is LineString lineString && lineString.Points != null)
             {
                 foreach (var p in lineString.Points)
                 {
@@ -49,16 +49,26 @@ namespace AgGateway.ADAPT.Visualizer.Mapping
             }
             else if (shape is Polygon polygon)
             {
-                foreach (var p in polygon.ExteriorRing.Points)
+                if (polygon.ExteriorRing?.Points != null)
                 {
-                    Update(p);
-                }
-
-                foreach (var interiorRing in polygon.InteriorRings)
-                {
-                    foreach (var p in interiorRing.Points)
+                    foreach (var p in polygon.ExteriorRing.Points)
                     {
                         Update(p);
+                    }
+                }
+
+                if (polygon.InteriorRings != null)
+                {
+                    foreach (var interiorRing in polygon.InteriorRings)
+                    {
+                        if (interiorRing?.Points == null)
+                        {
+                            continue;
+                        }
+                        foreach (var p in interiorRing.Points)
+                        {
+                            Update(p);
+                        }
                     }
                 }
             }

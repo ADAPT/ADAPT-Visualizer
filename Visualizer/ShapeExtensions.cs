@@ -107,19 +107,19 @@ namespace AgGateway.ADAPT.Visualizer
 
             return new Polygon
             {
-                ExteriorRing = polygon.ExteriorRing.ToUtm(),
-                InteriorRings = polygon.InteriorRings?.Select(ring => ring.ToUtm()).ToList()
+                ExteriorRing = polygon?.ExteriorRing?.ToUtm(),
+                InteriorRings = polygon?.InteriorRings?.Select(ring => ring.ToUtm()).ToList()
             };
         }
 
         public static LinearRing ToUtm(this LinearRing linearRing)
         {
-            return new LinearRing { Points = linearRing.Points.Select(p => p.ToUtm()).ToList() };
+            return new LinearRing { Points = linearRing?.Points?.Select(p => p.ToUtm()).ToList() };
         }
 
         public static LineString ToUtm(this LineString lineString)
         {
-            return new LineString { Points = lineString.Points.Select(p => p.ToUtm()).ToList() };
+            return new LineString { Points = lineString?.Points?.Select(p => p.ToUtm()).ToList() };
         }
     }
 }
