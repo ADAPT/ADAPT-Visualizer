@@ -240,7 +240,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
         private void MapControl_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && _lastMouseDownCenterPoint != null)
             {
                 float dx = e.X - _lastMouseDownPoint.X;
                 float dy = e.Y - _lastMouseDownPoint.Y;
