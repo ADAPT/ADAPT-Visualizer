@@ -183,7 +183,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         {
             if (mapPolygon.Polygon != null)
             {
-                PointF[] exteriorPoints = ProjectToControl(mapPolygon.Polygon.ExteriorRing.Points);
+                PointF[] exteriorPoints = ProjectToControl(mapPolygon.Polygon.ExteriorRing?.Points);
                 if (exteriorPoints != null && exteriorPoints.Length > 2)
                 {
                     if (mapPolygon.Brush != null)
@@ -197,19 +197,22 @@ namespace AgGateway.ADAPT.Visualizer.UI
                     }
                 }
 
-                foreach (var interiorRing in mapPolygon.Polygon.InteriorRings)
+                if (mapPolygon.Polygon.InteriorRings != null)
                 {
-                    PointF[] interiorPoints = ProjectToControl(interiorRing.Points);
-                    if (interiorPoints != null && interiorPoints.Length > 2)
+                    foreach (var interiorRing in mapPolygon.Polygon.InteriorRings)
                     {
-                        if (mapPolygon.Brush != null)
+                        PointF[] interiorPoints = ProjectToControl(interiorRing.Points);
+                        if (interiorPoints != null && interiorPoints.Length > 2)
                         {
-                            graphics.FillPolygon(mapPolygon.Brush, interiorPoints);
-                        }
+                            if (mapPolygon.Brush != null)
+                            {
+                                graphics.FillPolygon(mapPolygon.Brush, interiorPoints);
+                            }
 
-                        if (mapPolygon.Pen != null)
-                        {
-                            graphics.DrawPolygon(mapPolygon.Pen, interiorPoints);
+                            if (mapPolygon.Pen != null)
+                            {
+                                graphics.DrawPolygon(mapPolygon.Pen, interiorPoints);
+                            }
                         }
                     }
                 }
