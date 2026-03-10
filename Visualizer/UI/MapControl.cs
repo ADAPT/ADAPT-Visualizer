@@ -30,6 +30,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
             {
                 _map = value;
                 ZoomToMap();
+                Invalidate();
             }
         }
 

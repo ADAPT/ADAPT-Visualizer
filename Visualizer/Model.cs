@@ -58,7 +58,13 @@ namespace AgGateway.ADAPT.Visualizer
             set
             {
                 if (_currentState == State.StateImporting && value == State.StateIdle)
+                {
+                    _treeView.Invoke(() =>
+                    {
+                        _treeView.SelectedNode = _treeView.Nodes.Count > 0 ? _treeView.Nodes[0] : null;
+                    });
                     ShowMessageBox(@"Import Complete");
+                }
 
                 if (_currentState == State.StateExporting && value == State.StateIdle)
                     ShowMessageBox(@"Data exported successfully.");
