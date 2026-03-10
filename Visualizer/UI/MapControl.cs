@@ -36,6 +36,7 @@ namespace AgGateway.ADAPT.Visualizer.UI
         public MapControl()
         {
             InitializeComponent();
+            _centerPoint = new ADAPT.ApplicationDataModel.Shapes.Point { X = 0, Y = 0 };
             MouseWheel += MapControl_MouseWheel;
         }
 
