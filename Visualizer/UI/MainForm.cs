@@ -59,10 +59,10 @@ namespace AgGateway.ADAPT.Visualizer.UI
 
             _model = new Model(UpdateStatus);
             _operationDataProcessor = new OperationDataProcessor();
-            _boundaryProcessor = new BoundaryProcessor(_tabPageSpatial);
-            _guidanceProcessor = new GuidanceProcessor(_tabPageSpatial);
-            _spatialRecordProcessor = new SpatialRecordProcessor(_tabPageSpatial);
-            _prescriptionProcessor = new PrescriptionProcessor(_tabPageSpatial);
+            _boundaryProcessor = new BoundaryProcessor(_mapControl);
+            _guidanceProcessor = new GuidanceProcessor(_mapControl);
+            _spatialRecordProcessor = new SpatialRecordProcessor(_mapControl);
+            _prescriptionProcessor = new PrescriptionProcessor(_mapControl);
             _limitDataPanel.Visible = Settings.Default.ShowLimitDataUI;
             _limitDataCheckBox.Checked = Settings.Default.ShowLimitDataUI && Settings.Default.LimitData;
 
@@ -118,39 +118,6 @@ namespace AgGateway.ADAPT.Visualizer.UI
                     _busyForm.UpdateLabel(s);
                 }
             }
-        }
-
-        private void _treeViewMetadata_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            _tabControlViewer.SelectTab(_tabPageSpatial);
-            workingDataComboBox.Visible = false;
-
-            using (var g = _tabPageSpatial.CreateGraphics())
-            {
-                g.Clear(Color.White);
-            }
-            _dataGridViewRawData.DataSource = null;
-            _dataGridViewTotals.DataSource = null;
-
-            var treeNode = e.Node;
-
-            _tabPageSpatial.Tag = treeNode.Tag == null ? treeNode.Tag : treeNode;
-
-            if (treeNode.Tag == null)
-                return;
-
-            Cursor.Current = Cursors.WaitCursor;
-            ProcessData(GetProcessDataRequest(treeNode));
-            Cursor.Current = Cursors.Default;
-        }
-
-        private void _tabPageSpatial_Paint(object sender, PaintEventArgs e)
-        {
-            if (ProcessedNode == null)
-            {
-                return;
-            }
-            ProcessData(GetProcessDataRequest(ProcessedNode));
         }
 
         private void _aboutToolStripButton_Click(object sender, EventArgs e)
@@ -246,7 +213,6 @@ namespace AgGateway.ADAPT.Visualizer.UI
             var element = objectWithIndex.Element;
             ApplicationDataModel.ADM.ApplicationDataModel model = _model.ApplicationDataModels[objectWithIndex.ApplicationDataModelIndex];
 
-            workingDataComboBox.Visible = false;
             if (element is FieldBoundary)
             {
                 _boundaryProcessor.ProcessBoundary(element as FieldBoundary);
@@ -289,7 +255,6 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 _dataGridViewRawData.DataSource = _operationDataProcessor.ProcessOperationData(operation, spatialRecords, request.LimitData, request.MaxColumns);
 
                 _spatialRecordProcessor.ProcessOperation(operation, spatialRecords, model.Catalog);
-                workingDataComboBox.Visible = true;
                 if (matchesLastRequest)
                 {
                     DrawSpatialRecords();
@@ -545,11 +510,6 @@ namespace AgGateway.ADAPT.Visualizer.UI
             _spatialRecordProcessor.ThemeMap(workingDataKey);
         }
 
-        private void _dataGridViewRawData_Paint(object sender, PaintEventArgs e)
-        {
-            workingDataComboBox.Visible = false;
-        }
-
         private void _dataGridViewRawData_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
             e.Column.FillWeight = 1;
@@ -622,5 +582,59 @@ namespace AgGateway.ADAPT.Visualizer.UI
                 (int)_maxColumnsNumericUpDown.Value);
         }
 
+        private void _tabControlViewer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ShowHideWorkingDataComboBox(_treeViewMetadata.SelectedNode);
+        }
+
+        private void ShowHideWorkingDataComboBox(TreeNode? treeNode)
+        {
+            if (_tabControlViewer.SelectedTab == _tabPageSpatial)
+            {
+                var objectWithIndex = (ObjectWithIndex?)treeNode?.Tag;
+                workingDataComboBox.Visible = objectWithIndex?.Element is OperationData;
+            }
+            else
+            {
+                workingDataComboBox.Visible = false;
+            }
+        }
+
+        private void _treeViewMetadata_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            _mapControl.Map = null;
+            _tabControlViewer.SelectTab(_tabPageSpatial);
+
+            _dataGridViewRawData.DataSource = null;
+            _dataGridViewTotals.DataSource = null;
+
+            var treeNode = e.Node;
+
+            _tabPageSpatial.Tag = treeNode.Tag == null ? treeNode.Tag : treeNode;
+
+            ShowHideWorkingDataComboBox(_treeViewMetadata.SelectedNode);
+
+            if (treeNode.Tag == null)
+                return;
+
+            Cursor.Current = Cursors.WaitCursor;
+            ProcessData(GetProcessDataRequest(treeNode));
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void _zoomInToolStripButton_Click(object sender, EventArgs e)
+        {
+            _mapControl.ZoomIn();
+        }
+
+        private void _zoomOutToolStripButton_Click(object sender, EventArgs e)
+        {
+            _mapControl.ZoomOut();
+        }
+
+        private void _zoomWorldToolStripButton_Click(object sender, EventArgs e)
+        {
+            _mapControl.ZoomToMap();
+        }
     }
 }

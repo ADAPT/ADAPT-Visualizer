@@ -10,39 +10,33 @@
   *    Joseph Ross - Made changes to account for mapping multiple guidence patterns with the same context
   *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using AgGateway.ADAPT.ApplicationDataModel.Guidance;
 using AgGateway.ADAPT.ApplicationDataModel.Shapes;
+using AgGateway.ADAPT.Visualizer.Mapping;
+using AgGateway.ADAPT.Visualizer.UI;
 using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
 
 namespace AgGateway.ADAPT.Visualizer
 {
     public class GuidanceProcessor
     {
-        private DrawingUtil _drawingUtil;
-        private readonly TabPage _spatialViewer;
+        private Map? _map;
+        private readonly MapControl _mapControl;
+        
 
-        public GuidanceProcessor(TabPage spatialViewer)
+        public GuidanceProcessor(MapControl mapControl)
         {
-            _spatialViewer = spatialViewer;
+            _mapControl = mapControl;
         }
 
         public void ProcessGuidance(GuidanceGroup guidanceGroup, List<GuidancePattern> guidancePatterns)
         {
-            using (var graphics = _spatialViewer.CreateGraphics())
+            _map = new Map();
+            foreach (var id in guidanceGroup.GuidancePatternIds)
             {
-                _drawingUtil = new DrawingUtil(_spatialViewer.Width, _spatialViewer.Height, graphics);
-
-                SetMinMax(guidancePatterns, guidanceGroup.GuidancePatternIds);
-
-                foreach (var id in guidanceGroup.GuidancePatternIds)
-                {
-                    ProcessGuidancePattern(guidancePatterns, id);
-                }
+                ProcessGuidancePattern(guidancePatterns, id);
             }
+            _mapControl.Map = _map;
         }
 
         private void ProcessGuidancePattern(IEnumerable<GuidancePattern> guidancePatterns, int id)
@@ -53,52 +47,11 @@ namespace AgGateway.ADAPT.Visualizer
 
         public void ProccessGuidancePattern(GuidancePattern guidancePattern)
         {
-            using (var graphics = _spatialViewer.CreateGraphics())
-            {
-                _drawingUtil = new DrawingUtil(_spatialViewer.Width, _spatialViewer.Height, graphics);
+            _map = new Map();
 
-                SetMinMax(guidancePattern);
+            ProcessPattern(guidancePattern);
 
-                ProcessPattern(guidancePattern);
-            }
-        }
-
-        private void SetMinMax(IEnumerable<GuidancePattern> guidancePatterns, List<int> guidancePatternIds)
-        {
-            var matchingGuidancePatterns = guidancePatterns.Where(pattern => guidancePatternIds.Contains(pattern.Id.ReferenceId));
-
-            foreach (var guidancePattern in matchingGuidancePatterns)
-            {
-                SetMinMax(guidancePattern);
-            }
-        }
-
-        private void SetMinMax(GuidancePattern guidancePattern)
-        {
-            if (guidancePattern is APlus)
-            {
-                (guidancePattern as APlus).SetMinMax(_drawingUtil);
-            }
-            else if (guidancePattern is AbLine)
-            {
-                (guidancePattern as AbLine).SetMinMax(_drawingUtil);
-            }
-            else if (guidancePattern is AbCurve)
-            {
-                (guidancePattern as AbCurve).SetMinMax(_drawingUtil);
-            }
-            else if (guidancePattern is PivotGuidancePattern)
-            {
-                (guidancePattern as PivotGuidancePattern).SetMinMax(_drawingUtil);
-            }
-            else if (guidancePattern is MultiAbLine)
-            {
-                (guidancePattern as MultiAbLine).SetMinMax(_drawingUtil);
-            }
-            else if (guidancePattern is Spiral)
-            {
-                (guidancePattern as Spiral).SetMinMax(_drawingUtil);
-            }
+            _mapControl.Map = _map;
         }
 
         private void ProcessPattern(GuidancePattern guidancePattern)
@@ -131,27 +84,34 @@ namespace AgGateway.ADAPT.Visualizer
 
         private void ProcessSpiral(Spiral spiral)
         {
-            var delta = _drawingUtil.GetDelta();
-
-            ProcessLineString(spiral.Shape, delta);
+            ProcessLineString(spiral.Shape.ToUtm());
         }
 
         private void ProcessMultiAbLine(MultiAbLine multiAbLine)
         {
-            var delta = _drawingUtil.GetDelta();
-
             foreach (var abLine in multiAbLine.AbLines)
             {
-                ProcessPoints(new List<Point> {abLine.A, abLine.B}, delta);
+                ProcessPoints(new List<Point> {abLine.A.ToUtm(), abLine.B.ToUtm()});
             }
         }
 
         private void ProcessCenterPivot(PivotGuidancePattern centerPivot)
         {
-            var delta = _drawingUtil.GetDelta();
-            var center = centerPivot.Center.ToUtm().ToXy(_drawingUtil.MinX, _drawingUtil.MinY, delta);
+            var center = centerPivot.Center.ToUtm();
             var radius = GetRadius(centerPivot);
-            _drawingUtil.Graphics.DrawEllipse(DrawingUtil.B_Black, center.X - radius, center.Y - radius, radius + radius, radius + radius);
+            var points = new List<Point>();
+            for (int i = 0; i < 36; i++)
+            {
+                double angle = Math.PI * i / 18;
+                double x = center.X + radius * Math.Cos(angle);
+                double y = center.Y + radius * Math.Sin(angle);
+                points.Add(new Point { X = x, Y = y });
+            }
+            _map.AddMapObject(new MapPolygon
+            {
+                Pen = DrawingUtil.B_Black,
+                Polygon = new Polygon { ExteriorRing = new LinearRing { Points = points } }
+            });
         }
 
         private float GetRadius(PivotGuidancePattern centerPivot)
@@ -163,42 +123,37 @@ namespace AgGateway.ADAPT.Visualizer
 
         private void ProcessAbCurve(AbCurve abCurve)
         {
-            var delta = _drawingUtil.GetDelta();
-
             foreach (var lineString in abCurve.Shape)
             {
-                ProcessLineString(lineString, delta);
+                ProcessLineString(lineString.ToUtm());
             }
         }
 
         private void ProcessAbLine(AbLine abLine)
         {
-            var delta = _drawingUtil.GetDelta();
-
-            ProcessPoints(new List<Point> {abLine.A, abLine.B}, delta);
+            ProcessPoints(new List<Point> {abLine.A.ToUtm(), abLine.B.ToUtm()});
         }
 
         private void ProcessAPlus(APlus aPlus)
         {
-            var delta = _drawingUtil.GetDelta();
             var projectedPoint = aPlus.Point;
         }
 
-        private void ProcessLineString(LineString lineString, double delta)
+        private void ProcessLineString(LineString lineString)
         {
-            ProcessPoints(lineString.Points, delta);
+            ProcessPoints(lineString.Points);
         }
 
-        private void ProcessPoints(IEnumerable<Point> points, double delta)
+        private void ProcessPoints(List<Point> points)
         {
             if (!points.Any() || points.Count() == 1)
                 return;
 
-            if (delta == 0.0)
-                delta = 1.0;
-            var screenPoints = points.Select(point => point.ToUtm()).Select(point => point.ToXy(_drawingUtil.MinX, _drawingUtil.MinY, delta)).ToArray();
-
-            _drawingUtil.Graphics.DrawLines(DrawingUtil.B_Black, screenPoints);
+            _map.AddMapObject(new MapLineString
+            {
+                LineString = new LineString { Points = points },
+                Pen = DrawingUtil.B_Black
+            });
         }
     }
 }

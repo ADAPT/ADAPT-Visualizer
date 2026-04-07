@@ -11,52 +11,38 @@
 
 using AgGateway.ADAPT.ApplicationDataModel.Shapes;
 using AgGateway.ADAPT.ApplicationDataModel.Prescriptions;
-
-using Point = AgGateway.ADAPT.ApplicationDataModel.Shapes.Point;
+using AgGateway.ADAPT.Visualizer.Mapping;
+using AgGateway.ADAPT.Visualizer.UI;
 
 namespace AgGateway.ADAPT.Visualizer
 {
     public class PrescriptionProcessor
     {
         private DrawingUtil _drawingUtil;
-        private readonly TabPage _spatialViewer;
+        private readonly MapControl _mapControl;
 
-        public PrescriptionProcessor(TabPage spatialViewer)
+        public PrescriptionProcessor(MapControl mapControl)
         {
-            _spatialViewer = spatialViewer;
+            _mapControl = mapControl;
         }
 
         public void ProcessPrescription(Prescription prescription)
         {
+            Map map = new Map();
             if (prescription is VectorPrescription) //Only Vector currently supported for the Visualizer map
             {
                 VectorPrescription vectorPrescription = prescription as VectorPrescription;
 
-                using (var graphics = _spatialViewer.CreateGraphics())
+                foreach (Polygon polygon in vectorPrescription.RxShapeLookups.SelectMany(x => x.Shape.Polygons))
                 {
-                    _drawingUtil = new DrawingUtil(_spatialViewer.Width, _spatialViewer.Height, graphics);
-
-                    List<Point> allPoints = new List<Point>();
-                    List<List<Point>> projectedPointsPerPolygon = new List<List<Point>>();
-                    foreach (Polygon polygon in vectorPrescription.RxShapeLookups.SelectMany(x => x.Shape.Polygons))
+                    map.AddMapObject(new MapPolygon
                     {
-                        List<Point> polygonPoints = new List<Point>();
-                        foreach (Point point in polygon.ExteriorRing.Points)
-                        {
-                            Point projectedPoint = point.ToUtm();
-                            allPoints.Add(projectedPoint);
-                            polygonPoints.Add(projectedPoint);
-                        }
-                        projectedPointsPerPolygon.Add(polygonPoints);
-                    }
-                    _drawingUtil.SetMinMax(allPoints);
-                    foreach (List<Point> polygonPoints in projectedPointsPerPolygon)
-                    {
-                        var screenPolygon = polygonPoints.Select(point => point.ToXy(_drawingUtil.MinX, _drawingUtil.MinY, _drawingUtil.GetDelta())).ToArray();
-                        graphics.DrawPolygon(DrawingUtil.B_Black, screenPolygon);
-                    }
+                        Polygon = polygon.ToUtm(),
+                        Pen = DrawingUtil.B_Black
+                    });
                 }
             }
+            _mapControl.Map = map;
         }
     }
 }
