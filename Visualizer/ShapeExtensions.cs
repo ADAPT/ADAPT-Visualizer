@@ -24,10 +24,25 @@ namespace AgGateway.ADAPT.Visualizer
 
         public static ApplicationDataModel.Shapes.Point ToUtm(this ApplicationDataModel.Shapes.Point point)
         {
+            return ProjectToUtm(point, GetLongOrigin(point.X), point.Y < 0);
+        }
+
+        public static ApplicationDataModel.Shapes.Point ToUtmRelativeToSpatialRecordFirstPoint(
+            this ApplicationDataModel.Shapes.Point point,
+            ApplicationDataModel.Shapes.Point firstPoint)
+        {
+            return ProjectToUtm(point, GetLongOrigin(firstPoint.X), firstPoint.Y < 0);
+        }
+
+        private static ApplicationDataModel.Shapes.Point ProjectToUtm(
+            ApplicationDataModel.Shapes.Point point,
+            double longitudeOriginDegrees,
+            bool applySouthernHemisphereOffset)
+        {
             var latitudeInRadians = point.Y * ConstDeg2Rad;
             var longitudeInRadians = point.X * ConstDeg2Rad;
 
-            var longitudeOriginInRadians = GetLongOrigin(point.X) * ConstDeg2Rad;
+            var longitudeOriginInRadians = longitudeOriginDegrees * ConstDeg2Rad;
 
             var n = A / Math.Sqrt(1 - EccSquared * Math.Sin(latitudeInRadians) * Math.Sin(latitudeInRadians));
             var t = Math.Tan(latitudeInRadians) * Math.Tan(latitudeInRadians);
@@ -48,7 +63,7 @@ namespace AgGateway.ADAPT.Visualizer
                                                           (61 - 58 * t + t * t + 600 * c - 330 * EccPrimeSquared) * a1 * a1 * a1 * a1 *
                                                           a1 * a1 / 720));
 
-            if (point.Y < 0)
+            if (applySouthernHemisphereOffset)
             {
                 utmNorthing += 10000000.0;
             }

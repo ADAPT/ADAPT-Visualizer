@@ -58,6 +58,7 @@ namespace AgGateway.ADAPT.Visualizer
 
             List<Point> projectedPoints = new List<Point>();
             List<double> doubleValues = null;
+            Point? firstPoint = null;
             foreach (SpatialRecord record in _spatialRecords)
             {
                 Point? point = record.Geometry.FirstPoint();
@@ -66,7 +67,12 @@ namespace AgGateway.ADAPT.Visualizer
                     continue;
                 }
 
-                projectedPoints.Add(point.ToUtm());
+                if (firstPoint == null)
+                {
+                    firstPoint = point;
+                }
+
+                projectedPoints.Add(point.ToUtmRelativeToSpatialRecordFirstPoint(firstPoint));
 
                 if (_workingDataDictionary.ContainsKey(workingDataKey))
                 {
